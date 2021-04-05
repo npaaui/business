@@ -1,6 +1,7 @@
 package api
 
 import (
+	"business/dao/model"
 	"time"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
@@ -8,55 +9,62 @@ import (
 
 	. "business/common"
 	myjwt "business/middleware/jwt"
-	"business/model"
 	"business/service"
 )
+
+type LoginController struct {
+	service *service.UserService
+}
+
+func NewLoginController() *LoginController {
+	return &LoginController{
+		service: service.NewUserService(),
+	}
+}
 
 /**
  * 注册
  */
-func Register(c *gin.Context) {
-	_ = ValidatePostJson(c, map[string]string{
+func (c *LoginController) Register(g *gin.Context) {
+	var user = model.NewUserModel()
+	_ = ValidatePostJson(g, map[string]string{
 		"mobile":      "required|string",
 		"password":    "required|string",
 		"invite_code": "required|string",
 		"valid_code":  "required|string",
 		"wechat":      "string",
 		"qq":          "string",
-	}, model.UserM)
-	err := service.RegisterUser(model.UserM)
-	if err != nil {
-		ReturnErrMsg(c, ErrUserRegister, err.Error())
-		return
-	}
-	ReturnData(c, nil)
+	}, user)
+	c.service.RegisterUser(user)
+	ReturnData(g, user)
 	return
 }
 
 /**
  * 登录
  */
-func Login(c *gin.Context) {
-	var user model.User
-	_ = ValidatePostJson(c, map[string]string{
+func (c *LoginController) Login(g *gin.Context) {
+	var user = model.NewUserModel()
+	_ = ValidatePostJson(g, map[string]string{
 		"mobile":   "required|string",
 		"password": "required|string",
-	}, &user)
-	service.InfoUserByMobileAndPwd(&user)
+	}, user)
+	c.service.InfoUserByMobileAndPwd(user)
 	if user.Id == 0 {
-		ReturnErrMsg(c, ErrUserLogin, "用户名或密码有误")
+		ReturnErrMsg(g, ErrUserLogin, "用户名或密码有误")
 		return
 	}
-	generateToken(c, user)
+	generateToken(g, *user)
 	return
 }
 
 // 生成令牌
-func generateToken(c *gin.Context, user model.User) {
+func generateToken(g *gin.Context, user model.User) {
 	j := &myjwt.JWT{
 		SigningKey: []byte("CaiCai"),
 	}
 	claims := myjwt.CustomClaims{
+		UserId:   user.Id,
 		UserSn:   user.UserSn,
 		Mobile:   user.Mobile,
 		Username: user.Username,
@@ -70,7 +78,7 @@ func generateToken(c *gin.Context, user model.User) {
 	token, err := j.CreateToken(claims)
 
 	if err != nil {
-		ReturnErrMsg(c, ErrUserLogin, err.Error())
+		ReturnErrMsg(g, ErrUserLogin, err.Error())
 		return
 	}
 
@@ -78,7 +86,7 @@ func generateToken(c *gin.Context, user model.User) {
 		User:  user,
 		Token: token,
 	}
-	ReturnData(c, data)
+	ReturnData(g, data)
 	return
 }
 
@@ -90,24 +98,18 @@ type LoginResult struct {
 /**
  * 修改密码
  */
-func UpdateUserPassword(c *gin.Context) {
-	_ = ValidatePostJson(c, map[string]string{
+func (c *LoginController) UpdateUserPassword(g *gin.Context) {
+	var user = model.NewUserModel()
+	_ = ValidatePostJson(g, map[string]string{
 		"mobile":     "required|string",
 		"valid_code": "required|string",
 		"password":   "required|string",
-	}, model.UserM)
-	err := service.UpdateUserPassword(model.UserM)
+	}, user)
+	err := c.service.UpdateUserPassword(user)
 	if err != nil {
-		ReturnErrMsg(c, ErrUserUpdate, err.Error())
+		ReturnErrMsg(g, ErrUserUpdate, err.Error())
 		return
 	}
-	ReturnData(c, nil)
+	ReturnData(g, nil)
 	return
-}
-
-func Test(c *gin.Context) {
-	claims := c.MustGet("claims").(*myjwt.CustomClaims)
-	if claims != nil {
-		ReturnData(c, claims)
-	}
 }

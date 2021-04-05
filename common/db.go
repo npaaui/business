@@ -1,26 +1,27 @@
-package model
+package common
 
 import (
-	"business/common"
 	"fmt"
 	"github.com/go-xorm/xorm"
-	dbHelper "github.com/npaaui/go-helper-db"
+
+	"github.com/npaaui/go-helper/db"
 )
 
 var (
 	DbEngine *xorm.Engine
 )
 
+// 初始化数据库
 func InitMysql() {
-	mysqlConf, err := common.Conf.GetSection("MYSQL")
+	mysqlConf, err := Conf.GetSection("MYSQL")
 	if err != nil {
 		panic(fmt.Errorf("mysql get conf error: %w", err))
 	}
-	dbConf := dbHelper.DbConf{
+	dbConf := db.DbConf{
 		DriverName:      "mysql",
 		ConnMaxLifetime: 86400,
 		Prefix:          mysqlConf["prefix"],
-		Conn: dbHelper.MysqlConf{
+		Conn: db.MysqlConf{
 			Host:     mysqlConf["host"],
 			Username: mysqlConf["username"],
 			Password: mysqlConf["password"],
@@ -28,5 +29,5 @@ func InitMysql() {
 		},
 	}
 	dbConf.InitDbEngine()
-	DbEngine = dbHelper.GetDbEngineIns()
+	DbEngine = db.GetDbEngineIns()
 }

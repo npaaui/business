@@ -36,3 +36,20 @@ func RandNumString(length int) string {
 	}
 	return strings.Join(rs, "")
 }
+
+/****************************
+ * 数据格式转换
+ ****************************/
+func StrToInt(str string) int {
+	i, err := strconv.Atoi(str)
+	if err != nil {
+		Log(LogLevelWarning, fmt.Errorf("字符串「"+str+"」转整数失败: ", err))
+		return 0
+	}
+	return i
+}
+
+func IntToStr(i int) string {
+	str := strconv.Itoa(i)
+	return str
+}

@@ -10,10 +10,10 @@ import (
 	"github.com/gookit/validate"
 )
 
-func HandleQuery(c *gin.Context, param Arr) Arr {
-	res := Arr{}
+func HandleQuery(g *gin.Context, param MapItf) MapItf {
+	res := MapItf{}
 	for k, v := range param {
-		if query, ok := c.GetQuery(k); ok && query != "" {
+		if query, ok := g.GetQuery(k); ok && query != "" {
 			query = strings.TrimSpace(query)
 			switch v.(type) {
 			case string:
@@ -22,9 +22,9 @@ func HandleQuery(c *gin.Context, param Arr) Arr {
 				_q, _ := strconv.Atoi(query)
 				res[k] = _q
 			case []string:
-				res[k], _ = c.GetQueryArray(k)
+				res[k], _ = g.GetQueryArray(k)
 			case map[string]string:
-				res[k], _ = c.GetQueryMap(k)
+				res[k], _ = g.GetQueryMap(k)
 			}
 		} else {
 			res[k] = v
@@ -33,10 +33,10 @@ func HandleQuery(c *gin.Context, param Arr) Arr {
 	return res
 }
 
-func HandleParams(c *gin.Context, param Arr) Arr {
-	res := Arr{}
+func HandleParams(g *gin.Context, param MapItf) MapItf {
+	res := MapItf{}
 	for k, v := range param {
-		if query, ok := c.Params.Get(k); ok && query != "" {
+		if query, ok := g.Params.Get(k); ok && query != "" {
 			query = strings.TrimSpace(query)
 			switch v.(type) {
 			case string:
@@ -53,8 +53,8 @@ func HandleParams(c *gin.Context, param Arr) Arr {
 }
 
 // 验证query参数提交
-func ValidateQuery(c *gin.Context, param Arr, rule map[string]string) (Arr, error) {
-	data := HandleQuery(c, param)
+func ValidateQuery(g *gin.Context, param MapItf, rule map[string]string) (MapItf, error) {
+	data := HandleQuery(g, param)
 
 	va := validate.Map(data)
 
@@ -62,14 +62,14 @@ func ValidateQuery(c *gin.Context, param Arr, rule map[string]string) (Arr, erro
 	va.StringRules(rule)
 
 	if !va.Validate() {
-		return Arr{}, errors.New(va.Errors.One())
+		return MapItf{}, errors.New(va.Errors.One())
 	}
 	return data, nil
 }
 
 // 验证post json数据
-func ValidatePostJson(c *gin.Context, rule map[string]string, obj interface{}) (data Arr) {
-	jsonByte, err := c.GetRawData()
+func ValidatePostJson(g *gin.Context, rule map[string]string, obj interface{}) (data MapItf) {
+	jsonByte, err := g.GetRawData()
 	if err != nil {
 		panic(NewValidErr(err))
 	}

@@ -7,9 +7,15 @@ import (
 )
 
 func LoadUserRouter(r *gin.Engine) *gin.Engine {
-	u := r.Group("/user")
+	userCtrl := api.NewUserController()
+	shopCtrl := api.NewShopController()
+
+	u := r.Group("")
 	{
-		u.GET("/user", api.GetUserInfo)
+		u.GET("/user", userCtrl.InfoUser)
+		u.GET("/shop", shopCtrl.ListShop)
+		u.POST("/shop", shopCtrl.InsertShop)
+		u.PUT("/shop", shopCtrl.UpdateShop)
 	}
 	return r
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	. "business/common"
-	"business/model"
 	"business/router"
 )
 
@@ -17,7 +16,8 @@ func main() {
 	 * 初始化
 	 */
 	InitConfig("config.ini")
-	model.InitMysql()
+	InitMysql()
+	InitRedis()
 
 	/**
 	 * 加载路由

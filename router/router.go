@@ -11,14 +11,14 @@ import (
 func Load(r *gin.Engine) *gin.Engine {
 	r.Use(middleware.RecoverDbError())
 
-	r.POST("register", api.Register)
-	r.POST("login", api.Login)
+	loginCtrl := api.NewLoginController()
+	r.POST("register", loginCtrl.Register)
+	r.POST("login", loginCtrl.Login)
 	r.POST("sms_valid", api.SendSmsValid)
-	r.PUT("password", api.UpdateUserPassword)
+	r.PUT("password", loginCtrl.UpdateUserPassword)
 
 	r.Use(jwt.JWTAuth())
 	{
-		r.GET("/test", api.Test)
 		LoadUserRouter(r)
 	}
 	return r

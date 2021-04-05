@@ -11,14 +11,8 @@ type Category struct {
 	ParentId int    `db:"parent_id" json:"parent_id"`
 }
 
-var CategoryM = &Category{}
-
-func (m *Category) Insert() int64 {
-	row, err := DbEngine.Insert(m)
-	if err != nil {
-		panic(NewDbErr(err))
-	}
-	return row
+func NewCategoryModel() *Category {
+	return &Category{}
 }
 
 func (m *Category) Info() bool {
@@ -27,6 +21,14 @@ func (m *Category) Info() bool {
 		panic(NewDbErr(err))
 	}
 	return has
+}
+
+func (m *Category) Insert() int64 {
+	row, err := DbEngine.Insert(m)
+	if err != nil {
+		panic(NewDbErr(err))
+	}
+	return row
 }
 
 func (m *Category) Update(arg *Category) int64 {
@@ -43,4 +45,21 @@ func (m *Category) Delete() int64 {
 		panic(NewDbErr(err))
 	}
 	return row
+}
+
+func (m *Category) SetId(arg int) *Category {
+	m.Id = arg
+	return m
+}
+func (m *Category) SetName(arg string) *Category {
+	m.Name = arg
+	return m
+}
+func (m *Category) SetType(arg string) *Category {
+	m.Type = arg
+	return m
+}
+func (m *Category) SetParentId(arg int) *Category {
+	m.ParentId = arg
+	return m
 }

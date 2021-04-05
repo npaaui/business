@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	dbHelper "github.com/npaaui/go-helper-db"
-	"github.com/npaaui/go-helper-db/gen"
+	"github.com/npaaui/go-helper/db"
+	"github.com/npaaui/go-helper/gen"
 
 	. "business/common"
 )
@@ -15,11 +15,11 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("mysql get conf error: %w", err))
 	}
-	(&dbHelper.DbConf{
+	(&db.DbConf{
 		DriverName:      "mysql",
 		ConnMaxLifetime: 86400,
 		Prefix:          mysqlConf["prefix"],
-		Conn: dbHelper.MysqlConf{
+		Conn: db.MysqlConf{
 			Host:     mysqlConf["host"],
 			Username: mysqlConf["username"],
 			Password: mysqlConf["password"],
@@ -28,7 +28,7 @@ func main() {
 	}).InitDbEngine()
 
 	(&gen.Conf{
-		ModelFolder: "tmp/gen/model/",
+		ModelFolder: "dao/model/",
 		TplFile:     "tmp/gen/model.tpl",
 		TableNames:  "",
 		DbName:      "business",

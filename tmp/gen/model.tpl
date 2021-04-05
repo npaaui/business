@@ -3,18 +3,13 @@ package {{.PackageName}}
 import (
     . "business/common"
 )
+
 type {{$exportModelName}} struct {
-{{range .TableSchema}}{{.Field | ExportColumn | FormatCamelcase}} {{.Type | TypeConvert}} {{.Field | Tags}}
+{{range .TableSchema}}    {{.Field | ExportColumn | FormatCamelcase}} {{.Type | TypeConvert}} {{.Field | Tags}}
 {{end}}}
 
-var {{$exportModelName}}M = &{{$exportModelName}}{}
-
-func (m *{{$exportModelName}}) Insert() int64 {
-	row, err := DbEngine.Insert(m)
-	if err != nil {
-		panic(NewDbErr(err))
-	}
-	return row
+func New{{$exportModelName}}Model() *{{$exportModelName}} {
+	return &{{$exportModelName}}{}
 }
 
 func (m *{{$exportModelName}}) Info() bool {
@@ -23,6 +18,14 @@ func (m *{{$exportModelName}}) Info() bool {
 		panic(NewDbErr(err))
 	}
 	return has
+}
+
+func (m *{{$exportModelName}}) Insert() int64 {
+	row, err := DbEngine.Insert(m)
+	if err != nil {
+		panic(NewDbErr(err))
+	}
+	return row
 }
 
 func (m *{{$exportModelName}}) Update(arg *{{$exportModelName}}) int64 {
@@ -40,3 +43,9 @@ func (m *{{$exportModelName}}) Delete() int64 {
 	}
 	return row
 }
+
+{{range .TableSchema}}func (m *{{$exportModelName}}) Set{{.Field | FormatCamelcase}}(arg {{.Type | TypeConvert}}) *{{$exportModelName}} {
+	m.{{.Field | FormatCamelcase}} = arg
+	return m
+}
+{{end}}

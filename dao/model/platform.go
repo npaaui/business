@@ -10,14 +10,8 @@ type Platform struct {
 	Status string `db:"status" json:"status"`
 }
 
-var PlatformM = &Platform{}
-
-func (m *Platform) Insert() int64 {
-	row, err := DbEngine.Insert(m)
-	if err != nil {
-		panic(NewDbErr(err))
-	}
-	return row
+func NewPlatformModel() *Platform {
+	return &Platform{}
 }
 
 func (m *Platform) Info() bool {
@@ -26,6 +20,14 @@ func (m *Platform) Info() bool {
 		panic(NewDbErr(err))
 	}
 	return has
+}
+
+func (m *Platform) Insert() int64 {
+	row, err := DbEngine.Insert(m)
+	if err != nil {
+		panic(NewDbErr(err))
+	}
+	return row
 }
 
 func (m *Platform) Update(arg *Platform) int64 {
@@ -42,4 +44,17 @@ func (m *Platform) Delete() int64 {
 		panic(NewDbErr(err))
 	}
 	return row
+}
+
+func (m *Platform) SetCode(arg string) *Platform {
+	m.Code = arg
+	return m
+}
+func (m *Platform) SetName(arg string) *Platform {
+	m.Name = arg
+	return m
+}
+func (m *Platform) SetStatus(arg string) *Platform {
+	m.Status = arg
+	return m
 }

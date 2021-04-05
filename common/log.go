@@ -3,9 +3,9 @@ package common
 import "fmt"
 
 const (
-	LogLevelDanger = 1
+	LogLevelDanger  = 1
 	LogLevelWarning = 2
-	LogLevelError = 3
+	LogLevelNormal  = 3
 )
 
 func Log(level int, err error) {

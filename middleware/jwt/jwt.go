@@ -2,9 +2,8 @@ package jwt
 
 import (
 	. "business/common"
-
 	"errors"
-	"log"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -13,32 +12,34 @@ import (
 
 // JWTAuth 中间件，检查token
 func JWTAuth() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		token := c.Request.Header.Get("token")
+	return func(g *gin.Context) {
+		token := g.Request.Header.Get("authorization")
+		token = strings.Replace(token, "Bearer ", "", 1)
 		if token == "" {
-			ReturnErrMsg(c, ErrUserLogin, "请求未携带token，无权限访问")
-			c.Abort()
+			ReturnErrMsg(g, ErrUserLogin, "请求未携带token，无权限访问")
+			g.Abort()
 			return
 		}
 
-		log.Print("get token: ", token)
+		//log.Print("get token: ", token)
 
 		j := NewJWT()
 		// parseToken 解析token包含的信息
 		claims, err := j.ParseToken(token)
 		if err != nil {
 			if err == TokenExpired {
-				ReturnErrMsg(c, ErrUserLogin, "登录授权已过期")
-				c.Abort()
+				ReturnErrMsg(g, ErrUserLogin, "登录授权已过期")
+				g.Abort()
 				return
 			}
 
-			ReturnErr(c, ErrUserLogin, err)
-			c.Abort()
+			ReturnErr(g, ErrUserLogin, err)
+			g.Abort()
 			return
 		}
 		// 继续交由下一个路由处理,并将解析出的信息传递下去
-		c.Set("claims", claims)
+		//g.Set("userInfo", claims)
+		TokenInfo.UserId = claims.UserId
 	}
 }
 
@@ -58,6 +59,7 @@ var (
 
 // 载荷，可以加一些自己需要的信息
 type CustomClaims struct {
+	UserId   int    `json:"user_id"`
 	UserSn   string `json:"user_sn"`
 	Mobile   string `json:"mobile"`
 	Username string `json:"username"`

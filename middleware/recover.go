@@ -7,18 +7,22 @@ import (
 )
 
 func RecoverDbError() gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func(g *gin.Context) {
 		defer func() {
 			err := recover()
 			if dbErr, ok := err.(DbErr); ok {
-				ReturnErrSys(c, ErrSysDbExec, dbErr)
+				ReturnErrSys(g, ErrSysDbExec, dbErr)
 				return
 			}
 			if validErr, ok := err.(ValidErr); ok {
-				ReturnErr(c, ErrValidReq, validErr)
+				ReturnErr(g, ErrValidReq, validErr)
+				return
+			}
+			if respErr, ok := err.(RespErr); ok {
+				ReturnErrMsg(g, respErr.Code, respErr.Msg)
 				return
 			}
 		}()
-		c.Next()
+		g.Next()
 	}
 }
