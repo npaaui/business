@@ -9,4 +9,5 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-xorm/xorm v0.7.9
 	github.com/gookit/validate v1.2.9
+	github.com/npaaui/helper-go v1.0.0
 )

@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/npaaui/go-helper/db"
-	"github.com/npaaui/go-helper/gen"
+	"github.com/npaaui/helper-go/db"
+	"github.com/npaaui/helper-go/gen"
 
 	. "business/common"
 )
@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("mysql get conf error: %w", err))
 	}
-	(&db.DbConf{
+	(&db.Conf{
 		DriverName:      "mysql",
 		ConnMaxLifetime: 86400,
 		Prefix:          mysqlConf["prefix"],

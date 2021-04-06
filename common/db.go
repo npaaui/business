@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-xorm/xorm"
 
-	"github.com/npaaui/go-helper/db"
+	"github.com/npaaui/helper-go/db"
 )
 
 var (
@@ -17,7 +17,7 @@ func InitMysql() {
 	if err != nil {
 		panic(fmt.Errorf("mysql get conf error: %w", err))
 	}
-	dbConf := db.DbConf{
+	dbConf := db.Conf{
 		DriverName:      "mysql",
 		ConnMaxLifetime: 86400,
 		Prefix:          mysqlConf["prefix"],
