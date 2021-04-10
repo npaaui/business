@@ -64,7 +64,7 @@ func (s *UserService) UpdateUserPassword(set *model.User) error {
 		return errors.New("该手机号未注册")
 	}
 
-	row := user.Update(set.SetPassword(GetHash(user.Password)))
+	row := user.Update(set.SetPassword(GetHash(set.Password)))
 	if row == 0 {
 		return errors.New("密码修改失败")
 	}

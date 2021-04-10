@@ -23,6 +23,9 @@ func NewSmsController() *SmsController {
 func SendSmsValid(g *gin.Context) {
 	var smsValid = model.NewSmsValidModel()
 	_ = ValidatePostJson(g, map[string]string{
+		"mobile": "",
+		"type":   "",
+	}, map[string]string{
 		"mobile": "required|string",
 		"type":   "required|string|enum:" + strings.Join(service.SmsValidTypeArr, ","),
 	}, smsValid)

@@ -4,6 +4,13 @@ import (
 	. "business/common"
 )
 
+/**
+"id": "int", // 品类id
+"name": "string", // 品类名
+"type": "string", // 类别
+"parent_id": "int", // 父品类id
+*/
+
 type Category struct {
 	Id       int    `db:"id" json:"id"`
 	Name     string `db:"name" json:"name"`
@@ -51,15 +58,27 @@ func (m *Category) SetId(arg int) *Category {
 	m.Id = arg
 	return m
 }
+
 func (m *Category) SetName(arg string) *Category {
 	m.Name = arg
 	return m
 }
+
 func (m *Category) SetType(arg string) *Category {
 	m.Type = arg
 	return m
 }
+
 func (m *Category) SetParentId(arg int) *Category {
 	m.ParentId = arg
 	return m
+}
+
+func (m Category) Translates() map[string]string {
+	return map[string]string{
+		"id":        "品类id",
+		"name":      "品类名",
+		"type":      "类别",
+		"parent_id": "父品类id",
+	}
 }

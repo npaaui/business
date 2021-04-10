@@ -4,6 +4,30 @@ import (
 	. "business/common"
 )
 
+/**
+"id": "int", // id
+"user_id": "int", // 商家id
+"shop_sn": "string", // 店铺掌柜号
+"platform": "string", // 平台
+"name": "string", // 店铺名
+"group": "string", // 店铺组别
+"sell_category_id": "int", // 主营类目
+"url": "string", // 店铺链接
+"re_day": "int", // 复购天数
+"contact_name": "string", // 联系人
+"contact_mobile": "string", // 联系人电话
+"postcode": "string", // 邮编
+"province_id": "int", // 省id
+"province": "string", // 省
+"city_id": "int", // 市id
+"city": "string", // 市
+"county_id": "int", // 县id
+"county": "string", // 县
+"address": "string", // 详细地址
+"create_time": "string", //
+"update_time": "string", //
+*/
+
 type Shop struct {
 	Id             int    `db:"id" json:"id"`
 	UserId         int    `db:"user_id" json:"user_id"`
@@ -68,83 +92,129 @@ func (m *Shop) SetId(arg int) *Shop {
 	m.Id = arg
 	return m
 }
+
 func (m *Shop) SetUserId(arg int) *Shop {
 	m.UserId = arg
 	return m
 }
+
 func (m *Shop) SetShopSn(arg string) *Shop {
 	m.ShopSn = arg
 	return m
 }
+
 func (m *Shop) SetPlatform(arg string) *Shop {
 	m.Platform = arg
 	return m
 }
+
 func (m *Shop) SetName(arg string) *Shop {
 	m.Name = arg
 	return m
 }
+
 func (m *Shop) SetGroup(arg string) *Shop {
 	m.Group = arg
 	return m
 }
+
 func (m *Shop) SetSellCategoryId(arg int) *Shop {
 	m.SellCategoryId = arg
 	return m
 }
+
 func (m *Shop) SetUrl(arg string) *Shop {
 	m.Url = arg
 	return m
 }
+
 func (m *Shop) SetReDay(arg int) *Shop {
 	m.ReDay = arg
 	return m
 }
+
 func (m *Shop) SetContactName(arg string) *Shop {
 	m.ContactName = arg
 	return m
 }
+
 func (m *Shop) SetContactMobile(arg string) *Shop {
 	m.ContactMobile = arg
 	return m
 }
+
 func (m *Shop) SetPostcode(arg string) *Shop {
 	m.Postcode = arg
 	return m
 }
+
 func (m *Shop) SetProvinceId(arg int) *Shop {
 	m.ProvinceId = arg
 	return m
 }
+
 func (m *Shop) SetProvince(arg string) *Shop {
 	m.Province = arg
 	return m
 }
+
 func (m *Shop) SetCityId(arg int) *Shop {
 	m.CityId = arg
 	return m
 }
+
 func (m *Shop) SetCity(arg string) *Shop {
 	m.City = arg
 	return m
 }
+
 func (m *Shop) SetCountyId(arg int) *Shop {
 	m.CountyId = arg
 	return m
 }
+
 func (m *Shop) SetCounty(arg string) *Shop {
 	m.County = arg
 	return m
 }
+
 func (m *Shop) SetAddress(arg string) *Shop {
 	m.Address = arg
 	return m
 }
+
 func (m *Shop) SetCreateTime(arg string) *Shop {
 	m.CreateTime = arg
 	return m
 }
+
 func (m *Shop) SetUpdateTime(arg string) *Shop {
 	m.UpdateTime = arg
 	return m
+}
+
+func (m Shop) Translates() map[string]string {
+	return map[string]string{
+		"id":               "id",
+		"user_id":          "商家id",
+		"shop_sn":          "店铺掌柜号",
+		"platform":         "平台",
+		"name":             "店铺名",
+		"group":            "店铺组别",
+		"sell_category_id": "主营类目",
+		"url":              "店铺链接",
+		"re_day":           "复购天数",
+		"contact_name":     "联系人",
+		"contact_mobile":   "联系人电话",
+		"postcode":         "邮编",
+		"province_id":      "省id",
+		"province":         "省",
+		"city_id":          "市id",
+		"city":             "市",
+		"county_id":        "县id",
+		"county":           "县",
+		"address":          "详细地址",
+		"create_time":      "",
+		"update_time":      "",
+	}
 }

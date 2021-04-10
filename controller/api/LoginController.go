@@ -28,6 +28,13 @@ func NewLoginController() *LoginController {
 func (c *LoginController) Register(g *gin.Context) {
 	var user = model.NewUserModel()
 	_ = ValidatePostJson(g, map[string]string{
+		"mobile":      "string",
+		"password":    "string",
+		"invite_code": "string",
+		"valid_code":  "string",
+		"wechat":      "string",
+		"qq":          "string",
+	}, map[string]string{
 		"mobile":      "required|string",
 		"password":    "required|string",
 		"invite_code": "required|string",
@@ -46,6 +53,9 @@ func (c *LoginController) Register(g *gin.Context) {
 func (c *LoginController) Login(g *gin.Context) {
 	var user = model.NewUserModel()
 	_ = ValidatePostJson(g, map[string]string{
+		"mobile":   "string",
+		"password": "string",
+	}, map[string]string{
 		"mobile":   "required|string",
 		"password": "required|string",
 	}, user)
@@ -101,6 +111,10 @@ type LoginResult struct {
 func (c *LoginController) UpdateUserPassword(g *gin.Context) {
 	var user = model.NewUserModel()
 	_ = ValidatePostJson(g, map[string]string{
+		"mobile":     "",
+		"valid_code": "",
+		"password":   "",
+	}, map[string]string{
 		"mobile":     "required|string",
 		"valid_code": "required|string",
 		"password":   "required|string",

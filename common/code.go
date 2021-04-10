@@ -26,6 +26,10 @@ const (
 	ErrShopNotExist   = 20101
 	ErrShopCountLimit = 20102
 
+	ErrTaskInsert       = 20201
+	ErrTaskGoodsInsert  = 20202
+	ErrTaskDetailInsert = 20203
+
 	// 消息域
 	ErrSmsSend = 21001
 )
@@ -58,6 +62,13 @@ func GetMsg(code int) string {
 		return "店铺不存在"
 	case ErrShopCountLimit:
 		return "店铺数量已达上限"
+
+	case ErrTaskInsert:
+		return "任务新增失败"
+	case ErrTaskGoodsInsert:
+		return "任务商品新增失败"
+	case ErrTaskDetailInsert:
+		return "任务明细新增失败"
 
 	case ErrSmsSend:
 		return "发送失败"

@@ -9,6 +9,7 @@ import (
 func LoadUserRouter(r *gin.Engine) *gin.Engine {
 	userCtrl := api.NewUserController()
 	shopCtrl := api.NewShopController()
+	taskCtrl := api.NewTaskController()
 
 	u := r.Group("")
 	{
@@ -16,6 +17,7 @@ func LoadUserRouter(r *gin.Engine) *gin.Engine {
 		u.GET("/shop", shopCtrl.ListShop)
 		u.POST("/shop", shopCtrl.InsertShop)
 		u.PUT("/shop", shopCtrl.UpdateShop)
+		u.POST("/task", taskCtrl.InsertTask)
 	}
 	return r
 }

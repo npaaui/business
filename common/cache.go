@@ -23,7 +23,7 @@ func InitRedis() {
 		Network:      "tcp",
 		Addr:         redisConf["server"],
 		Password:     redisConf["pass"],
-		DB:           StrToInt(redisConf["db"]),
+		DB:           StrToInt(redisConf["db"], 0),
 		DialTimeout:  60 * time.Second,
 		PoolSize:     1000,
 		PoolTimeout:  2 * time.Minute,

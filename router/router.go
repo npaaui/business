@@ -13,7 +13,7 @@ func Load(r *gin.Engine) *gin.Engine {
 
 	loginCtrl := api.NewLoginController()
 	r.POST("register", loginCtrl.Register)
-	r.POST("login", loginCtrl.Login)
+	r.GET("login", loginCtrl.Login)
 	r.POST("sms_valid", api.SendSmsValid)
 	r.PUT("password", loginCtrl.UpdateUserPassword)
 

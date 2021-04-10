@@ -4,6 +4,14 @@ import (
 	. "business/common"
 )
 
+/**
+"id": "int", //
+"content": "string", // 内容
+"unique_id": "string", // 唯一ID
+"mode_id": "string", // 模板id
+"remark": "string", // 备注信息
+*/
+
 type SmsTpl struct {
 	Id       int    `db:"id" json:"id"`
 	Content  string `db:"content" json:"content"`
@@ -52,19 +60,33 @@ func (m *SmsTpl) SetId(arg int) *SmsTpl {
 	m.Id = arg
 	return m
 }
+
 func (m *SmsTpl) SetContent(arg string) *SmsTpl {
 	m.Content = arg
 	return m
 }
+
 func (m *SmsTpl) SetUniqueId(arg string) *SmsTpl {
 	m.UniqueId = arg
 	return m
 }
+
 func (m *SmsTpl) SetModeId(arg string) *SmsTpl {
 	m.ModeId = arg
 	return m
 }
+
 func (m *SmsTpl) SetRemark(arg string) *SmsTpl {
 	m.Remark = arg
 	return m
+}
+
+func (m SmsTpl) Translates() map[string]string {
+	return map[string]string{
+		"id":        "",
+		"content":   "内容",
+		"unique_id": "唯一ID",
+		"mode_id":   "模板id",
+		"remark":    "备注信息",
+	}
 }
