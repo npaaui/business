@@ -12,9 +12,10 @@ func Load(r *gin.Engine) *gin.Engine {
 	apiR := r.Group("api").Use(middleware.RecoverDbError())
 	{
 		loginCtrl := api.NewLoginController()
+		smsCtrl := api.NewSmsController()
 		apiR.POST("register", loginCtrl.Register)
 		apiR.POST("login", loginCtrl.Login)
-		apiR.POST("sms_valid", api.SendSmsValid)
+		apiR.POST("sms_valid", smsCtrl.SendSmsValid)
 		apiR.PUT("password", loginCtrl.UpdateUserPassword)
 
 		apiR.Use(jwt.JWTAuth())

@@ -20,7 +20,7 @@ func NewSmsController() *SmsController {
 	}
 }
 
-func SendSmsValid(g *gin.Context) {
+func (c *SmsController) SendSmsValid(g *gin.Context) {
 	var smsValid = model.NewSmsValidModel()
 	_ = ValidatePostJson(g, map[string]string{
 		"mobile": "",

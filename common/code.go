@@ -32,6 +32,9 @@ const (
 
 	// 消息域
 	ErrSmsSend = 21001
+
+	// 配置域
+	ErrConfigNotExist = 22001
 )
 
 func GetMsg(code int) string {
@@ -72,6 +75,10 @@ func GetMsg(code int) string {
 
 	case ErrSmsSend:
 		return "发送失败"
+
+	case ErrConfigNotExist:
+		return "配置不存在"
+
 	default:
 		return "未知错误"
 	}

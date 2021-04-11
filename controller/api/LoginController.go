@@ -79,9 +79,9 @@ func generateToken(g *gin.Context, user model.User) {
 		Mobile:   user.Mobile,
 		Username: user.Username,
 		StandardClaims: jwtgo.StandardClaims{
-			NotBefore: int64(time.Now().Unix() - 1000), // 签名生效时间
-			ExpiresAt: int64(time.Now().Unix() + 1800), // 过期时间 一小时
-			Issuer:    "CaiCai",                        //签名的发行者
+			NotBefore: time.Now().Unix() - 1000,  // 签名生效时间
+			ExpiresAt: time.Now().Unix() + 86400, // 过期时间
+			Issuer:    "CaiCai",                  //签名的发行者
 		},
 	}
 

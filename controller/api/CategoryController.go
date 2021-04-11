@@ -18,10 +18,16 @@ func NewCategoryController() *CategoryController {
 }
 
 /**
- * 获取任务列表
+ * 获取类别列表
  */
 func (c *CategoryController) ListCategory(g *gin.Context) {
-	category := model.NewCategoryModel().SetType("sell")
-	categoryList := c.service.ListCategory(*category)
+	category := model.NewCategoryModel()
+	ValidateQuery(g, map[string]string{
+		"type": "string",
+	}, map[string]string{
+		"type": "required|string|enum:sell,task",
+	}, category)
+
+	categoryList := c.service.ListCategory(category)
 	ReturnData(g, categoryList)
 }

@@ -3,7 +3,6 @@ package common
 import (
 	"encoding/json"
 	"errors"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -11,61 +10,30 @@ import (
 	"github.com/gookit/validate/locales/zhcn"
 )
 
-func HandleQuery(g *gin.Context, param MapItf) MapItf {
-	res := MapItf{}
-	for k, v := range param {
-		if query, ok := g.GetQuery(k); ok && query != "" {
-			query = strings.TrimSpace(query)
-			switch v.(type) {
-			case string:
-				res[k] = query
-			case int:
-				_q, _ := strconv.Atoi(query)
-				res[k] = _q
-			case []string:
-				res[k], _ = g.GetQueryArray(k)
-			case map[string]string:
-				res[k], _ = g.GetQueryMap(k)
-			}
-		} else {
-			res[k] = v
-		}
-	}
-	return res
-}
-
-func HandleParams(g *gin.Context, param MapItf) MapItf {
-	res := MapItf{}
-	for k, v := range param {
+// 验证param参数提交
+func ValidateParam(g *gin.Context, format validate.MS, rule validate.MS, obj interface{}) MapItf {
+	data := MapItf{}
+	for k, _ := range format {
 		if query, ok := g.Params.Get(k); ok && query != "" {
 			query = strings.TrimSpace(query)
-			switch v.(type) {
-			case string:
-				res[k] = query
-			case int:
-				_q, _ := strconv.Atoi(query)
-				res[k] = _q
-			}
-		} else {
-			res[k] = v
+			data[k] = query
 		}
 	}
-	return res
+
+	return ValidateData(data, format, rule, &obj)
 }
 
 // 验证query参数提交
-func ValidateQuery(g *gin.Context, param MapItf, rule map[string]string) (MapItf, error) {
-	data := HandleQuery(g, param)
-
-	va := validate.Map(data)
-
-	// 验证参数
-	va.StringRules(rule)
-
-	if !va.Validate() {
-		return MapItf{}, errors.New(va.Errors.One())
+func ValidateQuery(g *gin.Context, format validate.MS, rule validate.MS, obj interface{}) MapItf {
+	data := MapItf{}
+	for k, _ := range format {
+		if query, ok := g.GetQuery(k); ok && query != "" {
+			query = strings.TrimSpace(query)
+			data[k] = query
+		}
 	}
-	return data, nil
+
+	return ValidateData(data, format, rule, &obj)
 }
 
 // 验证post json数据
