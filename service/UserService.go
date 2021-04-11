@@ -30,7 +30,7 @@ func (s *UserService) InfoUserById(id int) (userInfo cache.UserInfo) {
 	userInfo.User = user
 
 	// 获取店铺数
-	userInfo.ShopCount = len(dao.ListShop(&dao.ListShopArgs{UserId: id}))
+	userInfo.ShopCount, _ = dao.ListShop(&dao.ListShopArgs{UserId: id})
 
 	ca.SetContent(userInfo).SetCacheUserInfo()
 	return

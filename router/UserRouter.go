@@ -17,6 +17,8 @@ func LoadUserRouter(r gin.IRoutes) {
 		u.GET("/shop", shopCtrl.ListShop)
 		u.POST("/shop", shopCtrl.InsertShop)
 		u.PUT("/shop", shopCtrl.UpdateShop)
+		u.GET("/task", taskCtrl.ListTask)
+		u.GET("/task/:id", taskCtrl.InfoTask)
 		u.POST("/task", taskCtrl.InsertTask)
 	}
 }

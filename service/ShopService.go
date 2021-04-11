@@ -14,8 +14,8 @@ func NewShopService() *ShopService {
 }
 
 func (s *ShopService) ListShop() (data *RespList) {
-	list := dao.ListShop(&dao.ListShopArgs{UserId: TokenInfo.UserId})
-	data = NewRespList(len(list), list)
+	count, list := dao.ListShop(&dao.ListShopArgs{UserId: TokenInfo.UserId})
+	data = NewRespList(count, list)
 	return
 }
 

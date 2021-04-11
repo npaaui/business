@@ -60,7 +60,6 @@ var (
 // 载荷，可以加一些自己需要的信息
 type CustomClaims struct {
 	UserId   int    `json:"user_id"`
-	UserSn   string `json:"user_sn"`
 	Mobile   string `json:"mobile"`
 	Username string `json:"username"`
 	jwt.StandardClaims

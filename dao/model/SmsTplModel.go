@@ -81,6 +81,15 @@ func (m *SmsTpl) SetRemark(arg string) *SmsTpl {
 	return m
 }
 
+func (m SmsTpl) AsMapItf() MapItf {
+	return MapItf{
+		"id":        m.Id,
+		"content":   m.Content,
+		"unique_id": m.UniqueId,
+		"mode_id":   m.ModeId,
+		"remark":    m.Remark,
+	}
+}
 func (m SmsTpl) Translates() map[string]string {
 	return map[string]string{
 		"id":        "",

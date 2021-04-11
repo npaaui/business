@@ -46,6 +46,15 @@ func ValidatePostJson(g *gin.Context, format validate.MS, rule validate.MS, obj 
 	if err != nil {
 		panic(NewValidErr(err))
 	}
+	// int, float类型值传了空字符串过不了filter，暂时做一下处理
+	for k, v := range format {
+		if v == "int" && data[k] == "" {
+			data[k] = 0
+		}
+		if v == "float" && data[k] == "" {
+			data[k] = "0"
+		}
+	}
 	return ValidateData(data, format, rule, &obj)
 }
 

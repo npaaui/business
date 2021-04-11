@@ -2,8 +2,8 @@ package common
 
 import (
 	"fmt"
-	"github.com/go-xorm/xorm"
 
+	"github.com/go-xorm/xorm"
 	"github.com/npaaui/helper-go/db"
 )
 
@@ -15,7 +15,7 @@ var (
 func InitMysql() {
 	mysqlConf, err := Conf.GetSection("MYSQL")
 	if err != nil {
-		panic(fmt.Errorf("mysql get conf error: %w", err))
+		panic(fmt.Errorf("get mysql conf error: %w", err))
 	}
 	dbConf := db.Conf{
 		DriverName:      "mysql",
@@ -30,4 +30,7 @@ func InitMysql() {
 	}
 	dbConf.InitDbEngine()
 	DbEngine = db.GetDbEngineIns()
+	if mysqlConf["show_sql"] == "true" {
+		DbEngine.ShowSQL(true)
+	}
 }

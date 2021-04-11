@@ -1,10 +1,14 @@
 package api
 
 import (
+	"strings"
+
+	"github.com/gin-gonic/gin"
+
 	. "business/common"
+	"business/dao"
 	"business/dao/model"
 	"business/service"
-	"github.com/gin-gonic/gin"
 )
 
 type TaskController struct {
@@ -18,10 +22,47 @@ func NewTaskController() *TaskController {
 }
 
 /**
+ * 获取任务详情
+ */
+func (c *TaskController) InfoTask(g *gin.Context) {
+	task := model.NewTaskModel()
+	ValidateParam(g, map[string]string{
+		"id": "int",
+	}, map[string]string{
+		"id": "required|int",
+	}, task)
+
+	data := c.service.InfoTask(task)
+
+	ReturnData(g, data)
+}
+
+/**
  * 获取任务列表
  */
 func (c *TaskController) ListTask(g *gin.Context) {
-	taskList := c.service.ListTask()
+	args := &service.ListTaskArgs{
+		UserId: TokenInfo.UserId,
+	}
+	ValidateQuery(g, map[string]string{
+		"id":                "int",
+		"shop_id":           "int",
+		"category_id":       "int",
+		"status":            "string",
+		"create_time_start": "string",
+		"create_time_end":   "string",
+		"goods_url":         "string",
+	}, map[string]string{
+		"id":                "int",
+		"shop_id":           "int",
+		"category_id":       "int",
+		"status":            "string|enum:" + strings.Join(dao.TaskStatusSlice, ","),
+		"create_time_start": "string",
+		"create_time_end":   "string",
+		"goods_url":         "string",
+	}, args)
+
+	taskList := c.service.ListTask(args)
 	ReturnData(g, taskList)
 }
 

@@ -2,6 +2,7 @@ package dao
 
 import (
 	. "business/common"
+	"business/dao/model"
 )
 
 /**
@@ -12,21 +13,20 @@ type ListShopArgs struct {
 	Platform string
 }
 
-func ListShop(args *ListShopArgs) (shopList []MapItf) {
+func ListShop(args *ListShopArgs) (int, []model.Shop) {
 	session := DbEngine.Table("b_shop").Alias("s").
-		Join("left", "b_user u", "s.user_id = u.id").
-		Cols("s.*, u.user_sn").
 		Where("s.user_id = ?", args.UserId)
 
 	if args.Platform != "" {
 		session = session.And("s.platform = ?", args.Platform)
 	}
 
-	err := session.Find(&shopList)
+	var shopList []model.Shop
+	count, err := session.FindAndCount(&shopList)
 	if err != nil {
 		panic(NewDbErr(err))
 	}
-	return
+	return int(count), shopList
 }
 
 /**

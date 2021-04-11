@@ -95,6 +95,17 @@ func (m *Config) SetUpdateTime(arg string) *Config {
 	return m
 }
 
+func (m Config) AsMapItf() MapItf {
+	return MapItf{
+		"id":          m.Id,
+		"key":         m.Key,
+		"value":       m.Value,
+		"opt":         m.Opt,
+		"comment":     m.Comment,
+		"create_time": m.CreateTime,
+		"update_time": m.UpdateTime,
+	}
+}
 func (m Config) Translates() map[string]string {
 	return map[string]string{
 		"id":          "",

@@ -67,6 +67,13 @@ func (m *Platform) SetStatus(arg string) *Platform {
 	return m
 }
 
+func (m Platform) AsMapItf() MapItf {
+	return MapItf{
+		"code":   m.Code,
+		"name":   m.Name,
+		"status": m.Status,
+	}
+}
 func (m Platform) Translates() map[string]string {
 	return map[string]string{
 		"code":   "平台标识",

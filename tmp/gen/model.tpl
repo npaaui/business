@@ -54,6 +54,11 @@ func (m *{{$exportModelName}}) Set{{.Field | FormatCamelcase}}(arg {{.Type | Typ
 	return m
 }
 {{end}}
+func (m {{$exportModelName}}) AsMapItf() MapItf {
+	return MapItf{ {{range .TableSchema}}
+        "{{.Field}}": m.{{.Field | FormatCamelcase}}, {{end}}
+	}
+}
 func (m {{$exportModelName}}) Translates() map[string]string {
 	return map[string]string{ {{range .TableSchema}}
         "{{.Field}}": "{{.Comment}}", {{end}}

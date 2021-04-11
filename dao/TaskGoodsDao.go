@@ -6,28 +6,27 @@ import (
 )
 
 /**
- * 获取店铺列表
+ * 获取任务商品列表
  */
 type ListTaskGoodsArgs struct {
-	UserId   int
-	Platform string
+	TaskId []int
+	Url    string
 }
 
-func ListTaskGoods(args *ListTaskGoodsArgs) (shopList []MapItf) {
-	session := DbEngine.Table("b_shop").Alias("s").
-		Join("left", "b_user u", "s.user_id = u.id").
-		Cols("s.*, u.user_sn").
-		Where("s.user_id = ?", args.UserId)
-
-	if args.Platform != "" {
-		session = session.And("s.platform = ?", args.Platform)
+func ListTaskGoods(args *ListTaskGoodsArgs) (int, []model.TaskGoods) {
+	var goodsList []model.TaskGoods
+	session := DbEngine.Where("1=1")
+	if len(args.TaskId) > 0 {
+		session.And("task_id in" + WhereInInt(args.TaskId))
 	}
-
-	err := session.Find(&shopList)
+	if args.Url != "" {
+		session.And("url = ?", args.Url)
+	}
+	count, err := session.FindAndCount(&goodsList)
 	if err != nil {
 		panic(NewDbErr(err))
 	}
-	return
+	return int(count), goodsList
 }
 
 func InsertTaskGoods(goods *model.TaskGoods) *model.TaskGoods {

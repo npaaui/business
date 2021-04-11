@@ -116,6 +116,20 @@ func (m *TaskGoods) SetSpec(arg string) *TaskGoods {
 	return m
 }
 
+func (m TaskGoods) AsMapItf() MapItf {
+	return MapItf{
+		"id":           m.Id,
+		"task_id":      m.TaskId,
+		"url":          m.Url,
+		"img":          m.Img,
+		"keywords":     m.Keywords,
+		"title":        m.Title,
+		"price":        m.Price,
+		"search_price": m.SearchPrice,
+		"num":          m.Num,
+		"spec":         m.Spec,
+	}
+}
 func (m TaskGoods) Translates() map[string]string {
 	return map[string]string{
 		"id":           "",

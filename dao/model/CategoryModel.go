@@ -74,6 +74,14 @@ func (m *Category) SetParentId(arg int) *Category {
 	return m
 }
 
+func (m Category) AsMapItf() MapItf {
+	return MapItf{
+		"id":        m.Id,
+		"name":      m.Name,
+		"type":      m.Type,
+		"parent_id": m.ParentId,
+	}
+}
 func (m Category) Translates() map[string]string {
 	return map[string]string{
 		"id":        "品类id",

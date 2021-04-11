@@ -109,6 +109,19 @@ func (m *SmsLog) SetChannel(arg int) *SmsLog {
 	return m
 }
 
+func (m SmsLog) AsMapItf() MapItf {
+	return MapItf{
+		"id":          m.Id,
+		"mobile":      m.Mobile,
+		"content":     m.Content,
+		"submit_time": m.SubmitTime,
+		"send_time":   m.SendTime,
+		"send_result": m.SendResult,
+		"tpl":         m.Tpl,
+		"status":      m.Status,
+		"channel":     m.Channel,
+	}
+}
 func (m SmsLog) Translates() map[string]string {
 	return map[string]string{
 		"id":          "",

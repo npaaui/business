@@ -102,6 +102,18 @@ func (m *SmsValid) SetExpireTime(arg string) *SmsValid {
 	return m
 }
 
+func (m SmsValid) AsMapItf() MapItf {
+	return MapItf{
+		"id":          m.Id,
+		"user_id":     m.UserId,
+		"mobile":      m.Mobile,
+		"type":        m.Type,
+		"code":        m.Code,
+		"ip":          m.Ip,
+		"create_time": m.CreateTime,
+		"expire_time": m.ExpireTime,
+	}
+}
 func (m SmsValid) Translates() map[string]string {
 	return map[string]string{
 		"id":          "",

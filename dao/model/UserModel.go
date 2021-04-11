@@ -5,8 +5,7 @@ import (
 )
 
 /**
-"id": "int", //
-"user_sn": "string", // 商家编号
+"id": "int", // 商家编号
 "mobile": "string", // 手机号
 "username": "string", // 用户名
 "password": "string", // 密码
@@ -27,7 +26,6 @@ import (
 
 type User struct {
 	Id            int    `db:"id" json:"id"`
-	UserSn        string `db:"user_sn" json:"user_sn"`
 	Mobile        string `db:"mobile" json:"mobile"`
 	Username      string `db:"username" json:"username"`
 	Password      string `db:"password" json:"password"`
@@ -84,11 +82,6 @@ func (m *User) Delete() int64 {
 
 func (m *User) SetId(arg int) *User {
 	m.Id = arg
-	return m
-}
-
-func (m *User) SetUserSn(arg string) *User {
-	m.UserSn = arg
 	return m
 }
 
@@ -172,10 +165,30 @@ func (m *User) SetUpdateTime(arg string) *User {
 	return m
 }
 
+func (m User) AsMapItf() MapItf {
+	return MapItf{
+		"id":             m.Id,
+		"mobile":         m.Mobile,
+		"username":       m.Username,
+		"password":       m.Password,
+		"qq":             m.Qq,
+		"wechat":         m.Wechat,
+		"invite_code":    m.InviteCode,
+		"invite_user":    m.InviteUser,
+		"province_id":    m.ProvinceId,
+		"province":       m.Province,
+		"city_id":        m.CityId,
+		"city":           m.City,
+		"address":        m.Address,
+		"contact_name":   m.ContactName,
+		"contact_mobile": m.ContactMobile,
+		"create_time":    m.CreateTime,
+		"update_time":    m.UpdateTime,
+	}
+}
 func (m User) Translates() map[string]string {
 	return map[string]string{
-		"id":             "",
-		"user_sn":        "商家编号",
+		"id":             "商家编号",
 		"mobile":         "手机号",
 		"username":       "用户名",
 		"password":       "密码",

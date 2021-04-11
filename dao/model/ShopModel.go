@@ -193,6 +193,31 @@ func (m *Shop) SetUpdateTime(arg string) *Shop {
 	return m
 }
 
+func (m Shop) AsMapItf() MapItf {
+	return MapItf{
+		"id":               m.Id,
+		"user_id":          m.UserId,
+		"shop_sn":          m.ShopSn,
+		"platform":         m.Platform,
+		"name":             m.Name,
+		"group":            m.Group,
+		"sell_category_id": m.SellCategoryId,
+		"url":              m.Url,
+		"re_day":           m.ReDay,
+		"contact_name":     m.ContactName,
+		"contact_mobile":   m.ContactMobile,
+		"postcode":         m.Postcode,
+		"province_id":      m.ProvinceId,
+		"province":         m.Province,
+		"city_id":          m.CityId,
+		"city":             m.City,
+		"county_id":        m.CountyId,
+		"county":           m.County,
+		"address":          m.Address,
+		"create_time":      m.CreateTime,
+		"update_time":      m.UpdateTime,
+	}
+}
 func (m Shop) Translates() map[string]string {
 	return map[string]string{
 		"id":               "id",

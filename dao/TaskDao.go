@@ -16,29 +16,60 @@ const (
 	TaskStatusCancel   = "cancel"   // 已撤销
 )
 
+var TaskStatusMap = MapStr{
+	TaskStatusInit:     "待审核",
+	TaskStatusFail:     "审核失败",
+	TaskStatusVerified: "待付款",
+	TaskStatusRunning:  "进行中",
+	TaskStatusStop:     "已停止",
+	TaskStatusDone:     "已完成",
+	TaskStatusCancel:   "已撤销",
+}
+var TaskStatusSlice = []string{TaskStatusInit, TaskStatusFail, TaskStatusVerified, TaskStatusRunning, TaskStatusStop, TaskStatusDone, TaskStatusCancel}
+
 /**
- * 获取店铺列表
+ * 获取任务列表
  */
 type ListTaskArgs struct {
-	UserId   int
-	Platform string
+	Id              []int
+	UserId          int
+	ShopId          int
+	CategoryId      int
+	Status          string
+	CreateTimeStart string
+	CreateTimeEnd   string
 }
 
-func ListTask(args *ListTaskArgs) (shopList []MapItf) {
-	session := DbEngine.Table("b_shop").Alias("s").
-		Join("left", "b_user u", "s.user_id = u.id").
-		Cols("s.*, u.user_sn").
-		Where("s.user_id = ?", args.UserId)
-
-	if args.Platform != "" {
-		session = session.And("s.platform = ?", args.Platform)
+func ListTask(args *ListTaskArgs) (int, []model.Task) {
+	var taskList []model.Task
+	session := DbEngine.Table("b_task").
+		Where("1=1")
+	if len(args.Id) > 0 {
+		session.And("id in " + WhereInInt(args.Id))
 	}
-
-	err := session.Find(&shopList)
+	if args.UserId > 0 {
+		session.And("user_id = ?", args.UserId)
+	}
+	if args.ShopId > 0 {
+		session.And("shop_id = ?", args.ShopId)
+	}
+	if args.CategoryId > 0 {
+		session.And("category_id = ?", args.CategoryId)
+	}
+	if args.Status != "" {
+		session.And("status = ?", args.Status)
+	}
+	if args.CreateTimeStart != "" {
+		session.And("create_time >= ?", args.CreateTimeStart)
+	}
+	if args.CreateTimeEnd != "" {
+		session.And("create_time <= ?", args.CreateTimeEnd)
+	}
+	count, err := session.FindAndCount(&taskList)
 	if err != nil {
 		panic(NewDbErr(err))
 	}
-	return
+	return int(count), taskList
 }
 
 func InsertTask(task *model.Task) *model.Task {

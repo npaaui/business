@@ -221,6 +221,35 @@ func (m *Task) SetUpdateTime(arg string) *Task {
 	return m
 }
 
+func (m Task) AsMapItf() MapItf {
+	return MapItf{
+		"id":            m.Id,
+		"user_id":       m.UserId,
+		"category_id":   m.CategoryId,
+		"shop_id":       m.ShopId,
+		"name":          m.Name,
+		"pay_amount":    m.PayAmount,
+		"coupon_url":    m.CouponUrl,
+		"free_shipping": m.FreeShipping,
+		"closing_date":  m.ClosingDate,
+		"sort":          m.Sort,
+		"sell_num":      m.SellNum,
+		"price_upper":   m.PriceUpper,
+		"price_down":    m.PriceDown,
+		"province_id":   m.ProvinceId,
+		"province":      m.Province,
+		"city_id":       m.CityId,
+		"city":          m.City,
+		"question":      m.Question,
+		"message":       m.Message,
+		"addition":      m.Addition,
+		"add_img":       m.AddImg,
+		"remark":        m.Remark,
+		"status":        m.Status,
+		"create_time":   m.CreateTime,
+		"update_time":   m.UpdateTime,
+	}
+}
 func (m Task) Translates() map[string]string {
 	return map[string]string{
 		"id":            "",

@@ -75,7 +75,6 @@ func generateToken(g *gin.Context, user model.User) {
 	}
 	claims := myjwt.CustomClaims{
 		UserId:   user.Id,
-		UserSn:   user.UserSn,
 		Mobile:   user.Mobile,
 		Username: user.Username,
 		StandardClaims: jwtgo.StandardClaims{

@@ -158,6 +158,26 @@ func (m *TaskDetail) SetPublishTime(arg string) *TaskDetail {
 	return m
 }
 
+func (m TaskDetail) AsMapItf() MapItf {
+	return MapItf{
+		"id":           m.Id,
+		"task_id":      m.TaskId,
+		"type":         m.Type,
+		"key_words":    m.KeyWords,
+		"key_words2":   m.KeyWords2,
+		"num":          m.Num,
+		"color_size":   m.ColorSize,
+		"evaluate":     m.Evaluate,
+		"img1":         m.Img1,
+		"img2":         m.Img2,
+		"img3":         m.Img3,
+		"img4":         m.Img4,
+		"img5":         m.Img5,
+		"video":        m.Video,
+		"status":       m.Status,
+		"publish_time": m.PublishTime,
+	}
+}
 func (m TaskDetail) Translates() map[string]string {
 	return map[string]string{
 		"id":           "",

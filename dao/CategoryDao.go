@@ -8,11 +8,12 @@ import (
 /**
  * 获取类别列表
  */
-func ListCategory(args *model.Category) (categoryList []model.Category) {
-	err := DbEngine.
-		Where("type = ?", args.Type).Find(&categoryList)
+func ListCategory(args *model.Category) (int, []model.Category) {
+	var categoryList []model.Category
+	count, err := DbEngine.
+		Where("type = ?", args.Type).FindAndCount(&categoryList)
 	if err != nil {
 		panic(NewDbErr(err))
 	}
-	return
+	return int(count), categoryList
 }
