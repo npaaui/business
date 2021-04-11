@@ -6,12 +6,12 @@ import (
 	"business/controller/api"
 )
 
-func LoadUserRouter(r *gin.Engine) *gin.Engine {
+func LoadUserRouter(r gin.IRoutes) {
 	userCtrl := api.NewUserController()
 	shopCtrl := api.NewShopController()
 	taskCtrl := api.NewTaskController()
 
-	u := r.Group("")
+	u := r
 	{
 		u.GET("/user", userCtrl.InfoUser)
 		u.GET("/shop", shopCtrl.ListShop)
@@ -19,5 +19,4 @@ func LoadUserRouter(r *gin.Engine) *gin.Engine {
 		u.PUT("/shop", shopCtrl.UpdateShop)
 		u.POST("/task", taskCtrl.InsertTask)
 	}
-	return r
 }

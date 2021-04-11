@@ -82,6 +82,16 @@ func ValidatePostJson(g *gin.Context, format validate.MS, rule validate.MS, obj 
 }
 
 func ValidateData(data MapItf, format validate.MS, rule validate.MS, obj interface{}) MapItf {
+	defer func() {
+		validErr := recover()
+		switch validErr.(type) {
+		case string:
+			panic(NewValidErr(errors.New(validErr.(string))))
+		case error:
+			panic(NewValidErr(validErr.(error)))
+		}
+	}()
+
 	// 参数校验
 	zhcn.RegisterGlobal()
 	va := validate.Map(data)

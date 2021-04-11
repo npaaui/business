@@ -1,12 +1,11 @@
 package service
 
 import (
-	"business/dao"
-	"errors"
-
 	. "business/common"
+	"business/dao"
 	"business/dao/model"
 	"business/service/cache"
+	"errors"
 )
 
 type UserService struct{}

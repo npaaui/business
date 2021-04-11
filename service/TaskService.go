@@ -13,9 +13,9 @@ func NewTaskService() *TaskService {
 }
 
 type InsertTaskArgs struct {
-	Task   *model.Task
-	Goods  []*model.TaskGoods
-	Detail []*model.TaskDetail
+	Task   *model.Task         `json:"task"`
+	Goods  []*model.TaskGoods  `json:"goods"`
+	Detail []*model.TaskDetail `json:"detail"`
 }
 
 func (s *TaskService) InsertTask(args *InsertTaskArgs) {

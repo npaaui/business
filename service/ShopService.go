@@ -13,12 +13,10 @@ func NewShopService() *ShopService {
 	return &ShopService{}
 }
 
-func (s *ShopService) ListShop() MapItf {
-	data := MapItf{
-		"list": []MapItf{},
-	}
-	data["list"] = dao.ListShop(&dao.ListShopArgs{UserId: TokenInfo.UserId})
-	return data
+func (s *ShopService) ListShop() (data *RespList) {
+	list := dao.ListShop(&dao.ListShopArgs{UserId: TokenInfo.UserId})
+	data = NewRespList(len(list), list)
+	return
 }
 
 func (s *ShopService) InsertShop(shop *model.Shop) {

@@ -17,8 +17,8 @@ type UserInfoS struct {
 }
 
 type UserInfo struct {
-	User      *model.User
-	ShopCount int
+	User      *model.User `json:"user"`
+	ShopCount int         `json:"shop_count"`
 }
 
 func NewCacheUserInfo(id int) *UserInfoS {

@@ -111,9 +111,9 @@ type LoginResult struct {
 func (c *LoginController) UpdateUserPassword(g *gin.Context) {
 	var user = model.NewUserModel()
 	_ = ValidatePostJson(g, map[string]string{
-		"mobile":     "",
-		"valid_code": "",
-		"password":   "",
+		"mobile":     "string",
+		"valid_code": "string",
+		"password":   "string",
 	}, map[string]string{
 		"mobile":     "required|string",
 		"valid_code": "required|string",
