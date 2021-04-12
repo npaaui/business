@@ -3,7 +3,13 @@ package common
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
+	"math/rand"
+	"os"
+	"path"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/validate"
@@ -13,7 +19,7 @@ import (
 // 验证param参数提交
 func ValidateParam(g *gin.Context, format validate.MS, rule validate.MS, obj interface{}) MapItf {
 	data := MapItf{}
-	for k, _ := range format {
+	for k := range format {
 		if query, ok := g.Params.Get(k); ok && query != "" {
 			query = strings.TrimSpace(query)
 			data[k] = query
@@ -26,8 +32,21 @@ func ValidateParam(g *gin.Context, format validate.MS, rule validate.MS, obj int
 // 验证query参数提交
 func ValidateQuery(g *gin.Context, format validate.MS, rule validate.MS, obj interface{}) MapItf {
 	data := MapItf{}
-	for k, _ := range format {
+	for k := range format {
 		if query, ok := g.GetQuery(k); ok && query != "" {
+			query = strings.TrimSpace(query)
+			data[k] = query
+		}
+	}
+
+	return ValidateData(data, format, rule, &obj)
+}
+
+// 验证 post form 参数提交
+func ValidatePostForm(g *gin.Context, format validate.MS, rule validate.MS, obj interface{}) MapItf {
+	data := MapItf{}
+	for k := range format {
+		if query, ok := g.GetPostForm(k); ok && query != "" {
 			query = strings.TrimSpace(query)
 			data[k] = query
 		}
@@ -138,4 +157,54 @@ func toFloat64(v interface{}, def float64) float64 {
 		return v.(float64)
 	}
 	return def
+}
+
+func LoadPostFile(g *gin.Context, fileKey string, resType string) string {
+	header, err := g.FormFile(fileKey)
+	if err != nil {
+		panic(NewValidErr(err))
+	}
+	fileName := header.Filename
+
+	fileExt := path.Ext(fileName)
+	fileTime := time.Now().Format("20060102130405")
+	fileRand := IntToStr(rand.Intn(100))
+	name := fileTime + fileRand + "[" + strings.TrimRight(fileName, "."+fileExt) + "]" + fileExt
+
+	postFile, _ := header.Open()
+	defer func() {
+		err = postFile.Close()
+		if err != nil {
+			panic(NewSysErr(fmt.Errorf("postFile文件句柄关闭失败:%w", err)))
+		}
+	}()
+
+	src := "upload/" + resType
+	upload, err := os.Create(src + "/" + name)
+	defer func() {
+		err = upload.Close()
+		if err != nil {
+			panic(NewSysErr(fmt.Errorf("upload文件句柄关闭失败:%w", err)))
+		}
+	}()
+
+	if os.IsNotExist(err) {
+		// 判断upload文件夹是否存在
+		_, err = os.Stat(src)
+		if os.IsNotExist(err) {
+			err = os.MkdirAll(src, os.ModePerm)
+			if err != nil {
+				panic(NewSysErr(fmt.Errorf("upload文件夹创建失败:%w", err)))
+			}
+			upload, _ = os.Create(src + "/" + name)
+		} else {
+			panic(NewSysErr(fmt.Errorf(name+"文件创建失败:%w", err)))
+		}
+	}
+
+	_, err = io.Copy(upload, postFile)
+	if err != nil {
+		panic(NewSysErr(fmt.Errorf(name+"文件创建失败:%w", err)))
+	}
+	return resType + "/" + name
 }

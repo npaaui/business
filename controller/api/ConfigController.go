@@ -6,6 +6,7 @@ import (
 	"business/dao/model"
 	"business/service"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 type ConfigController struct {
@@ -37,13 +38,19 @@ func (c *ConfigController) InfoConfig(g *gin.Context) {
 /**
  * 获取配置列表
  */
-func (c *ConfigController) ListConfig(g *gin.Context) {
-	keys := g.QueryArray("keys")
-	if len(keys) == 0 {
-		ReturnErrMsg(g, ErrValidReq, "配置Keys值不可为空")
-		return
-	}
+type ListConfig struct {
+	Keys string
+}
 
+func (c *ConfigController) ListConfig(g *gin.Context) {
+	args := &ListConfig{}
+	ValidateQuery(g, map[string]string{
+		"keys": "string",
+	}, map[string]string{
+		"keys": "required|string",
+	}, args)
+
+	keys := strings.Split(args.Keys, ",")
 	configList := c.service.ListConfig(dao.ListConfigArgs{
 		Keys: keys,
 	})

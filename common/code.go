@@ -107,6 +107,20 @@ func NewRespErr(code int, msg string) RespErr {
  * 其它全局 panic 错误类型
  **************************************/
 
+// 系统错误
+type SysErr struct {
+	Msg string
+}
+
+func (err SysErr) Error() string {
+	return err.Msg
+}
+
+func NewSysErr(err error) (sysErr SysErr) {
+	sysErr = SysErr{Msg: err.Error()}
+	return
+}
+
 // 校验错误
 type ValidErr struct {
 	Msg string

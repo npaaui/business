@@ -10,6 +10,10 @@ func RecoverDbError() gin.HandlerFunc {
 	return func(g *gin.Context) {
 		defer func() {
 			err := recover()
+			if sysErr, ok := err.(SysErr); ok {
+				ReturnErrMsg(g, ErrSys, sysErr.Msg)
+				return
+			}
 			if dbErr, ok := err.(DbErr); ok {
 				ReturnErrSys(g, ErrSysDbExec, dbErr)
 				return
