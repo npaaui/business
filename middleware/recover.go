@@ -11,7 +11,7 @@ func RecoverDbError() gin.HandlerFunc {
 		defer func() {
 			err := recover()
 			if sysErr, ok := err.(SysErr); ok {
-				ReturnErrMsg(g, ErrSys, sysErr.Msg)
+				ReturnErrSys(g, ErrSys, sysErr)
 				return
 			}
 			if dbErr, ok := err.(DbErr); ok {

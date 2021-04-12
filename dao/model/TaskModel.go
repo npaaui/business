@@ -28,36 +28,38 @@ import (
 "add_img": "string", // 商家附加图(多张,分离)
 "remark": "string", // 商家备注
 "status": "string", // 任务状态 &#39;init&#39;待审核, &#39;fail&#39;审核失败, &#39;verified&#39;待付款, &#39;running&#39;进行中, &#39;stop&#39;已停止, &#39;done&#39;已完成, &#39;cancel&#39;已撤销
+"publish_config": "string", // 发布时间设置
 "create_time": "string", // 创建时间
 "update_time": "string", // 更新时间
 */
 
 type Task struct {
-	Id           int     `db:"id" json:"id"`
-	UserId       int     `db:"user_id" json:"user_id"`
-	CategoryId   int     `db:"category_id" json:"category_id"`
-	ShopId       int     `db:"shop_id" json:"shop_id"`
-	Name         string  `db:"name" json:"name"`
-	PayAmount    float64 `db:"pay_amount" json:"pay_amount"`
-	CouponUrl    string  `db:"coupon_url" json:"coupon_url"`
-	FreeShipping string  `db:"free_shipping" json:"free_shipping"`
-	ClosingDate  string  `db:"closing_date" json:"closing_date"`
-	Sort         string  `db:"sort" json:"sort"`
-	SellNum      int     `db:"sell_num" json:"sell_num"`
-	PriceUpper   float64 `db:"price_upper" json:"price_upper"`
-	PriceDown    float64 `db:"price_down" json:"price_down"`
-	ProvinceId   int     `db:"province_id" json:"province_id"`
-	Province     string  `db:"province" json:"province"`
-	CityId       int     `db:"city_id" json:"city_id"`
-	City         string  `db:"city" json:"city"`
-	Question     string  `db:"question" json:"question"`
-	Message      string  `db:"message" json:"message"`
-	Addition     string  `db:"addition" json:"addition"`
-	AddImg       string  `db:"add_img" json:"add_img"`
-	Remark       string  `db:"remark" json:"remark"`
-	Status       string  `db:"status" json:"status"`
-	CreateTime   string  `db:"create_time" json:"create_time"`
-	UpdateTime   string  `db:"update_time" json:"update_time"`
+	Id            int     `db:"id" json:"id"`
+	UserId        int     `db:"user_id" json:"user_id"`
+	CategoryId    int     `db:"category_id" json:"category_id"`
+	ShopId        int     `db:"shop_id" json:"shop_id"`
+	Name          string  `db:"name" json:"name"`
+	PayAmount     float64 `db:"pay_amount" json:"pay_amount"`
+	CouponUrl     string  `db:"coupon_url" json:"coupon_url"`
+	FreeShipping  string  `db:"free_shipping" json:"free_shipping"`
+	ClosingDate   string  `db:"closing_date" json:"closing_date"`
+	Sort          string  `db:"sort" json:"sort"`
+	SellNum       int     `db:"sell_num" json:"sell_num"`
+	PriceUpper    float64 `db:"price_upper" json:"price_upper"`
+	PriceDown     float64 `db:"price_down" json:"price_down"`
+	ProvinceId    int     `db:"province_id" json:"province_id"`
+	Province      string  `db:"province" json:"province"`
+	CityId        int     `db:"city_id" json:"city_id"`
+	City          string  `db:"city" json:"city"`
+	Question      string  `db:"question" json:"question"`
+	Message       string  `db:"message" json:"message"`
+	Addition      string  `db:"addition" json:"addition"`
+	AddImg        string  `db:"add_img" json:"add_img"`
+	Remark        string  `db:"remark" json:"remark"`
+	Status        string  `db:"status" json:"status"`
+	PublishConfig string  `db:"publish_config" json:"publish_config"`
+	CreateTime    string  `db:"create_time" json:"create_time"`
+	UpdateTime    string  `db:"update_time" json:"update_time"`
 }
 
 func NewTaskModel() *Task {
@@ -211,6 +213,11 @@ func (m *Task) SetStatus(arg string) *Task {
 	return m
 }
 
+func (m *Task) SetPublishConfig(arg string) *Task {
+	m.PublishConfig = arg
+	return m
+}
+
 func (m *Task) SetCreateTime(arg string) *Task {
 	m.CreateTime = arg
 	return m
@@ -223,59 +230,61 @@ func (m *Task) SetUpdateTime(arg string) *Task {
 
 func (m Task) AsMapItf() MapItf {
 	return MapItf{
-		"id":            m.Id,
-		"user_id":       m.UserId,
-		"category_id":   m.CategoryId,
-		"shop_id":       m.ShopId,
-		"name":          m.Name,
-		"pay_amount":    m.PayAmount,
-		"coupon_url":    m.CouponUrl,
-		"free_shipping": m.FreeShipping,
-		"closing_date":  m.ClosingDate,
-		"sort":          m.Sort,
-		"sell_num":      m.SellNum,
-		"price_upper":   m.PriceUpper,
-		"price_down":    m.PriceDown,
-		"province_id":   m.ProvinceId,
-		"province":      m.Province,
-		"city_id":       m.CityId,
-		"city":          m.City,
-		"question":      m.Question,
-		"message":       m.Message,
-		"addition":      m.Addition,
-		"add_img":       m.AddImg,
-		"remark":        m.Remark,
-		"status":        m.Status,
-		"create_time":   m.CreateTime,
-		"update_time":   m.UpdateTime,
+		"id":             m.Id,
+		"user_id":        m.UserId,
+		"category_id":    m.CategoryId,
+		"shop_id":        m.ShopId,
+		"name":           m.Name,
+		"pay_amount":     m.PayAmount,
+		"coupon_url":     m.CouponUrl,
+		"free_shipping":  m.FreeShipping,
+		"closing_date":   m.ClosingDate,
+		"sort":           m.Sort,
+		"sell_num":       m.SellNum,
+		"price_upper":    m.PriceUpper,
+		"price_down":     m.PriceDown,
+		"province_id":    m.ProvinceId,
+		"province":       m.Province,
+		"city_id":        m.CityId,
+		"city":           m.City,
+		"question":       m.Question,
+		"message":        m.Message,
+		"addition":       m.Addition,
+		"add_img":        m.AddImg,
+		"remark":         m.Remark,
+		"status":         m.Status,
+		"publish_config": m.PublishConfig,
+		"create_time":    m.CreateTime,
+		"update_time":    m.UpdateTime,
 	}
 }
 func (m Task) Translates() map[string]string {
 	return map[string]string{
-		"id":            "",
-		"user_id":       "商家编号",
-		"category_id":   "品类id",
-		"shop_id":       "店铺id",
-		"name":          "任务名",
-		"pay_amount":    "付款金额",
-		"coupon_url":    "优惠券链接",
-		"free_shipping": "是否包邮",
-		"closing_date":  "截止日期",
-		"sort":          "排序方式",
-		"sell_num":      "现有付款人数约",
-		"price_upper":   "价格区间起",
-		"price_down":    "价格区间终",
-		"province_id":   "省份id",
-		"province":      "省",
-		"city_id":       "城市id",
-		"city":          "所在市",
-		"question":      "宝贝详情问答",
-		"message":       "留言",
-		"addition":      "增值服务",
-		"add_img":       "商家附加图(多张,分离)",
-		"remark":        "商家备注",
-		"status":        "任务状态 &#39;init&#39;待审核, &#39;fail&#39;审核失败, &#39;verified&#39;待付款, &#39;running&#39;进行中, &#39;stop&#39;已停止, &#39;done&#39;已完成, &#39;cancel&#39;已撤销",
-		"create_time":   "创建时间",
-		"update_time":   "更新时间",
+		"id":             "",
+		"user_id":        "商家编号",
+		"category_id":    "品类id",
+		"shop_id":        "店铺id",
+		"name":           "任务名",
+		"pay_amount":     "付款金额",
+		"coupon_url":     "优惠券链接",
+		"free_shipping":  "是否包邮",
+		"closing_date":   "截止日期",
+		"sort":           "排序方式",
+		"sell_num":       "现有付款人数约",
+		"price_upper":    "价格区间起",
+		"price_down":     "价格区间终",
+		"province_id":    "省份id",
+		"province":       "省",
+		"city_id":        "城市id",
+		"city":           "所在市",
+		"question":       "宝贝详情问答",
+		"message":        "留言",
+		"addition":       "增值服务",
+		"add_img":        "商家附加图(多张,分离)",
+		"remark":         "商家备注",
+		"status":         "任务状态 &#39;init&#39;待审核, &#39;fail&#39;审核失败, &#39;verified&#39;待付款, &#39;running&#39;进行中, &#39;stop&#39;已停止, &#39;done&#39;已完成, &#39;cancel&#39;已撤销",
+		"publish_config": "发布时间设置",
+		"create_time":    "创建时间",
+		"update_time":    "更新时间",
 	}
 }
