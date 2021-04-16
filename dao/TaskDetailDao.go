@@ -34,12 +34,12 @@ func ListTaskDetail(args *ListTaskDetailArgs) (int, []model.TaskDetail) {
 }
 
 func InsertTaskDetail(detail *model.TaskDetail) *model.TaskDetail {
-	detail.SetStatus(TaskDetailStatusInit).SetPublishTime(GetNow())
+	detail.SetStatus(TaskDetailStatusInit).SetPublishTime(GetNow()).SetCreateTime(GetNow()).SetUpdateTime(GetNow())
 	if row := detail.Insert(); row == 0 {
-		panic(NewRespErr(ErrTaskDetailInsert, ""))
+		panic(NewRespErr(ErrInsert, "任务明细新增失败"))
 	}
 	if !detail.Info() {
-		panic(NewRespErr(ErrTaskDetailInsert, ""))
+		panic(NewRespErr(ErrInsert, "任务明细新增失败"))
 	}
 	return detail
 }

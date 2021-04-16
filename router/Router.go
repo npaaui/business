@@ -13,15 +13,16 @@ func Load(r *gin.Engine) *gin.Engine {
 	{
 		loginCtrl := api.NewLoginController()
 		smsCtrl := api.NewSmsController()
+		userCtrl := api.NewUserController()
 		apiR.POST("register", loginCtrl.Register)
 		apiR.POST("login", loginCtrl.Login)
 		apiR.POST("sms_valid", smsCtrl.SendSmsValid)
-		apiR.PUT("password", loginCtrl.UpdateUserPassword)
+		apiR.PUT("password", userCtrl.UpdateUserPassword)
 
 		apiR.Use(jwt.JWTAuth())
 		{
 			LoadUserRouter(apiR)
-			LoadCommonRouter(apiR)
+			LoadConfigRouter(apiR)
 		}
 	}
 	return r

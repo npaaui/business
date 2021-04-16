@@ -1,19 +1,20 @@
 package api
 
 import (
+	"github.com/gin-gonic/gin"
+
 	. "business/common"
 	"business/dao/model"
 	"business/service"
-	"github.com/gin-gonic/gin"
 )
 
 type CategoryController struct {
-	service *service.CategoryService
+	service *service.ConfigService
 }
 
 func NewCategoryController() *CategoryController {
 	return &CategoryController{
-		service: service.NewCategoryService(),
+		service: service.NewConfigService(),
 	}
 }
 

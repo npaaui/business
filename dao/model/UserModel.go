@@ -9,6 +9,7 @@ import (
 "mobile": "string", // 手机号
 "username": "string", // 用户名
 "password": "string", // 密码
+"withdraw_password": "string", // 提现密码
 "qq": "string", // qq号
 "wechat": "string", // 微信号
 "invite_code": "string", // 邀请码
@@ -25,23 +26,24 @@ import (
 */
 
 type User struct {
-	Id            int    `db:"id" json:"id"`
-	Mobile        string `db:"mobile" json:"mobile"`
-	Username      string `db:"username" json:"username"`
-	Password      string `db:"password" json:"password"`
-	Qq            string `db:"qq" json:"qq"`
-	Wechat        string `db:"wechat" json:"wechat"`
-	InviteCode    string `db:"invite_code" json:"invite_code"`
-	InviteUser    int    `db:"invite_user" json:"invite_user"`
-	ProvinceId    int    `db:"province_id" json:"province_id"`
-	Province      string `db:"province" json:"province"`
-	CityId        int    `db:"city_id" json:"city_id"`
-	City          string `db:"city" json:"city"`
-	Address       string `db:"address" json:"address"`
-	ContactName   string `db:"contact_name" json:"contact_name"`
-	ContactMobile string `db:"contact_mobile" json:"contact_mobile"`
-	CreateTime    string `db:"create_time" json:"create_time"`
-	UpdateTime    string `db:"update_time" json:"update_time"`
+	Id               int    `db:"id" json:"id"`
+	Mobile           string `db:"mobile" json:"mobile"`
+	Username         string `db:"username" json:"username"`
+	Password         string `db:"password" json:"password"`
+	WithdrawPassword string `db:"withdraw_password" json:"withdraw_password"`
+	Qq               string `db:"qq" json:"qq"`
+	Wechat           string `db:"wechat" json:"wechat"`
+	InviteCode       string `db:"invite_code" json:"invite_code"`
+	InviteUser       int    `db:"invite_user" json:"invite_user"`
+	ProvinceId       int    `db:"province_id" json:"province_id"`
+	Province         string `db:"province" json:"province"`
+	CityId           int    `db:"city_id" json:"city_id"`
+	City             string `db:"city" json:"city"`
+	Address          string `db:"address" json:"address"`
+	ContactName      string `db:"contact_name" json:"contact_name"`
+	ContactMobile    string `db:"contact_mobile" json:"contact_mobile"`
+	CreateTime       string `db:"create_time" json:"create_time"`
+	UpdateTime       string `db:"update_time" json:"update_time"`
 }
 
 func NewUserModel() *User {
@@ -97,6 +99,11 @@ func (m *User) SetUsername(arg string) *User {
 
 func (m *User) SetPassword(arg string) *User {
 	m.Password = arg
+	return m
+}
+
+func (m *User) SetWithdrawPassword(arg string) *User {
+	m.WithdrawPassword = arg
 	return m
 }
 
@@ -167,43 +174,45 @@ func (m *User) SetUpdateTime(arg string) *User {
 
 func (m User) AsMapItf() MapItf {
 	return MapItf{
-		"id":             m.Id,
-		"mobile":         m.Mobile,
-		"username":       m.Username,
-		"password":       m.Password,
-		"qq":             m.Qq,
-		"wechat":         m.Wechat,
-		"invite_code":    m.InviteCode,
-		"invite_user":    m.InviteUser,
-		"province_id":    m.ProvinceId,
-		"province":       m.Province,
-		"city_id":        m.CityId,
-		"city":           m.City,
-		"address":        m.Address,
-		"contact_name":   m.ContactName,
-		"contact_mobile": m.ContactMobile,
-		"create_time":    m.CreateTime,
-		"update_time":    m.UpdateTime,
+		"id":                m.Id,
+		"mobile":            m.Mobile,
+		"username":          m.Username,
+		"password":          m.Password,
+		"withdraw_password": m.WithdrawPassword,
+		"qq":                m.Qq,
+		"wechat":            m.Wechat,
+		"invite_code":       m.InviteCode,
+		"invite_user":       m.InviteUser,
+		"province_id":       m.ProvinceId,
+		"province":          m.Province,
+		"city_id":           m.CityId,
+		"city":              m.City,
+		"address":           m.Address,
+		"contact_name":      m.ContactName,
+		"contact_mobile":    m.ContactMobile,
+		"create_time":       m.CreateTime,
+		"update_time":       m.UpdateTime,
 	}
 }
 func (m User) Translates() map[string]string {
 	return map[string]string{
-		"id":             "商家编号",
-		"mobile":         "手机号",
-		"username":       "用户名",
-		"password":       "密码",
-		"qq":             "qq号",
-		"wechat":         "微信号",
-		"invite_code":    "邀请码",
-		"invite_user":    "邀请人",
-		"province_id":    "",
-		"province":       "省",
-		"city_id":        "",
-		"city":           "市",
-		"address":        "地址描述",
-		"contact_name":   "联系人姓名",
-		"contact_mobile": "联系人手机",
-		"create_time":    "创建时间",
-		"update_time":    "更新时间",
+		"id":                "商家编号",
+		"mobile":            "手机号",
+		"username":          "用户名",
+		"password":          "密码",
+		"withdraw_password": "提现密码",
+		"qq":                "qq号",
+		"wechat":            "微信号",
+		"invite_code":       "邀请码",
+		"invite_user":       "邀请人",
+		"province_id":       "",
+		"province":          "省",
+		"city_id":           "",
+		"city":              "市",
+		"address":           "地址描述",
+		"contact_name":      "联系人姓名",
+		"contact_mobile":    "联系人手机",
+		"create_time":       "创建时间",
+		"update_time":       "更新时间",
 	}
 }

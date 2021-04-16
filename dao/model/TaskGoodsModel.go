@@ -15,6 +15,8 @@ import (
 "search_price": "float64", // 搜索单价
 "num": "int", // 数量
 "spec": "string", // 规格
+"create_time": "string", // 添加时间
+"update_time": "string", // 更新时间
 */
 
 type TaskGoods struct {
@@ -28,6 +30,8 @@ type TaskGoods struct {
 	SearchPrice float64 `db:"search_price" json:"search_price"`
 	Num         int     `db:"num" json:"num"`
 	Spec        string  `db:"spec" json:"spec"`
+	CreateTime  string  `db:"create_time" json:"create_time"`
+	UpdateTime  string  `db:"update_time" json:"update_time"`
 }
 
 func NewTaskGoodsModel() *TaskGoods {
@@ -116,6 +120,16 @@ func (m *TaskGoods) SetSpec(arg string) *TaskGoods {
 	return m
 }
 
+func (m *TaskGoods) SetCreateTime(arg string) *TaskGoods {
+	m.CreateTime = arg
+	return m
+}
+
+func (m *TaskGoods) SetUpdateTime(arg string) *TaskGoods {
+	m.UpdateTime = arg
+	return m
+}
+
 func (m TaskGoods) AsMapItf() MapItf {
 	return MapItf{
 		"id":           m.Id,
@@ -128,6 +142,8 @@ func (m TaskGoods) AsMapItf() MapItf {
 		"search_price": m.SearchPrice,
 		"num":          m.Num,
 		"spec":         m.Spec,
+		"create_time":  m.CreateTime,
+		"update_time":  m.UpdateTime,
 	}
 }
 func (m TaskGoods) Translates() map[string]string {
@@ -142,5 +158,7 @@ func (m TaskGoods) Translates() map[string]string {
 		"search_price": "搜索单价",
 		"num":          "数量",
 		"spec":         "规格",
+		"create_time":  "添加时间",
+		"update_time":  "更新时间",
 	}
 }

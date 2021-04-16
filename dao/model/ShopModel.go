@@ -5,8 +5,8 @@ import (
 )
 
 /**
-"id": "int", // id
-"user_id": "int", // 商家id
+"id": "int", // 店铺编号
+"user_id": "int", // 商家编号
 "shop_sn": "string", // 店铺掌柜号
 "platform": "string", // 平台
 "name": "string", // 店铺名
@@ -24,8 +24,8 @@ import (
 "county_id": "int", // 县id
 "county": "string", // 县
 "address": "string", // 详细地址
-"create_time": "string", //
-"update_time": "string", //
+"create_time": "string", // 添加时间
+"update_time": "string", // 更新时间
 */
 
 type Shop struct {
@@ -220,8 +220,8 @@ func (m Shop) AsMapItf() MapItf {
 }
 func (m Shop) Translates() map[string]string {
 	return map[string]string{
-		"id":               "id",
-		"user_id":          "商家id",
+		"id":               "店铺编号",
+		"user_id":          "商家编号",
 		"shop_sn":          "店铺掌柜号",
 		"platform":         "平台",
 		"name":             "店铺名",
@@ -239,7 +239,7 @@ func (m Shop) Translates() map[string]string {
 		"county_id":        "县id",
 		"county":           "县",
 		"address":          "详细地址",
-		"create_time":      "",
-		"update_time":      "",
+		"create_time":      "添加时间",
+		"update_time":      "更新时间",
 	}
 }

@@ -8,38 +8,34 @@ import (
 "id": "int", //
 "task_id": "int", // 任务id
 "type": "string", // 任务类型
-"key_words": "string", // 下单关键词
-"key_words2": "string", // 备用关键词
+"keywords": "string", // 下单关键词
+"keywords2": "string", // 备用关键词
 "num": "int", // 单数
 "color_size": "string", // 颜色尺码
 "evaluate": "string", // 评价内容
-"img1": "string", // 晒图1
-"img2": "string", // 晒图2
-"img3": "string", // 晒图3
-"img4": "string", // 晒图4
-"img5": "string", // 晒图5
+"images": "string", // 晒图(最多5张 ,分隔)
 "video": "string", // 视频
 "status": "string", // 状态
 "publish_time": "string", // 发布时间
+"create_time": "string", // 添加时间
+"update_time": "string", // 更新时间
 */
 
 type TaskDetail struct {
 	Id          int    `db:"id" json:"id"`
 	TaskId      int    `db:"task_id" json:"task_id"`
 	Type        string `db:"type" json:"type"`
-	KeyWords    string `db:"key_words" json:"key_words"`
-	KeyWords2   string `db:"key_words2" json:"key_words2"`
+	Keywords    string `db:"keywords" json:"keywords"`
+	Keywords2   string `db:"keywords2" json:"keywords2"`
 	Num         int    `db:"num" json:"num"`
 	ColorSize   string `db:"color_size" json:"color_size"`
 	Evaluate    string `db:"evaluate" json:"evaluate"`
-	Img1        string `db:"img1" json:"img1"`
-	Img2        string `db:"img2" json:"img2"`
-	Img3        string `db:"img3" json:"img3"`
-	Img4        string `db:"img4" json:"img4"`
-	Img5        string `db:"img5" json:"img5"`
+	Images      string `db:"images" json:"images"`
 	Video       string `db:"video" json:"video"`
 	Status      string `db:"status" json:"status"`
 	PublishTime string `db:"publish_time" json:"publish_time"`
+	CreateTime  string `db:"create_time" json:"create_time"`
+	UpdateTime  string `db:"update_time" json:"update_time"`
 }
 
 func NewTaskDetailModel() *TaskDetail {
@@ -93,13 +89,13 @@ func (m *TaskDetail) SetType(arg string) *TaskDetail {
 	return m
 }
 
-func (m *TaskDetail) SetKeyWords(arg string) *TaskDetail {
-	m.KeyWords = arg
+func (m *TaskDetail) SetKeywords(arg string) *TaskDetail {
+	m.Keywords = arg
 	return m
 }
 
-func (m *TaskDetail) SetKeyWords2(arg string) *TaskDetail {
-	m.KeyWords2 = arg
+func (m *TaskDetail) SetKeywords2(arg string) *TaskDetail {
+	m.Keywords2 = arg
 	return m
 }
 
@@ -118,28 +114,8 @@ func (m *TaskDetail) SetEvaluate(arg string) *TaskDetail {
 	return m
 }
 
-func (m *TaskDetail) SetImg1(arg string) *TaskDetail {
-	m.Img1 = arg
-	return m
-}
-
-func (m *TaskDetail) SetImg2(arg string) *TaskDetail {
-	m.Img2 = arg
-	return m
-}
-
-func (m *TaskDetail) SetImg3(arg string) *TaskDetail {
-	m.Img3 = arg
-	return m
-}
-
-func (m *TaskDetail) SetImg4(arg string) *TaskDetail {
-	m.Img4 = arg
-	return m
-}
-
-func (m *TaskDetail) SetImg5(arg string) *TaskDetail {
-	m.Img5 = arg
+func (m *TaskDetail) SetImages(arg string) *TaskDetail {
+	m.Images = arg
 	return m
 }
 
@@ -158,24 +134,32 @@ func (m *TaskDetail) SetPublishTime(arg string) *TaskDetail {
 	return m
 }
 
+func (m *TaskDetail) SetCreateTime(arg string) *TaskDetail {
+	m.CreateTime = arg
+	return m
+}
+
+func (m *TaskDetail) SetUpdateTime(arg string) *TaskDetail {
+	m.UpdateTime = arg
+	return m
+}
+
 func (m TaskDetail) AsMapItf() MapItf {
 	return MapItf{
 		"id":           m.Id,
 		"task_id":      m.TaskId,
 		"type":         m.Type,
-		"key_words":    m.KeyWords,
-		"key_words2":   m.KeyWords2,
+		"keywords":     m.Keywords,
+		"keywords2":    m.Keywords2,
 		"num":          m.Num,
 		"color_size":   m.ColorSize,
 		"evaluate":     m.Evaluate,
-		"img1":         m.Img1,
-		"img2":         m.Img2,
-		"img3":         m.Img3,
-		"img4":         m.Img4,
-		"img5":         m.Img5,
+		"images":       m.Images,
 		"video":        m.Video,
 		"status":       m.Status,
 		"publish_time": m.PublishTime,
+		"create_time":  m.CreateTime,
+		"update_time":  m.UpdateTime,
 	}
 }
 func (m TaskDetail) Translates() map[string]string {
@@ -183,18 +167,16 @@ func (m TaskDetail) Translates() map[string]string {
 		"id":           "",
 		"task_id":      "任务id",
 		"type":         "任务类型",
-		"key_words":    "下单关键词",
-		"key_words2":   "备用关键词",
+		"keywords":     "下单关键词",
+		"keywords2":    "备用关键词",
 		"num":          "单数",
 		"color_size":   "颜色尺码",
 		"evaluate":     "评价内容",
-		"img1":         "晒图1",
-		"img2":         "晒图2",
-		"img3":         "晒图3",
-		"img4":         "晒图4",
-		"img5":         "晒图5",
+		"images":       "晒图(最多5张 ,分隔)",
 		"video":        "视频",
 		"status":       "状态",
 		"publish_time": "发布时间",
+		"create_time":  "添加时间",
+		"update_time":  "更新时间",
 	}
 }

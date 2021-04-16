@@ -1,12 +1,14 @@
 package api
 
 import (
+	"strings"
+
+	"github.com/gin-gonic/gin"
+
 	. "business/common"
 	"business/dao"
 	"business/dao/model"
 	"business/service"
-	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 type ConfigController struct {

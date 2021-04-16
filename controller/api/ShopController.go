@@ -1,20 +1,20 @@
 package api
 
 import (
-	"business/dao/model"
 	"github.com/gin-gonic/gin"
 
 	. "business/common"
+	"business/dao/model"
 	"business/service"
 )
 
 type ShopController struct {
-	service *service.ShopService
+	service *service.UserService
 }
 
 func NewShopController() *ShopController {
 	return &ShopController{
-		service: service.NewShopService(),
+		service: service.NewUserService(),
 	}
 }
 
@@ -77,7 +77,7 @@ func (c *ShopController) InsertShop(g *gin.Context) {
  * 编辑店铺
  */
 func (c *ShopController) UpdateShop(g *gin.Context) {
-	var shop = model.NewShopModel()
+	var shop = model.NewShopModel().SetUserId(TokenInfo.UserId)
 	_ = ValidatePostJson(g, map[string]string{
 		"id":               "int",
 		"shop_sn":          "string", // 店铺掌柜号

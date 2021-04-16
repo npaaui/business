@@ -5,7 +5,6 @@ import (
 	"business/dao"
 	"business/dao/model"
 	"business/service/cache"
-	"errors"
 )
 
 type UserService struct{}
@@ -25,7 +24,7 @@ func (s *UserService) InfoUserById(id int) (userInfo cache.UserInfo) {
 	user := model.NewUserModel()
 	has := user.SetId(id).Info()
 	if !has {
-		panic(NewRespErr(ErrUserNotExist, ""))
+		panic(NewRespErr(ErrNotExist, "无效用户"))
 	}
 	userInfo.User = user
 
@@ -48,24 +47,26 @@ func (s *UserService) RegisterUser(user *model.User) {
 	if ret != 1 {
 		panic(NewRespErr(ErrUserRegister, ""))
 	}
+	if !user.Info() {
+		panic(NewRespErr(ErrUserRegister, ""))
+	}
 }
 
-func (s *UserService) InfoUserByMobileAndPwd(user *model.User) {
-	user.SetPassword(GetHash(user.Password)).Info()
+func (s *UserService) Login(user *model.User) {
+	dao.CheckMobileAndPwd(user)
 	return
 }
 
-func (s *UserService) UpdateUserPassword(set *model.User) error {
+func (s *UserService) UpdateUserPassword(set *model.User) {
 	user := &model.User{
 		Mobile: set.Mobile,
 	}
 	if !user.Info() {
-		return errors.New("该手机号未注册")
+		panic(NewRespErr(ErrNotExist, "该手机号未注册"))
 	}
 
-	row := user.Update(set.SetPassword(GetHash(set.Password)))
+	row := user.Update(set)
 	if row == 0 {
-		return errors.New("密码修改失败")
+		panic(NewRespErr(ErrUpdate, ""))
 	}
-	return nil
 }

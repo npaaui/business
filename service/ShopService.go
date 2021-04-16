@@ -7,19 +7,13 @@ import (
 	"business/service/cache"
 )
 
-type ShopService struct{}
-
-func NewShopService() *ShopService {
-	return &ShopService{}
-}
-
-func (s *ShopService) ListShop() (data *RespList) {
+func (s *UserService) ListShop() (data *RespList) {
 	count, list := dao.ListShop(&dao.ListShopArgs{UserId: TokenInfo.UserId})
 	data = NewRespList(count, list)
 	return
 }
 
-func (s *ShopService) InsertShop(shop *model.Shop) {
+func (s *UserService) InsertShop(shop *model.Shop) {
 	var shopCount int
 	ca := cache.NewCacheUserInfo(TokenInfo.UserId)
 	if ok := ca.GetCacheUserInfo(); ok {
@@ -37,10 +31,13 @@ func (s *ShopService) InsertShop(shop *model.Shop) {
 	ca.DeleteCacheUserInfo()
 }
 
-func (s *ShopService) UpdateShop(set *model.Shop) {
-	shop := model.NewShopModel().SetId(set.Id)
+func (s *UserService) UpdateShop(set *model.Shop) {
+	shop := model.NewShopModel().SetId(set.Id).SetUserId(set.UserId)
 	if !shop.Info() {
-		panic(NewRespErr(ErrShopNotExist, ""))
+		panic(NewRespErr(ErrNotExist, "不存在的店铺记录"))
 	}
-	shop.Update(set)
+	row := shop.Update(set)
+	if row == 0 {
+		panic(NewRespErr(ErrUpdate, ""))
+	}
 }

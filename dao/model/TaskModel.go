@@ -5,7 +5,7 @@ import (
 )
 
 /**
-"id": "int", //
+"id": "int", // 任务编号
 "user_id": "int", // 商家编号
 "category_id": "int", // 品类id
 "shop_id": "int", // 店铺id
@@ -27,7 +27,7 @@ import (
 "addition": "string", // 增值服务
 "add_img": "string", // 商家附加图(多张,分离)
 "remark": "string", // 商家备注
-"status": "string", // 任务状态 &#39;init&#39;待审核, &#39;fail&#39;审核失败, &#39;verified&#39;待付款, &#39;running&#39;进行中, &#39;stop&#39;已停止, &#39;done&#39;已完成, &#39;cancel&#39;已撤销
+"status": "string", // 任务状态 &#39;init&#39;待支付, &#39;paid&#39;待审核, &#39;fail&#39;审核失败, &#39;running&#39;进行中, &#39;stop&#39;已停止, &#39;done&#39;已完成, &#39;cancel&#39;已撤销
 "publish_config": "string", // 发布时间设置
 "create_time": "string", // 创建时间
 "update_time": "string", // 更新时间
@@ -260,7 +260,7 @@ func (m Task) AsMapItf() MapItf {
 }
 func (m Task) Translates() map[string]string {
 	return map[string]string{
-		"id":             "",
+		"id":             "任务编号",
 		"user_id":        "商家编号",
 		"category_id":    "品类id",
 		"shop_id":        "店铺id",
@@ -282,7 +282,7 @@ func (m Task) Translates() map[string]string {
 		"addition":       "增值服务",
 		"add_img":        "商家附加图(多张,分离)",
 		"remark":         "商家备注",
-		"status":         "任务状态 &#39;init&#39;待审核, &#39;fail&#39;审核失败, &#39;verified&#39;待付款, &#39;running&#39;进行中, &#39;stop&#39;已停止, &#39;done&#39;已完成, &#39;cancel&#39;已撤销",
+		"status":         "任务状态 &#39;init&#39;待支付, &#39;paid&#39;待审核, &#39;fail&#39;审核失败, &#39;running&#39;进行中, &#39;stop&#39;已停止, &#39;done&#39;已完成, &#39;cancel&#39;已撤销",
 		"publish_config": "发布时间设置",
 		"create_time":    "创建时间",
 		"update_time":    "更新时间",

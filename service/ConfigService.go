@@ -14,7 +14,7 @@ func NewConfigService() *ConfigService {
 
 func (s *ConfigService) InfoConfig(config *model.Config) {
 	if !config.Info() {
-		panic(NewRespErr(ErrConfigNotExist, ""))
+		panic(NewRespErr(ErrNotExist, "不存在的配置记录"))
 	}
 	return
 }

@@ -7,25 +7,25 @@ import (
 
 const (
 	// 任务状态
-	TaskStatusInit     = "init"     // 待审核
-	TaskStatusFail     = "fail"     // 审核失败
-	TaskStatusVerified = "verified" // 待付款
-	TaskStatusRunning  = "running"  // 进行中
-	TaskStatusStop     = "stop"     // 已停止
-	TaskStatusDone     = "done"     // 已完成
-	TaskStatusCancel   = "cancel"   // 已撤销
+	TaskStatusInit    = "init"    // 待支付
+	TaskStatusPaid    = "paid"    // 待审核
+	TaskStatusFail    = "fail"    // 审核失败
+	TaskStatusRunning = "running" // 进行中
+	TaskStatusStop    = "stop"    // 已停止
+	TaskStatusDone    = "done"    // 已完成
+	TaskStatusCancel  = "cancel"  // 已撤销
 )
 
 var TaskStatusMap = MapStr{
-	TaskStatusInit:     "待审核",
-	TaskStatusFail:     "审核失败",
-	TaskStatusVerified: "待付款",
-	TaskStatusRunning:  "进行中",
-	TaskStatusStop:     "已停止",
-	TaskStatusDone:     "已完成",
-	TaskStatusCancel:   "已撤销",
+	TaskStatusInit:    "待支付",
+	TaskStatusPaid:    "待审核",
+	TaskStatusFail:    "审核失败",
+	TaskStatusRunning: "进行中",
+	TaskStatusStop:    "已停止",
+	TaskStatusDone:    "已完成",
+	TaskStatusCancel:  "已撤销",
 }
-var TaskStatusSlice = []string{TaskStatusInit, TaskStatusFail, TaskStatusVerified, TaskStatusRunning, TaskStatusStop, TaskStatusDone, TaskStatusCancel}
+var TaskStatusSlice = []string{TaskStatusInit, TaskStatusPaid, TaskStatusFail, TaskStatusRunning, TaskStatusStop, TaskStatusDone, TaskStatusCancel}
 
 /**
  * 获取任务列表
@@ -72,7 +72,7 @@ func ListTask(args *ListTaskArgs) (int, []model.Task) {
 	return int(count), taskList
 }
 
-func InsertTask(task *model.Task) *model.Task {
+func InsertTask(task *model.Task) {
 	task.
 		SetUserId(TokenInfo.UserId).
 		SetCreateTime(GetNow()).
@@ -88,10 +88,9 @@ func InsertTask(task *model.Task) *model.Task {
 	}
 
 	if row := task.Insert(); row == 0 {
-		panic(NewRespErr(ErrTaskInsert, ""))
+		panic(NewRespErr(ErrInsert, "任务新增失败"))
 	}
 	if !task.Info() {
-		panic(NewRespErr(ErrTaskInsert, ""))
+		panic(NewRespErr(ErrInsert, "任务新增失败"))
 	}
-	return task
 }

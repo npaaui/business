@@ -6,7 +6,7 @@ import (
 	"business/controller/api"
 )
 
-func LoadCommonRouter(r gin.IRoutes) {
+func LoadConfigRouter(r gin.IRoutes) {
 	uploadCtrl := api.NewUploadController()
 	categoryCtrl := api.NewCategoryController()
 	configCtrl := api.NewConfigController()

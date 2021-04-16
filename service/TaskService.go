@@ -12,6 +12,9 @@ func NewTaskService() *TaskService {
 	return &TaskService{}
 }
 
+/**
+ * 添加任务
+ */
 type InsertTaskArgs struct {
 	Task   *model.Task         `json:"task"`
 	Goods  []*model.TaskGoods  `json:"goods"`
@@ -32,9 +35,12 @@ func (s *TaskService) InsertTask(args *InsertTaskArgs) {
 	}
 }
 
+/**
+ * 任务列表
+ */
 type ListTaskArgs struct {
-	Id              int `json:"id"`
-	UserId          int
+	Id              int    `json:"id"`
+	UserId          int    `json:"user_id"`
 	ShopId          int    `json:"shop_id"`
 	CategoryId      int    `json:"category_id"`
 	Status          string `json:"status"`
@@ -105,8 +111,14 @@ func (s *TaskService) ListTask(args *ListTaskArgs) *RespList {
 	return NewRespList(count, list)
 }
 
+/**
+ * 任务详情
+ */
 func (s *TaskService) InfoTask(task *model.Task) MapItf {
-	task.Info()
+	if !task.Info() {
+		panic(NewRespErr(ErrNotExist, "不存在的任务记录"))
+	}
+
 	data := task.AsMapItf()
 	data["status_desc"] = dao.TaskStatusMap[task.Status]
 	_, data["goods"] = dao.ListTaskGoods(&dao.ListTaskGoodsArgs{

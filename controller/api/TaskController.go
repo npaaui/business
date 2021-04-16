@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -88,7 +89,6 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 		"category_id":    "int",    //品类id
 		"shop_id":        "int",    //店铺id
 		"name":           "string", //任务名
-		"pay_amount":     "float",  //付款金额
 		"coupon_url":     "string", //优惠券链接
 		"free_shipping":  "string", //是否包邮
 		"closing_date":   "string", //截止日期
@@ -111,7 +111,6 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 		"category_id":    "required|int",                       //品类id
 		"shop_id":        "required|int",                       //店铺id
 		"name":           "required|string",                    //任务名
-		"pay_amount":     "required|float",                     //付款金额
 		"coupon_url":     "string",                             //优惠券链接
 		"free_shipping":  "required|string|enum:Y,N",           //是否包邮
 		"closing_date":   "required|string",                    //截止日期
@@ -147,7 +146,7 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 			}, map[string]string{
 				"url":          "required|string", // 宝贝链接
 				"img":          "required|string", // 宝贝图片
-				"keywords":     "required|string", // 关键词
+				"keywords":     "string",          // 关键词
 				"title":        "required|string", // 标题
 				"price":        "required|float",  // 单价
 				"search_price": "float",           // 搜索单价
@@ -156,7 +155,7 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 			}, tmpTaskGoods)
 			args.Goods = append(args.Goods, tmpTaskGoods)
 		} else {
-			ReturnErrMsg(g, ErrTaskGoodsInsert, "任务商品数据有误")
+			ReturnErrMsg(g, ErrValidReq, "任务商品数据有误")
 			return
 		}
 	}
@@ -166,34 +165,26 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 		if v, ok := item.(map[string]interface{}); ok {
 			ValidateData(v, map[string]string{
 				"type":       "string", // 任务类型
-				"key_words":  "string", // 下单关键词
-				"key_words2": "string", // 备用关键词
+				"keywords":   "string", // 下单关键词
+				"keywords2":  "string", // 备用关键词
 				"num":        "int",    // 单数
 				"color_size": "string", // 颜色尺码
 				"evaluate":   "string", // 评价内容
-				"img1":       "string", // 晒图1
-				"img2":       "string", // 晒图2
-				"img3":       "string", // 晒图3
-				"img4":       "string", // 晒图4
-				"img5":       "string", // 晒图5
+				"images":     "string", // 晒图
 				"video":      "string", // 视频
 			}, map[string]string{
 				"type":       "required|string|enum:normal,words,img,video", // 任务类型
-				"key_words":  "required|string",                             // 下单关键词
-				"key_words2": "string",                                      // 备用关键词
+				"keywords":   "string",                                      // 下单关键词
+				"keywords2":  "string",                                      // 备用关键词
 				"num":        "int",                                         // 单数
 				"color_size": "string",                                      // 颜色尺码
 				"evaluate":   "string",                                      // 评价内容
-				"img1":       "string",                                      // 晒图1
-				"img2":       "string",                                      // 晒图2
-				"img3":       "string",                                      // 晒图3
-				"img4":       "string",                                      // 晒图4
-				"img5":       "string",                                      // 晒图5
+				"images":     "string",                                      // 晒图
 				"video":      "string",                                      // 视频
 			}, tmpTaskDetail)
 			args.Detail = append(args.Detail, tmpTaskDetail)
 		} else {
-			ReturnErrMsg(g, ErrTaskInsert, "任务明细数据有误")
+			ReturnErrMsg(g, ErrValidReq, "任务明细数据有误")
 			return
 		}
 	}
@@ -202,4 +193,21 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 
 	ReturnData(g, args)
 	return
+}
+
+// 更新任务状态
+func (c *TaskController) UpdateTaskStatus(g *gin.Context) {
+	args := &service.UpdateTaskStatusArgs{
+		UserId: TokenInfo.UserId,
+	}
+	ValidatePostJson(g, map[string]string{
+		"id":     "int",
+		"status": "string",
+	}, map[string]string{
+		"id":     "required|int",
+		"status": "required|string|enum:" + strings.Join(dao.TaskStatusSlice, ","),
+	}, args)
+	fmt.Println(args)
+	c.service.UpdateTaskStatus(args)
+	ReturnData(g, nil)
 }

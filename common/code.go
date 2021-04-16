@@ -9,32 +9,34 @@ const (
  **************************************/
 
 const (
-	// 系统域
+	// 系统错误 10001 ～ 10100
 	ErrSys        = 10001
 	ErrSysReqData = 10002
 	ErrSysDbExec  = 10003
 
-	// 校验域
+	// 参数校验错误 10101 ～ 10200
 	ErrValidReq = 10101
 
-	// 用户域
+	// 全局统一错误 10201 ～ 10300
+	ErrInsert   = 10201
+	ErrDelete   = 10202
+	ErrUpdate   = 10203
+	ErrNotExist = 10204
+
+	// 用户模块 20001 ～ 21000
 	ErrUserRegister = 20001
 	ErrUserLogin    = 20002
-	ErrUserUpdate   = 20003
-	ErrUserNotExist = 20004
+	ErrUserPassword = 20003
 
-	ErrShopNotExist   = 20101
 	ErrShopCountLimit = 20102
 
-	ErrTaskInsert       = 20201
-	ErrTaskGoodsInsert  = 20202
-	ErrTaskDetailInsert = 20203
+	ErrAccountWithdrawAmount = 20201
 
-	// 消息域
-	ErrSmsSend = 21001
+	// 任务模块 21001 ～ 22000
+	ErrTaskStatus = 21001 // 任务状态异常
 
-	// 配置域
-	ErrConfigNotExist = 22001
+	// 消息模块 24001 ～ 25000
+	ErrSmsSend = 24001
 )
 
 func GetMsg(code int) string {
@@ -52,32 +54,34 @@ func GetMsg(code int) string {
 	case ErrValidReq:
 		return "参数错误"
 
+	case ErrInsert:
+		return "添加失败"
+	case ErrDelete:
+		return "删除失败"
+	case ErrUpdate:
+		return "内容无变更"
+	case ErrNotExist:
+		return "不存在的记录"
+
 	case ErrUserRegister:
 		return "注册失败"
 	case ErrUserLogin:
 		return "登录失败"
-	case ErrUserUpdate:
-		return "修改密码失败"
-	case ErrUserNotExist:
-		return "商家不存在"
+	case ErrUserPassword:
+		return "密码错误"
 
-	case ErrShopNotExist:
-		return "店铺不存在"
 	case ErrShopCountLimit:
 		return "店铺数量已达上限"
 
-	case ErrTaskInsert:
-		return "任务新增失败"
-	case ErrTaskGoodsInsert:
-		return "任务商品新增失败"
-	case ErrTaskDetailInsert:
-		return "任务明细新增失败"
+	// 任务模块 21001 ～ 22000
+	case ErrTaskStatus:
+		return "任务状态异常"
+
+	case ErrAccountWithdrawAmount:
+		return "提现金额有误"
 
 	case ErrSmsSend:
-		return "发送失败"
-
-	case ErrConfigNotExist:
-		return "配置不存在"
+		return "信息发送失败"
 
 	default:
 		return "未知错误"

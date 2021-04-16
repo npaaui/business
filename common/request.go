@@ -65,6 +65,10 @@ func ValidatePostJson(g *gin.Context, format validate.MS, rule validate.MS, obj 
 	if err != nil {
 		panic(NewValidErr(err))
 	}
+	return ValidateData(data, format, rule, &obj)
+}
+
+func ValidateData(data MapItf, format validate.MS, rule validate.MS, obj interface{}) MapItf {
 	// int, float类型值传了空字符串过不了filter，暂时做一下处理
 	for k, v := range format {
 		if v == "int" && data[k] == "" {
@@ -74,10 +78,7 @@ func ValidatePostJson(g *gin.Context, format validate.MS, rule validate.MS, obj 
 			data[k] = "0"
 		}
 	}
-	return ValidateData(data, format, rule, &obj)
-}
 
-func ValidateData(data MapItf, format validate.MS, rule validate.MS, obj interface{}) MapItf {
 	defer func() {
 		validErr := recover()
 		switch validErr.(type) {

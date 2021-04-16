@@ -10,14 +10,18 @@ import (
 "unique_id": "string", // 唯一ID
 "mode_id": "string", // 模板id
 "remark": "string", // 备注信息
+"create_time": "string", // 添加时间
+"update_time": "string", // 更新时间
 */
 
 type SmsTpl struct {
-	Id       int    `db:"id" json:"id"`
-	Content  string `db:"content" json:"content"`
-	UniqueId string `db:"unique_id" json:"unique_id"`
-	ModeId   string `db:"mode_id" json:"mode_id"`
-	Remark   string `db:"remark" json:"remark"`
+	Id         int    `db:"id" json:"id"`
+	Content    string `db:"content" json:"content"`
+	UniqueId   string `db:"unique_id" json:"unique_id"`
+	ModeId     string `db:"mode_id" json:"mode_id"`
+	Remark     string `db:"remark" json:"remark"`
+	CreateTime string `db:"create_time" json:"create_time"`
+	UpdateTime string `db:"update_time" json:"update_time"`
 }
 
 func NewSmsTplModel() *SmsTpl {
@@ -81,21 +85,35 @@ func (m *SmsTpl) SetRemark(arg string) *SmsTpl {
 	return m
 }
 
+func (m *SmsTpl) SetCreateTime(arg string) *SmsTpl {
+	m.CreateTime = arg
+	return m
+}
+
+func (m *SmsTpl) SetUpdateTime(arg string) *SmsTpl {
+	m.UpdateTime = arg
+	return m
+}
+
 func (m SmsTpl) AsMapItf() MapItf {
 	return MapItf{
-		"id":        m.Id,
-		"content":   m.Content,
-		"unique_id": m.UniqueId,
-		"mode_id":   m.ModeId,
-		"remark":    m.Remark,
+		"id":          m.Id,
+		"content":     m.Content,
+		"unique_id":   m.UniqueId,
+		"mode_id":     m.ModeId,
+		"remark":      m.Remark,
+		"create_time": m.CreateTime,
+		"update_time": m.UpdateTime,
 	}
 }
 func (m SmsTpl) Translates() map[string]string {
 	return map[string]string{
-		"id":        "",
-		"content":   "内容",
-		"unique_id": "唯一ID",
-		"mode_id":   "模板id",
-		"remark":    "备注信息",
+		"id":          "",
+		"content":     "内容",
+		"unique_id":   "唯一ID",
+		"mode_id":     "模板id",
+		"remark":      "备注信息",
+		"create_time": "添加时间",
+		"update_time": "更新时间",
 	}
 }

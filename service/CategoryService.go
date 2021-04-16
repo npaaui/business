@@ -6,13 +6,7 @@ import (
 	"business/dao/model"
 )
 
-type CategoryService struct{}
-
-func NewCategoryService() *CategoryService {
-	return &CategoryService{}
-}
-
-func (s *CategoryService) ListCategory(category *model.Category) (data *RespList) {
+func (s *ConfigService) ListCategory(category *model.Category) (data *RespList) {
 	count, list := dao.ListCategory(category)
 	data = NewRespList(count, list)
 	return

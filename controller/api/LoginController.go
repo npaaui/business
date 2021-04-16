@@ -2,6 +2,7 @@ package api
 
 import (
 	"business/dao/model"
+	"business/service"
 	"time"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
@@ -9,7 +10,6 @@ import (
 
 	. "business/common"
 	myjwt "business/middleware/jwt"
-	"business/service"
 )
 
 type LoginController struct {
@@ -43,6 +43,11 @@ func (c *LoginController) Register(g *gin.Context) {
 		"qq":          "string",
 	}, user)
 	c.service.RegisterUser(user)
+
+	// 初始化账户
+	account := model.NewAccountModel().SetUserId(user.Id)
+	c.service.InsertAccount(account)
+
 	ReturnData(g, user)
 	return
 }
@@ -59,11 +64,7 @@ func (c *LoginController) Login(g *gin.Context) {
 		"mobile":   "required|string",
 		"password": "required|string",
 	}, user)
-	c.service.InfoUserByMobileAndPwd(user)
-	if user.Id == 0 {
-		ReturnErrMsg(g, ErrUserLogin, "用户名或密码有误")
-		return
-	}
+	c.service.Login(user)
 	generateToken(g, *user)
 	return
 }
@@ -102,27 +103,4 @@ func generateToken(g *gin.Context, user model.User) {
 type LoginResult struct {
 	User  model.User `json:"user"`
 	Token string     `json:"token"`
-}
-
-/**
- * 修改密码
- */
-func (c *LoginController) UpdateUserPassword(g *gin.Context) {
-	var user = model.NewUserModel()
-	_ = ValidatePostJson(g, map[string]string{
-		"mobile":     "string",
-		"valid_code": "string",
-		"password":   "string",
-	}, map[string]string{
-		"mobile":     "required|string",
-		"valid_code": "required|string",
-		"password":   "required|string",
-	}, user)
-	err := c.service.UpdateUserPassword(user)
-	if err != nil {
-		ReturnErrMsg(g, ErrUserUpdate, err.Error())
-		return
-	}
-	ReturnData(g, nil)
-	return
 }

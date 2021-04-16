@@ -6,13 +6,14 @@ import (
 
 /**
 "id": "int", //
-"user_id": "string", // 用户ID
+"user_id": "string", // 商家编号
 "mobile": "string", // 手机号
 "type": "string", // 验证类型
 "code": "string", // 验证代码
 "ip": "string", // IP地址
-"create_time": "string", // 申请时间
 "expire_time": "string", // 过期时间
+"create_time": "string", // 申请时间
+"update_time": "string", // 更新时间
 */
 
 type SmsValid struct {
@@ -22,8 +23,9 @@ type SmsValid struct {
 	Type       string `db:"type" json:"type"`
 	Code       string `db:"code" json:"code"`
 	Ip         string `db:"ip" json:"ip"`
-	CreateTime string `db:"create_time" json:"create_time"`
 	ExpireTime string `db:"expire_time" json:"expire_time"`
+	CreateTime string `db:"create_time" json:"create_time"`
+	UpdateTime string `db:"update_time" json:"update_time"`
 }
 
 func NewSmsValidModel() *SmsValid {
@@ -92,13 +94,18 @@ func (m *SmsValid) SetIp(arg string) *SmsValid {
 	return m
 }
 
+func (m *SmsValid) SetExpireTime(arg string) *SmsValid {
+	m.ExpireTime = arg
+	return m
+}
+
 func (m *SmsValid) SetCreateTime(arg string) *SmsValid {
 	m.CreateTime = arg
 	return m
 }
 
-func (m *SmsValid) SetExpireTime(arg string) *SmsValid {
-	m.ExpireTime = arg
+func (m *SmsValid) SetUpdateTime(arg string) *SmsValid {
+	m.UpdateTime = arg
 	return m
 }
 
@@ -110,19 +117,21 @@ func (m SmsValid) AsMapItf() MapItf {
 		"type":        m.Type,
 		"code":        m.Code,
 		"ip":          m.Ip,
-		"create_time": m.CreateTime,
 		"expire_time": m.ExpireTime,
+		"create_time": m.CreateTime,
+		"update_time": m.UpdateTime,
 	}
 }
 func (m SmsValid) Translates() map[string]string {
 	return map[string]string{
 		"id":          "",
-		"user_id":     "用户ID",
+		"user_id":     "商家编号",
 		"mobile":      "手机号",
 		"type":        "验证类型",
 		"code":        "验证代码",
 		"ip":          "IP地址",
-		"create_time": "申请时间",
 		"expire_time": "过期时间",
+		"create_time": "申请时间",
+		"update_time": "更新时间",
 	}
 }
