@@ -32,30 +32,12 @@ func (c *ShopController) ListShop(g *gin.Context) {
 func (c *ShopController) InsertShop(g *gin.Context) {
 	var shop = model.NewShopModel().SetUserId(TokenInfo.UserId)
 	_ = ValidatePostJson(g, map[string]string{
-		"shop_sn":          "string", // 店铺掌柜号
-		"platform":         "string", // 平台
-		"name":             "string", // 店铺名
-		"group":            "string", // 店铺组别
-		"sell_category_id": "int",    // 主营类目
-		"url":              "string", // 店铺链接
-		"re_day":           "int",    // 复购天数
-		"contact_name":     "string", // 联系人
-		"contact_mobile":   "string", // 联系人电话
-		"postcode":         "string", // 邮编
-		"province_id":      "int",    //
-		"province":         "string", //
-		"city_id":          "int",    //
-		"city":             "string", //
-		"county_id":        "int",    //
-		"county":           "string", //
-		"address":          "string", //
-	}, map[string]string{
-		"shop_sn":          "required|string",
-		"platform":         "required|string",
-		"name":             "required|string",
+		"shop_sn":          "string|required",
+		"platform":         "string|required",
+		"name":             "string|required",
 		"group":            "string",
-		"sell_category_id": "required|int",
-		"url":              "required|string",
+		"sell_category_id": "int|required",
+		"url":              "string|required",
 		"re_day":           "int",    // 复购天数
 		"contact_name":     "string", // 联系人
 		"contact_mobile":   "string", // 联系人电话
@@ -79,32 +61,13 @@ func (c *ShopController) InsertShop(g *gin.Context) {
 func (c *ShopController) UpdateShop(g *gin.Context) {
 	var shop = model.NewShopModel().SetUserId(TokenInfo.UserId)
 	_ = ValidatePostJson(g, map[string]string{
-		"id":               "int",
-		"shop_sn":          "string", // 店铺掌柜号
-		"platform":         "string", // 平台
-		"name":             "string", // 店铺名
-		"group":            "string", // 店铺组别
-		"sell_category_id": "int",    // 主营类目
-		"url":              "string", // 店铺链接
-		"re_day":           "int",    // 复购天数
-		"contact_name":     "string", // 联系人
-		"contact_mobile":   "string", // 联系人电话
-		"postcode":         "string", // 邮编
-		"province_id":      "int",    //
-		"province":         "string", //
-		"city_id":          "int",    //
-		"city":             "string", //
-		"county_id":        "int",    //
-		"county":           "string", //
-		"address":          "string", //
-	}, map[string]string{
-		"id":               "required|int",
-		"shop_sn":          "required|string",
-		"platform":         "required|string",
-		"name":             "required|string",
+		"id":               "int|required",
+		"shop_sn":          "string|required",
+		"platform":         "string|required",
+		"name":             "string|required",
 		"group":            "string",
-		"sell_category_id": "required|int",
-		"url":              "required|string",
+		"sell_category_id": "int|required",
+		"url":              "string|required",
 		"re_day":           "int",    // 复购天数
 		"contact_name":     "string", // 联系人
 		"contact_mobile":   "string", // 联系人电话

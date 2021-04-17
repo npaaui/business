@@ -24,9 +24,7 @@ func NewCategoryController() *CategoryController {
 func (c *CategoryController) ListCategory(g *gin.Context) {
 	category := model.NewCategoryModel()
 	ValidateQuery(g, map[string]string{
-		"type": "string",
-	}, map[string]string{
-		"type": "required|string|enum:sell,task",
+		"type": "string|required|enum:sell,task",
 	}, category)
 
 	categoryList := c.service.ListCategory(category)

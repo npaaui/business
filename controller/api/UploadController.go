@@ -20,9 +20,7 @@ type UploadFileArgs struct {
 func (c *UploadController) UploadFile(g *gin.Context) {
 	args := &UploadFileArgs{}
 	ValidatePostForm(g, map[string]string{
-		"res_type": "string",
-	}, map[string]string{
-		"res_type": "required|string|enum:task",
+		"res_type": "string|required|enum:task,recharge||资源类型",
 	}, args)
 
 	name := LoadPostFile(g, "file", args.ResType)

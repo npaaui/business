@@ -32,16 +32,10 @@ func (c *UserBankController) ListUserBank(g *gin.Context) {
 func (c *UserBankController) InsertUserBank(g *gin.Context) {
 	var userBank = model.NewUserBankModel().SetUserId(TokenInfo.UserId)
 	_ = ValidatePostJson(g, map[string]string{
-		"bank_category_id": "int",    // 银行品类id
-		"open_bank_name":   "string", // 开户行名称
-		"code":             "string", // 银行卡号
-		"name":             "string", // 开户人姓名
-		"default":          "int",    // 是否为默认银行卡 1/0
-	}, map[string]string{
-		"bank_category_id": "required|int",    // 银行品类id
+		"bank_category_id": "int|required",    // 银行品类id
 		"open_bank_name":   "string",          // 开户行名称
-		"code":             "required|string", // 银行卡号
-		"name":             "required|string", // 开户人姓名
+		"code":             "string|required", // 银行卡号
+		"name":             "string|required", // 开户人姓名
 		"default":          "int",             // 是否为默认银行卡 1/0
 	}, userBank)
 	c.service.InsertUserBank(userBank)
@@ -55,14 +49,7 @@ func (c *UserBankController) InsertUserBank(g *gin.Context) {
 func (c *UserBankController) UpdateUserBank(g *gin.Context) {
 	var userBank = model.NewUserBankModel().SetUserId(TokenInfo.UserId)
 	_ = ValidatePostJson(g, map[string]string{
-		"id":               "int",
-		"bank_category_id": "int",    // 银行品类id
-		"open_bank_name":   "string", // 开户行名称
-		"code":             "string", // 银行卡号
-		"name":             "string", // 开户人姓名
-		"default":          "int",    // 是否为默认银行卡 1/0
-	}, map[string]string{
-		"id":               "required|int",
+		"id":               "int|required",
 		"bank_category_id": "int",    // 银行品类id
 		"open_bank_name":   "string", // 开户行名称
 		"code":             "string", // 银行卡号
@@ -80,9 +67,7 @@ func (c *UserBankController) UpdateUserBank(g *gin.Context) {
 func (c *UserBankController) DeleteUserBank(g *gin.Context) {
 	var userBank = model.NewUserBankModel().SetUserId(TokenInfo.UserId)
 	_ = ValidatePostJson(g, map[string]string{
-		"id": "int",
-	}, map[string]string{
-		"id": "required|int",
+		"id": "int|required",
 	}, userBank)
 	c.service.DeleteUserBank(userBank)
 	ReturnData(g, userBank)

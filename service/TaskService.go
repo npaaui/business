@@ -47,6 +47,8 @@ type ListTaskArgs struct {
 	CreateTimeStart string `json:"create_time_start"`
 	CreateTimeEnd   string `json:"create_time_end"`
 	GoodsUrl        string `json:"goods_url"`
+	Offset          int
+	Limit           int
 }
 
 func (s *TaskService) ListTask(args *ListTaskArgs) *RespList {
@@ -72,6 +74,8 @@ func (s *TaskService) ListTask(args *ListTaskArgs) *RespList {
 		Status:          args.Status,
 		CreateTimeStart: args.CreateTimeStart,
 		CreateTimeEnd:   args.CreateTimeEnd,
+		Limit:           args.Limit,
+		Offset:          args.Offset,
 	})
 
 	if count == 0 {

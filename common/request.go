@@ -16,47 +16,65 @@ import (
 	"github.com/gookit/validate/locales/zhcn"
 )
 
+// 字段名称转换
+type ValidTransfer interface {
+	Translates() map[string]string
+}
+
 // 验证param参数提交
-func ValidateParam(g *gin.Context, format validate.MS, rule validate.MS, obj interface{}) MapItf {
+func ValidateParam(g *gin.Context, rule map[string]string, as interface{}) MapItf {
 	data := MapItf{}
-	for k := range format {
+	for k := range rule {
 		if query, ok := g.Params.Get(k); ok && query != "" {
 			query = strings.TrimSpace(query)
 			data[k] = query
 		}
 	}
 
-	return ValidateData(data, format, rule, &obj)
+	return ValidateData(data, rule, as)
 }
 
 // 验证query参数提交
-func ValidateQuery(g *gin.Context, format validate.MS, rule validate.MS, obj interface{}) MapItf {
+func ValidateQuery(g *gin.Context, rule map[string]string, as interface{}) MapItf {
 	data := MapItf{}
-	for k := range format {
+	for k := range rule {
 		if query, ok := g.GetQuery(k); ok && query != "" {
 			query = strings.TrimSpace(query)
 			data[k] = query
 		}
 	}
 
-	return ValidateData(data, format, rule, &obj)
+	// 分页参数处理
+	if rule["page"] != "" && rule["page_size"] != "" {
+		if data["page"] == nil || data["page_size"] == nil {
+			data["page"], data["page_size"] = "1", "10"
+		}
+		data["offset"], data["limit"] =
+			PartPage(StrToInt(data["page"].(string), 1), StrToInt(data["page_size"].(string), 10))
+		delete(rule, "page")
+		delete(rule, "page_size")
+		rule["limit"], rule["offset"] = "int", "int"
+	}
+
+	return ValidateData(data, rule, as)
 }
 
 // 验证 post form 参数提交
-func ValidatePostForm(g *gin.Context, format validate.MS, rule validate.MS, obj interface{}) MapItf {
+func ValidatePostForm(g *gin.Context, rule map[string]string, as interface{}) MapItf {
 	data := MapItf{}
-	for k := range format {
+	for k := range rule {
 		if query, ok := g.GetPostForm(k); ok && query != "" {
 			query = strings.TrimSpace(query)
 			data[k] = query
 		}
 	}
 
-	return ValidateData(data, format, rule, &obj)
+	return ValidateData(data, rule, as)
 }
 
 // 验证post json数据
-func ValidatePostJson(g *gin.Context, format validate.MS, rule validate.MS, obj interface{}) (data MapItf) {
+func ValidatePostJson(g *gin.Context, rule map[string]string, as interface{}) MapItf {
+	data := MapItf{}
 	jsonByte, err := g.GetRawData()
 	if err != nil {
 		panic(NewValidErr(err))
@@ -65,12 +83,21 @@ func ValidatePostJson(g *gin.Context, format validate.MS, rule validate.MS, obj 
 	if err != nil {
 		panic(NewValidErr(err))
 	}
-	return ValidateData(data, format, rule, &obj)
+	return ValidateData(data, rule, as)
 }
 
-func ValidateData(data MapItf, format validate.MS, rule validate.MS, obj interface{}) MapItf {
+// map数据校验
+// @param rule map[string]string{
+// 		"name": "string|required||字段名称",
+// }
+func ValidateData(data MapItf, format map[string]string, as interface{}) MapItf {
+	var filter = map[string]string{}   // 过滤配置
+	var rule = map[string]string{}     // 校验配置
+	var transfer = map[string]string{} // 字段名转换配置
+	filter, rule, transfer = getValidateMaps(format)
+
 	// int, float类型值传了空字符串过不了filter，暂时做一下处理
-	for k, v := range format {
+	for k, v := range filter {
 		if v == "int" && data[k] == "" {
 			data[k] = 0
 		}
@@ -92,72 +119,44 @@ func ValidateData(data MapItf, format validate.MS, rule validate.MS, obj interfa
 	// 参数校验
 	zhcn.RegisterGlobal()
 	va := validate.Map(data)
-	va.FilterRules(format)
+	va.FilterRules(filter)
 	va.StringRules(rule)
+	if len(transfer) > 0 {
+		va.AddTranslates(transfer)
+	} else if trans, ok := as.(ValidTransfer); ok {
+		va.AddTranslates(trans.Translates())
+	}
 
 	if !va.Validate() {
 		panic(NewValidErr(errors.New(va.Errors.One())))
 	}
 
 	// 参数赋值到结构体
-	err := va.BindSafeData(&obj)
+	err := va.BindSafeData(&as)
 	if err != nil {
 		panic(NewValidErr(err))
 	}
 	return data
 }
 
-func (param *MapItf) FormatMapItf(rule MapItf) {
-	p := *param
-	for k, def := range rule {
-		k = strings.TrimSpace(k)
-		if p[k] != nil {
-			switch def.(type) {
-			case string:
-				p[k] = toStr(p[k], def.(string))
-			case int:
-				p[k] = toInt(p[k], def.(int))
-			case float64:
-				p[k] = toFloat64(p[k], def.(float64))
-			}
+// 获取过滤配置，校验规则，字段名转换配置
+func getValidateMaps(format map[string]string) (map[string]string, map[string]string, map[string]string) {
+	var filter, rule, transfer = map[string]string{}, map[string]string{}, map[string]string{}
+	for k, v := range format {
+		tmpSlice := strings.Split(v, "||")
+		if len(tmpSlice) == 0 {
+			panic(NewValidErr(errors.New("校验配置有误")))
+		}
+		rule[k] = tmpSlice[0]
+		typ := strings.Split(tmpSlice[0], "|")[0]
+		if typ != "" {
+			filter[k] = typ
+		}
+		if len(tmpSlice) == 2 {
+			transfer[k] = tmpSlice[1]
 		}
 	}
-}
-
-func toStr(v interface{}, def string) string {
-	switch v.(type) {
-	case string:
-		return v.(string)
-	case int:
-		return IntToStr(v.(int))
-	case float64:
-		return Float64ToString(v.(float64))
-	}
-	return def
-}
-
-func toInt(v interface{}, def int) int {
-	switch v.(type) {
-	case string:
-		return StrToInt(v.(string), def)
-	case int:
-		return v.(int)
-	case float64:
-		return Float64ToInt(v.(float64))
-	}
-	return def
-}
-
-func toFloat64(v interface{}, def float64) float64 {
-	switch v.(type) {
-	case string:
-		return StrToFloat64(v.(string), def)
-	case int:
-		return float64(v.(int))
-	case float64:
-		return v.(float64)
-	}
-	return def
+	return filter, rule, transfer
 }
 
 func LoadPostFile(g *gin.Context, fileKey string, resType string) string {
@@ -168,7 +167,7 @@ func LoadPostFile(g *gin.Context, fileKey string, resType string) string {
 	fileName := header.Filename
 
 	fileExt := path.Ext(fileName)
-	fileTime := time.Now().Format("20060102130405")
+	fileTime := time.Now().Format("20060102150405")
 	fileRand := IntToStr(rand.Intn(100))
 	name := fileTime + fileRand + "[" + strings.TrimRight(fileName, "."+fileExt) + "]" + fileExt
 
@@ -208,4 +207,16 @@ func LoadPostFile(g *gin.Context, fileKey string, resType string) string {
 		panic(NewSysErr(fmt.Errorf(name+"文件创建失败:%w", err)))
 	}
 	return resType + "/" + name
+}
+
+func PartPage(page, pageSize int) (offset, limit int) {
+	if page < 0 {
+		page = 1
+	}
+	if pageSize > 200 || pageSize < 1 {
+		pageSize = 10
+	}
+	limit = pageSize
+	offset = limit * (page - 1)
+	return offset, limit
 }

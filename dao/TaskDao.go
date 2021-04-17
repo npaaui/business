@@ -38,6 +38,8 @@ type ListTaskArgs struct {
 	Status          string
 	CreateTimeStart string
 	CreateTimeEnd   string
+	Limit           int
+	Offset          int
 }
 
 func ListTask(args *ListTaskArgs) (int, []model.Task) {
@@ -65,7 +67,7 @@ func ListTask(args *ListTaskArgs) (int, []model.Task) {
 	if args.CreateTimeEnd != "" {
 		session.And("create_time <= ?", args.CreateTimeEnd)
 	}
-	count, err := session.FindAndCount(&taskList)
+	count, err := session.Limit(args.Limit, args.Offset).FindAndCount(&taskList)
 	if err != nil {
 		panic(NewDbErr(err))
 	}

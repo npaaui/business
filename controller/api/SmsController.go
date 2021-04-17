@@ -1,36 +1,33 @@
 package api
 
 import (
-	"business/dao/model"
-	service2 "business/service"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 
 	. "business/common"
+	"business/dao/model"
+	"business/service"
 )
 
 type SmsController struct {
-	service *service2.SmsService
+	service *service.SmsService
 }
 
 func NewSmsController() *SmsController {
 	return &SmsController{
-		service: service2.NewSmsService(),
+		service: service.NewSmsService(),
 	}
 }
 
 func (c *SmsController) SendSmsValid(g *gin.Context) {
 	var smsValid = model.NewSmsValidModel()
 	_ = ValidatePostJson(g, map[string]string{
-		"mobile": "",
-		"type":   "",
-	}, map[string]string{
-		"mobile": "required|string",
-		"type":   "required|string|enum:" + strings.Join(service2.SmsValidTypeArr, ","),
+		"mobile": "string|required",
+		"type":   "string|required|enum:" + strings.Join(service.SmsValidTypeArr, ","),
 	}, smsValid)
 
-	err := service2.SendSmsValid(smsValid)
+	err := service.SendSmsValid(smsValid)
 	if err != nil {
 		ReturnErrMsg(g, ErrSmsSend, err.Error())
 		return

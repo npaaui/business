@@ -4,7 +4,6 @@ import (
 	. "business/common"
 	"business/dao"
 	"business/dao/model"
-	"fmt"
 )
 
 /**
@@ -54,7 +53,6 @@ func (args *UpdateTaskStatusArgs) InitTask() {
 }
 func (args *UpdateTaskStatusArgs) CheckTask() {}
 func (args *UpdateTaskStatusArgs) DoUpdate() {
-	fmt.Println(args)
 	args.task.Update(model.NewTaskModel().SetStatus(args.Status))
 }
 func (args *UpdateTaskStatusArgs) AfterUpdate() {}
@@ -67,7 +65,7 @@ type UpdateTaskStatusPaid struct {
 }
 
 func (a *UpdateTaskStatusPaid) CheckTask() {
-	if a.Status != dao.TaskStatusInit {
+	if a.task.Status != dao.TaskStatusInit {
 		panic(NewRespErr(ErrTaskStatus, "订单非待支付状态"))
 	}
 }

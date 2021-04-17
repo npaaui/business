@@ -1,30 +1,32 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
-
 	. "business/common"
+	"github.com/gin-gonic/gin"
 )
 
 func RecoverDbError() gin.HandlerFunc {
 	return func(g *gin.Context) {
 		defer func() {
-			err := recover()
-			if sysErr, ok := err.(SysErr); ok {
+			pic := recover()
+			if sysErr, ok := pic.(SysErr); ok {
 				ReturnErrSys(g, ErrSys, sysErr)
 				return
 			}
-			if dbErr, ok := err.(DbErr); ok {
+			if dbErr, ok := pic.(DbErr); ok {
 				ReturnErrSys(g, ErrSysDbExec, dbErr)
 				return
 			}
-			if validErr, ok := err.(ValidErr); ok {
+			if validErr, ok := pic.(ValidErr); ok {
 				ReturnErr(g, ErrValidReq, validErr)
 				return
 			}
-			if respErr, ok := err.(RespErr); ok {
+			if respErr, ok := pic.(RespErr); ok {
 				ReturnErrMsg(g, respErr.Code, respErr.Msg)
 				return
+			}
+			if err, ok := pic.(error); ok {
+				ReturnErrSys(g, ErrSys, err)
 			}
 		}()
 		g.Next()

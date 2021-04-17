@@ -2,8 +2,10 @@ package common
 
 import (
 	"crypto/md5"
+	"errors"
 	"fmt"
 	"math/rand"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -88,10 +90,26 @@ func Float64ToString(f float64) string {
 
 func StrToFloat64(s string, def float64) float64 {
 	f, err := strconv.ParseFloat(s, 64)
-	fmt.Printf("失败:%f", f)
 	if err != nil {
 		Log(LogLevelWarning, fmt.Errorf("字符串「"+s+"」转浮点数失败: ", err))
 		return def
 	}
 	return f
+}
+
+/****************************
+ * 函数调用
+ ****************************/
+func Call(m map[string]interface{}, name string, params ...interface{}) (result []reflect.Value, err error) {
+	f := reflect.ValueOf(m[name])
+	if len(params) != f.Type().NumIn() {
+		err = errors.New("the number of params is not adapted")
+		return
+	}
+	in := make([]reflect.Value, len(params))
+	for k, param := range params {
+		in[k] = reflect.ValueOf(param)
+	}
+	result = f.Call(in)
+	return
 }

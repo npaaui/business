@@ -27,9 +27,7 @@ func NewConfigController() *ConfigController {
 func (c *ConfigController) InfoConfig(g *gin.Context) {
 	config := model.NewConfigModel()
 	ValidateParam(g, map[string]string{
-		"key": "string",
-	}, map[string]string{
-		"key": "required|string",
+		"key": "string|required",
 	}, config)
 
 	c.service.InfoConfig(config)
@@ -41,15 +39,13 @@ func (c *ConfigController) InfoConfig(g *gin.Context) {
  * 获取配置列表
  */
 type ListConfig struct {
-	Keys string
+	Keys string `json:"keys"`
 }
 
 func (c *ConfigController) ListConfig(g *gin.Context) {
 	args := &ListConfig{}
 	ValidateQuery(g, map[string]string{
-		"keys": "string",
-	}, map[string]string{
-		"keys": "required|string",
+		"keys": "string|required||配置键名",
 	}, args)
 
 	keys := strings.Split(args.Keys, ",")

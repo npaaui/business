@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -28,9 +27,7 @@ func NewTaskController() *TaskController {
 func (c *TaskController) InfoTask(g *gin.Context) {
 	task := model.NewTaskModel()
 	ValidateParam(g, map[string]string{
-		"id": "int",
-	}, map[string]string{
-		"id": "required|int",
+		"id": "int|required",
 	}, task)
 
 	data := c.service.InfoTask(task)
@@ -49,20 +46,13 @@ func (c *TaskController) ListTask(g *gin.Context) {
 		"id":                "int",
 		"shop_id":           "int",
 		"category_id":       "int",
-		"status":            "string",
-		"create_time_start": "string",
-		"create_time_end":   "string",
-		"goods_url":         "string",
-	}, map[string]string{
-		"id":                "int",
-		"shop_id":           "int",
-		"category_id":       "int",
 		"status":            "string|enum:" + strings.Join(dao.TaskStatusSlice, ","),
 		"create_time_start": "string",
 		"create_time_end":   "string",
 		"goods_url":         "string",
+		"page":              "int",
+		"page_size":         "int",
 	}, args)
-
 	taskList := c.service.ListTask(args)
 	ReturnData(g, taskList)
 }
@@ -71,10 +61,10 @@ func (c *TaskController) ListTask(g *gin.Context) {
  * 新增任务
  */
 func (c *TaskController) InsertTask(g *gin.Context) {
-	req := ValidatePostJson(g, map[string]string{}, map[string]string{
-		"task":   "required",
-		"goods":  "required",
-		"detail": "required",
+	req := ValidatePostJson(g, map[string]string{
+		"task":   "|required||任务详情",
+		"goods":  "|required||任务商品",
+		"detail": "|required||任务明细",
 	}, nil)
 	taskInfo := req["task"].(map[string]interface{})
 	taskGoods := req["goods"].([]interface{})
@@ -86,35 +76,13 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 	}
 
 	ValidateData(taskInfo, map[string]string{
-		"category_id":    "int",    //品类id
-		"shop_id":        "int",    //店铺id
-		"name":           "string", //任务名
-		"coupon_url":     "string", //优惠券链接
-		"free_shipping":  "string", //是否包邮
-		"closing_date":   "string", //截止日期
-		"sort":           "string", //排序方式
-		"sell_num":       "int",    //现有付款人数约
-		"price_upper":    "float",  //价格区间起
-		"price_down":     "float",  //价格区间终
-		"province_id":    "int",    // 省份id
-		"province":       "string", // 省
-		"city_id":        "int",    // 城市id
-		"city":           "string", // 所在市
-		"question":       "string", //宝贝详情问答
-		"message":        "string", //留言
-		"addition":       "string", //增值服务
-		"add_img":        "string", //商家附加图(多张,分离)
-		"remark":         "string", //商家备注
-		"status":         "string", //任务状态
-		"publish_config": "string", //发布时间配置
-	}, map[string]string{
-		"category_id":    "required|int",                       //品类id
-		"shop_id":        "required|int",                       //店铺id
-		"name":           "required|string",                    //任务名
+		"category_id":    "int|required",                       //品类id
+		"shop_id":        "int|required",                       //店铺id
+		"name":           "string|required",                    //任务名
 		"coupon_url":     "string",                             //优惠券链接
-		"free_shipping":  "required|string|enum:Y,N",           //是否包邮
-		"closing_date":   "required|string",                    //截止日期
-		"sort":           "required|string|enum:multiple,sell", //排序方式
+		"free_shipping":  "string|required|enum:Y,N",           //是否包邮
+		"closing_date":   "string|required",                    //截止日期
+		"sort":           "string|required|enum:multiple,sell", //排序方式
 		"sell_num":       "int",                                //现有付款人数约
 		"price_upper":    "float",                              //价格区间起
 		"price_down":     "float",                              //价格区间终
@@ -128,29 +96,20 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 		"add_img":        "string",                             //商家附加图(多张,分离)
 		"remark":         "string",                             //商家备注
 		"status":         "string",                             //任务状态
-		"publish_config": "required|string",                    //发布时间配置
+		"publish_config": "string|required",                    //发布时间配置
 	}, task)
 
 	for _, item := range taskGoods {
 		tmpTaskGoods := model.NewTaskGoodsModel()
 		if v, ok := item.(map[string]interface{}); ok {
 			ValidateData(v, map[string]string{
-				"url":          "string", // 宝贝链接
-				"img":          "string", // 宝贝图片
-				"keywords":     "string", // 关键词
-				"title":        "string", // 标题
-				"price":        "float",  // 单价
-				"search_price": "float",  // 搜索单价
-				"num":          "int",    // 数量
-				"spec":         "string", // 规格
-			}, map[string]string{
-				"url":          "required|string", // 宝贝链接
-				"img":          "required|string", // 宝贝图片
+				"url":          "string|required", // 宝贝链接
+				"img":          "string|required", // 宝贝图片
 				"keywords":     "string",          // 关键词
-				"title":        "required|string", // 标题
-				"price":        "required|float",  // 单价
+				"title":        "string|required", // 标题
+				"price":        "float|required",  // 单价
 				"search_price": "float",           // 搜索单价
-				"num":          "required|int",    // 数量
+				"num":          "int|required",    // 数量
 				"spec":         "string",          // 规格
 			}, tmpTaskGoods)
 			args.Goods = append(args.Goods, tmpTaskGoods)
@@ -164,16 +123,7 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 		tmpTaskDetail := model.NewTaskDetailModel()
 		if v, ok := item.(map[string]interface{}); ok {
 			ValidateData(v, map[string]string{
-				"type":       "string", // 任务类型
-				"keywords":   "string", // 下单关键词
-				"keywords2":  "string", // 备用关键词
-				"num":        "int",    // 单数
-				"color_size": "string", // 颜色尺码
-				"evaluate":   "string", // 评价内容
-				"images":     "string", // 晒图
-				"video":      "string", // 视频
-			}, map[string]string{
-				"type":       "required|string|enum:normal,words,img,video", // 任务类型
+				"type":       "string|enum:normal,words,img,video|required", // 任务类型
 				"keywords":   "string",                                      // 下单关键词
 				"keywords2":  "string",                                      // 备用关键词
 				"num":        "int",                                         // 单数
@@ -201,13 +151,9 @@ func (c *TaskController) UpdateTaskStatus(g *gin.Context) {
 		UserId: TokenInfo.UserId,
 	}
 	ValidatePostJson(g, map[string]string{
-		"id":     "int",
-		"status": "string",
-	}, map[string]string{
-		"id":     "required|int",
-		"status": "required|string|enum:" + strings.Join(dao.TaskStatusSlice, ","),
+		"id":     "int|required||任务编号",
+		"status": "string|required|enum:" + strings.Join(dao.TaskStatusSlice, ",") + "||任务变更状态",
 	}, args)
-	fmt.Println(args)
 	c.service.UpdateTaskStatus(args)
 	ReturnData(g, nil)
 }
