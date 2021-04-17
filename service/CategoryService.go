@@ -11,3 +11,8 @@ func (s *ConfigService) ListCategory(category *model.Category) (data *RespList) 
 	data = NewRespList(count, list)
 	return
 }
+
+func (s *ConfigService) InfoCategory(category *model.Category) bool {
+	has := category.Info()
+	return has
+}

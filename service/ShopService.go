@@ -13,6 +13,11 @@ func (s *UserService) ListShop() (data *RespList) {
 	return
 }
 
+func (s *UserService) InfoShop(shop *model.Shop) bool {
+	has := shop.Info()
+	return has
+}
+
 func (s *UserService) InsertShop(shop *model.Shop) {
 	var shopCount int
 	ca := cache.NewCacheUserInfo(TokenInfo.UserId)

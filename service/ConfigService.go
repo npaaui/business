@@ -19,11 +19,28 @@ func (s *ConfigService) InfoConfig(config *model.Config) {
 	return
 }
 
-func (s *ConfigService) ListConfig(args dao.ListConfigArgs) MapItf {
+type ListConfigArgs struct {
+	Keys []string
+}
+
+func (s *ConfigService) ListConfig(args ListConfigArgs) MapItf {
 	data := MapItf{}
-	list := dao.ListConfig(args)
+	list := dao.ListConfig(dao.ListConfigArgs{
+		Keys: args.Keys,
+	})
 	for _, v := range list {
 		data[v.Key] = v
+	}
+	return data
+}
+
+func (s *ConfigService) ListConfigValue(args ListConfigArgs) MapStr {
+	data := MapStr{}
+	list := dao.ListConfig(dao.ListConfigArgs{
+		Keys: args.Keys,
+	})
+	for _, v := range list {
+		data[v.Key] = v.Value
 	}
 	return data
 }

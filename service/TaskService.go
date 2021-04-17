@@ -1,6 +1,9 @@
 package service
 
 import (
+	"encoding/json"
+	"fmt"
+
 	. "business/common"
 	"business/dao"
 	"business/dao/model"
@@ -22,6 +25,59 @@ type InsertTaskArgs struct {
 }
 
 func (s *TaskService) InsertTask(args *InsertTaskArgs) {
+	// 校验任务类型
+	category := model.NewCategoryModel().SetId(args.Task.CategoryId)
+	if !NewConfigService().InfoCategory(category) {
+		panic(NewRespErr(ErrNotExist, "不存在的任务类型"))
+	}
+	args.Task.CategoryName = category.Name
+
+	// 校验店铺
+	shop := model.NewShopModel().SetId(args.Task.ShopId)
+	if !NewUserService().InfoShop(shop) {
+		panic(NewRespErr(ErrNotExist, "不存在的店铺"))
+	}
+	args.Task.ShopName = shop.Name
+
+	// 获取配置
+	conf := NewConfigService().ListConfigValue(ListConfigArgs{
+		Keys: []string{"task_detail_type_config", "amount_config_" + category.Code, "addition_config_" + category.Code},
+	})
+	var addConf = map[string]float64{}
+	var amountConf []map[string]float64
+	var detailConf = map[string]float64{}
+	if err := json.Unmarshal([]byte(conf["addition_config_"+category.Code]), &addConf); err != nil {
+		panic(NewSysErr(fmt.Errorf("addition_config配置有误:%w", err)))
+	}
+	if err := json.Unmarshal([]byte(conf["amount_config_"+category.Code]), &amountConf); err != nil {
+		panic(NewSysErr(fmt.Errorf("amount_config配置有误:%w", err)))
+	}
+	if err := json.Unmarshal([]byte(conf["task_detail_type_config"]), &detailConf); err != nil {
+		panic(NewSysErr(fmt.Errorf("task_detail_type_config配置有误:%w", err)))
+	}
+
+	fmt.Println(detailConf)
+	// 计算本金
+	var goodsAmount float64
+	for _, v := range args.Goods {
+		goodsAmount += v.Price * float64(v.Num)
+	}
+
+	// 计算基础服务费
+	var baseServAmount, platServAmount float64
+	for _, v := range amountConf {
+		if goodsAmount > v["min"] && goodsAmount <= v["max"] {
+			baseServAmount = v["now_return"]
+			platServAmount = v["platform"]
+			break
+		}
+	}
+
+	// 附加服务费
+	var addAmount float64
+	goodsCnt := float64(len(args.Goods) - 1)
+	addAmount += addConf["multi_goods"] * goodsCnt
+
 	dao.InsertTask(args.Task)
 
 	for _, v := range args.Goods {
@@ -29,10 +85,27 @@ func (s *TaskService) InsertTask(args *InsertTaskArgs) {
 		dao.InsertTaskGoods(v)
 	}
 
+	var payAmount float64
 	for _, v := range args.Detail {
-		v.SetTaskId(args.Task.Id)
+		fmt.Println(detailConf[v.Type])
+		v.SetTaskId(args.Task.Id).
+			SetGoodsAmount(goodsAmount).
+			SetBaseServAmount(baseServAmount).
+			SetPlatformServAmount(platServAmount).
+			SetCommentAmount(detailConf[v.Type]).
+			SetAdditionServAmount(addAmount).
+			SetShippingAmount(args.Task.ShippingAmount)
+
+		amount := v.GoodsAmount + v.BaseServAmount + v.PlatformServAmount + v.CommentAmount + v.AdditionServAmount + v.ShippingAmount
+		v.SetAmount(amount)
+		payAmount += amount
+
 		dao.InsertTaskDetail(v)
 	}
+
+	// 更新任务总支付金额
+	args.Task.Update(model.NewTaskModel().SetPayAmount(payAmount))
+	args.Task.PayAmount = payAmount
 }
 
 /**

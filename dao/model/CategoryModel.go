@@ -9,7 +9,7 @@ import (
 "name": "string", // 品类名
 "type": "string", // 类别
 "parent_id": "int", // 父品类id
-"configs": "string", // 关联配置
+"code": "string", // 唯一标示
 */
 
 type Category struct {
@@ -17,7 +17,7 @@ type Category struct {
 	Name     string `db:"name" json:"name"`
 	Type     string `db:"type" json:"type"`
 	ParentId int    `db:"parent_id" json:"parent_id"`
-	Configs  string `db:"configs" json:"configs"`
+	Code     string `db:"code" json:"code"`
 }
 
 func NewCategoryModel() *Category {
@@ -76,8 +76,8 @@ func (m *Category) SetParentId(arg int) *Category {
 	return m
 }
 
-func (m *Category) SetConfigs(arg string) *Category {
-	m.Configs = arg
+func (m *Category) SetCode(arg string) *Category {
+	m.Code = arg
 	return m
 }
 
@@ -87,7 +87,7 @@ func (m Category) AsMapItf() MapItf {
 		"name":      m.Name,
 		"type":      m.Type,
 		"parent_id": m.ParentId,
-		"configs":   m.Configs,
+		"code":      m.Code,
 	}
 }
 func (m Category) Translates() map[string]string {
@@ -96,6 +96,6 @@ func (m Category) Translates() map[string]string {
 		"name":      "品类名",
 		"type":      "类别",
 		"parent_id": "父品类id",
-		"configs":   "关联配置",
+		"code":      "唯一标示",
 	}
 }

@@ -76,27 +76,28 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 	}
 
 	ValidateData(taskInfo, map[string]string{
-		"category_id":    "int|required",                       //品类id
-		"shop_id":        "int|required",                       //店铺id
-		"name":           "string|required",                    //任务名
-		"coupon_url":     "string",                             //优惠券链接
-		"free_shipping":  "string|required|enum:Y,N",           //是否包邮
-		"closing_date":   "string|required",                    //截止日期
-		"sort":           "string|required|enum:multiple,sell", //排序方式
-		"sell_num":       "int",                                //现有付款人数约
-		"price_upper":    "float",                              //价格区间起
-		"price_down":     "float",                              //价格区间终
-		"province_id":    "int",                                // 省份id
-		"province":       "string",                             // 省
-		"city_id":        "int",                                // 城市id
-		"city":           "string",                             // 所在市
-		"question":       "string",                             //宝贝详情问答
-		"message":        "string",                             //留言
-		"addition":       "string",                             //增值服务
-		"add_img":        "string",                             //商家附加图(多张,分离)
-		"remark":         "string",                             //商家备注
-		"status":         "string",                             //任务状态
-		"publish_config": "string|required",                    //发布时间配置
+		"category_id":     "int|required",                       //品类id
+		"shop_id":         "int|required",                       //店铺id
+		"name":            "string|required",                    //任务名
+		"coupon_url":      "string",                             //优惠券链接
+		"free_shipping":   "string|required|enum:Y,N",           //是否包邮
+		"shipping_amount": "float",                              //邮费
+		"closing_date":    "string|required",                    //截止日期
+		"sort":            "string|required|enum:multiple,sell", //排序方式
+		"sell_num":        "int",                                //现有付款人数约
+		"price_upper":     "float",                              //价格区间起
+		"price_down":      "float",                              //价格区间终
+		"province_id":     "int",                                // 省份id
+		"province":        "string",                             // 省
+		"city_id":         "int",                                // 城市id
+		"city":            "string",                             // 所在市
+		"question":        "string",                             //宝贝详情问答
+		"message":         "string",                             //留言
+		"addition":        "string",                             //增值服务
+		"add_img":         "string",                             //商家附加图(多张,分离)
+		"remark":          "string",                             //商家备注
+		"status":          "string",                             //任务状态
+		"publish_config":  "string|required",                    //发布时间配置
 	}, task)
 
 	for _, item := range taskGoods {
@@ -123,7 +124,7 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 		tmpTaskDetail := model.NewTaskDetailModel()
 		if v, ok := item.(map[string]interface{}); ok {
 			ValidateData(v, map[string]string{
-				"type":       "string|enum:normal,words,img,video|required", // 任务类型
+				"type":       "string|required|enum:normal,words,img,video", // 任务类型
 				"keywords":   "string",                                      // 下单关键词
 				"keywords2":  "string",                                      // 备用关键词
 				"num":        "int",                                         // 单数
@@ -141,6 +142,7 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 
 	c.service.InsertTask(args)
 
+	// 补充返回信息
 	ReturnData(g, args)
 	return
 }

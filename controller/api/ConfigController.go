@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	. "business/common"
-	"business/dao"
 	"business/dao/model"
 	"business/service"
 )
@@ -49,7 +48,7 @@ func (c *ConfigController) ListConfig(g *gin.Context) {
 	}, args)
 
 	keys := strings.Split(args.Keys, ",")
-	configList := c.service.ListConfig(dao.ListConfigArgs{
+	configList := c.service.ListConfig(service.ListConfigArgs{
 		Keys: keys,
 	})
 
