@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	. "business/common"
 	"business/dao"
@@ -56,7 +57,6 @@ func (s *TaskService) InsertTask(args *InsertTaskArgs) {
 		panic(NewSysErr(fmt.Errorf("task_detail_type_config配置有误:%w", err)))
 	}
 
-	fmt.Println(detailConf)
 	// 计算本金
 	var goodsAmount float64
 	for _, v := range args.Goods {
@@ -78,6 +78,12 @@ func (s *TaskService) InsertTask(args *InsertTaskArgs) {
 	goodsCnt := float64(len(args.Goods) - 1)
 	addAmount += addConf["multi_goods"] * goodsCnt
 
+	// 发布时间处理
+	publishPlan := getPublishPlan(args.Task.PublishConfig)
+	if len(publishPlan) != len(args.Detail) {
+		panic(NewValidErr(fmt.Errorf("publish_config配置有误:%v", args.Task.PublishConfig)))
+	}
+
 	dao.InsertTask(args.Task)
 
 	for _, v := range args.Goods {
@@ -86,8 +92,7 @@ func (s *TaskService) InsertTask(args *InsertTaskArgs) {
 	}
 
 	var payAmount float64
-	for _, v := range args.Detail {
-		fmt.Println(detailConf[v.Type])
+	for k, v := range args.Detail {
 		v.SetTaskId(args.Task.Id).
 			SetGoodsAmount(goodsAmount).
 			SetBaseServAmount(baseServAmount).
@@ -100,12 +105,42 @@ func (s *TaskService) InsertTask(args *InsertTaskArgs) {
 		v.SetAmount(amount)
 		payAmount += amount
 
+		v.SetPublishTime(publishPlan[k])
+
 		dao.InsertTaskDetail(v)
 	}
 
 	// 更新任务总支付金额
 	args.Task.Update(model.NewTaskModel().SetPayAmount(payAmount))
 	args.Task.PayAmount = payAmount
+}
+
+func getPublishPlan(conf string) []string {
+	var publishPlan = make([]string, 0)
+	var publishConf map[string]interface{}
+	if err := json.Unmarshal([]byte(conf), &publishConf); err != nil {
+		return []string{}
+	}
+	plans := publishConf["plan"].([]interface{})
+	for _, v := range plans {
+		plan := v.(map[string]interface{})
+		start, _ := time.ParseInLocation("2006-01-02 15:04:05", plan["start"].(string), time.Local)
+		interval := Float64ToInt(plan["interval_min"].(float64))
+		total := Float64ToInt(plan["total"].(float64))
+		num := Float64ToInt(plan["num"].(float64))
+		for i := 0; i < total; i += num {
+			var tmp = make([]string, num)
+			if i == total-1 && total%num != 0 {
+				// 如果是最后一次分配，则只需分配剩余次数
+				tmp = make([]string, total%num)
+			}
+			for _ = range tmp {
+				publishPlan = append(publishPlan, start.Format("2006-01-02 15:04:05"))
+			}
+			start = start.Add(time.Duration(interval) * time.Minute)
+		}
+	}
+	return publishPlan
 }
 
 /**
