@@ -54,6 +54,7 @@ func ReqLog() gin.HandlerFunc {
 		cost := float64(time.Now().UnixNano()/1e6-start) / 1000
 		ReqLogChan <- &ReqLogForChan{
 			ReqNo:    ReqNo,
+			UserId:   TokenInfo.UserId,
 			Cost:     cost,
 			HttpCode: g.Writer.Status(),
 			Code:     resp.Code,

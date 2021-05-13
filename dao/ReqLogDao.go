@@ -1,13 +1,24 @@
 package dao
 
 import (
+	"log"
+	"runtime"
+
 	. "business/common"
 	"business/dao/model"
 )
 
 func UpdateReqLog(args *ReqLogForChan) {
-	log := model.NewReqLogModel().SetReqNo(args.ReqNo)
-	if !log.Info() {
+	defer func() {
+		if r := recover(); r != nil {
+			const size = 64 << 10
+			buf := make([]byte, size)
+			buf = buf[:runtime.Stack(buf, false)]
+			log.Printf("reqLogWorker: panic: %v\n%s", r, buf)
+		}
+	}()
+	reqLog := model.NewReqLogModel().SetReqNo(args.ReqNo)
+	if !reqLog.Info() {
 		(&model.ReqLog{
 			ReqNo:      args.ReqNo,
 			UserId:     args.UserId,
@@ -24,7 +35,7 @@ func UpdateReqLog(args *ReqLogForChan) {
 			CreateTime: GetNow(),
 		}).Insert()
 	} else {
-		log.Update(&model.ReqLog{
+		reqLog.Update(&model.ReqLog{
 			UserId:     args.UserId,
 			Router:     args.Router,
 			Method:     args.Method,
