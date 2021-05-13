@@ -14,9 +14,9 @@ import (
 "wechat": "string", // 微信号
 "invite_code": "string", // 邀请码
 "invite_user": "int", // 邀请人
-"province_id": "int", //
+"province_id": "int", // 省编号
 "province": "string", // 省
-"city_id": "int", //
+"city_id": "int", // 市编号
 "city": "string", // 市
 "address": "string", // 地址描述
 "contact_name": "string", // 联系人姓名
@@ -205,9 +205,9 @@ func (m User) Translates() map[string]string {
 		"wechat":            "微信号",
 		"invite_code":       "邀请码",
 		"invite_user":       "邀请人",
-		"province_id":       "",
+		"province_id":       "省编号",
 		"province":          "省",
-		"city_id":           "",
+		"city_id":           "市编号",
 		"city":              "市",
 		"address":           "地址描述",
 		"contact_name":      "联系人姓名",

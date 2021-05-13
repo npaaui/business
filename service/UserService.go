@@ -31,7 +31,18 @@ func (s *UserService) InfoUserById(id int) (userInfo cache.UserInfo) {
 	// 获取店铺数
 	userInfo.ShopCount, _ = dao.ListShop(&dao.ListShopArgs{UserId: id})
 
+	// 获取账户金额信息
+	account := dao.InfoAccountByUserAndType(id, dao.AccountTypeMain)
+	userInfo.Amount = account.Amount
+	userInfo.FrozenAmount = account.FrozenAmount
+
 	ca.SetContent(userInfo).SetCacheUserInfo()
+	return
+}
+
+func (s *UserService) ListUser(args *dao.ListUserArgs) (data *RespList) {
+	count, list := dao.ListUser(args)
+	data = NewRespList(count, list)
 	return
 }
 
@@ -69,4 +80,7 @@ func (s *UserService) UpdateUserPassword(set *model.User) {
 	if row == 0 {
 		panic(NewRespErr(ErrUpdate, ""))
 	}
+
+	ca := cache.NewCacheUserInfo(TokenInfo.UserId)
+	ca.DeleteCacheUserInfo()
 }

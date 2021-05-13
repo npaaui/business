@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	. "business/common"
+	"business/dao"
 	"business/dao/model"
 	"business/service"
 )
@@ -23,6 +24,23 @@ func NewUserController() *UserController {
  */
 func (c *UserController) InfoUser(g *gin.Context) {
 	userInfo := c.service.InfoUserById(TokenInfo.UserId)
+	ReturnData(g, userInfo)
+}
+
+/**
+ * 全部注册商家
+ */
+func (c *UserController) ListUser(g *gin.Context) {
+	var args = &dao.ListUserArgs{}
+	ValidateQuery(g, map[string]string{
+		"user_name":         "string",
+		"mobile":            "string",
+		"create_time_start": "string",
+		"create_time_end":   "string",
+		"page":              "int",
+		"page_size":         "int",
+	}, args)
+	userInfo := c.service.ListUser(args)
 	ReturnData(g, userInfo)
 }
 

@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"strings"
 
 	. "business/common"
 	"business/dao"
@@ -44,4 +45,55 @@ func (c *AccountController) Withdraw(g *gin.Context) {
 
 	c.service.Withdraw(args)
 	ReturnData(g, nil)
+}
+
+func (c *AccountController) UpdateAccountInOutStatus(g *gin.Context) {
+	args := &model.AccountInOut{
+		UserId: TokenInfo.UserId,
+	}
+	ValidatePostJson(g, map[string]string{
+		"id":     "int|required",
+		"status": "string|required|enum:" + dao.AccountInOutStatusCancel,
+	}, args)
+
+	c.service.UpdateAccountInOut(args)
+	ReturnData(g, nil)
+}
+
+/**
+ * 获取充提申请记录列表
+ */
+func (c *AccountController) ListAccountInOut(g *gin.Context) {
+	args := &dao.ListAccountInOutArgs{
+		UserId: TokenInfo.UserId,
+	}
+	ValidateQuery(g, map[string]string{
+		"type":      "string|enum:" + strings.Join(dao.AccountInOutTypeSlice, ","),
+		"page":      "int",
+		"page_size": "int",
+	}, args)
+	accountInOutList := c.service.ListAccountInOut(args)
+	ReturnData(g, accountInOutList)
+}
+
+/**
+ * 获取资金记录列表
+ */
+func (c *AccountController) ListAccountLog(g *gin.Context) {
+	args := &dao.ListAccountLogArgs{
+		UserId: TokenInfo.UserId,
+	}
+	ValidateQuery(g, map[string]string{
+		"account_type":      "string|enum:" + strings.Join(dao.AccountTypeSlice, ","),
+		"type":              "string|enum:" + strings.Join(dao.AccountLogTypeSlice, ","),
+		"task_id":           "int",
+		"order_id":          "int",
+		"shop_id":           "int",
+		"create_time_start": "string",
+		"create_time_end":   "string",
+		"page":              "int",
+		"page_size":         "int",
+	}, args)
+	accountInOutList := c.service.ListAccountLog(args)
+	ReturnData(g, accountInOutList)
 }

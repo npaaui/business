@@ -16,6 +16,8 @@ func LoadUserRouter(r gin.IRoutes) {
 	u := r
 	{
 		u.GET("/user", userCtrl.InfoUser)
+		u.GET("/user/list", userCtrl.ListUser)
+
 		u.GET("/shop", shopCtrl.ListShop)
 		u.POST("/shop", shopCtrl.InsertShop)
 		u.PUT("/shop", shopCtrl.UpdateShop)
@@ -27,6 +29,9 @@ func LoadUserRouter(r gin.IRoutes) {
 
 		u.POST("/recharge", accountCtrl.Recharge)
 		u.POST("/withdraw", accountCtrl.Withdraw)
+		u.GET("/account_in_out", accountCtrl.ListAccountInOut)
+		u.PUT("/account_in_out/status", accountCtrl.UpdateAccountInOutStatus)
+		u.GET("/account_log", accountCtrl.ListAccountLog)
 
 		u.GET("/task", taskCtrl.ListTask)
 		u.GET("/task/:id", taskCtrl.InfoTask)

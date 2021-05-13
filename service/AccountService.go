@@ -17,7 +17,26 @@ func (s *UserService) InsertAccount(account *model.Account) {
 }
 
 func (s *UserService) Recharge(accountInOut *model.AccountInOut) {
+	// 验证银行卡
+	userBank := model.NewUserBankModel().SetId(accountInOut.UserBankId)
+	if !userBank.Info() {
+		panic(NewRespErr(ErrNotExist, "银行卡信息有误"))
+	}
+	accountInOut.
+		SetBankName(userBank.Name).
+		SetBankCode(userBank.Code)
+
 	dao.InsertAccountInOut(accountInOut)
+
+	// 增加审核记录
+	dao.InsertAudit(&model.Audit{
+		Action:     dao.AuditActionCodeRecharge,
+		Status:     dao.AuditStatusInit,
+		LinkId:     accountInOut.Id,
+		UserId:     accountInOut.UserId,
+		CreateTime: GetNow(),
+		UpdateTime: GetNow(),
+	})
 }
 
 type WithdrawArgs struct {
@@ -28,6 +47,12 @@ type WithdrawArgs struct {
 }
 
 func (s *UserService) Withdraw(args *WithdrawArgs) {
+	// 验证银行卡
+	userBank := model.NewUserBankModel().SetId(args.UserBankId)
+	if !userBank.Info() {
+		panic(NewRespErr(ErrNotExist, "银行卡信息有误"))
+	}
+
 	// 验证密码
 	user := model.NewUserModel().
 		SetId(args.UserId).
@@ -36,7 +61,7 @@ func (s *UserService) Withdraw(args *WithdrawArgs) {
 
 	// 验证金额
 	account := dao.InfoAccountByUserAndType(args.UserId, dao.AccountTypeMain)
-	if account.Amount < 10 {
+	if args.Amount < 10 {
 		panic(NewRespErr(ErrAccountWithdrawAmount, "金额有误，提现金额至少为¥10.00"))
 	}
 	if account.Amount < args.Amount {
@@ -46,6 +71,59 @@ func (s *UserService) Withdraw(args *WithdrawArgs) {
 	// 添加提现申请
 	accountInOut := model.NewAccountInOutModel().
 		SetUserId(args.UserId).
-		SetType(dao.AccountInOutTypeWithdraw)
+		SetType(dao.AccountInOutTypeWithdraw).
+		SetBankName(userBank.Name).
+		SetBankCode(userBank.Code)
 	dao.InsertAccountInOut(accountInOut)
+
+	// 增加审核记录
+	dao.InsertAudit(&model.Audit{
+		Action:     dao.AuditActionCodeWithdraw,
+		Status:     dao.AuditStatusInit,
+		LinkId:     accountInOut.Id,
+		UserId:     accountInOut.UserId,
+		CreateTime: GetNow(),
+		UpdateTime: GetNow(),
+	})
+}
+
+func (s *UserService) UpdateAccountInOut(set *model.AccountInOut) {
+	accountInOut := &model.AccountInOut{
+		Id:     set.Id,
+		UserId: set.UserId,
+	}
+	if !accountInOut.Info() {
+		panic(NewRespErr(ErrNotExist, "不存在的记录"))
+	}
+
+	row := accountInOut.Update(set)
+	if row == 0 {
+		panic(NewRespErr(ErrUpdate, ""))
+	}
+}
+
+func (s *UserService) ListAccountInOut(args *dao.ListAccountInOutArgs) (data *RespList) {
+	count, list := dao.ListAccountInOut(args)
+
+	var retList []MapItf
+	for _, v := range list {
+		item := v.AsMapItf()
+		item["status_desc"] = dao.AccountInOutStatusMap[v.Status]
+		retList = append(retList, item)
+	}
+
+	data = NewRespList(count, retList)
+	return
+}
+
+func (s *UserService) ListAccountLog(args *dao.ListAccountLogArgs) (data *RespList) {
+	count, list := dao.ListAccountLog(args)
+	var retList []dao.ListAccountLogResult
+	for _, v := range list {
+		v.TypeDesc = dao.AccountLogTypeMap[v.Type]
+		v.AccountTypeDesc = dao.AccountTypeMap[v.AccountType]
+		retList = append(retList, v)
+	}
+	data = NewRespList(count, retList)
+	return
 }

@@ -13,8 +13,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/validate"
-	"github.com/gookit/validate/locales/zhcn"
 )
+
+var ReqNo string
 
 // 字段名称转换
 type ValidTransfer interface {
@@ -79,6 +80,13 @@ func ValidatePostJson(g *gin.Context, rule map[string]string, as interface{}) Ma
 	if err != nil {
 		panic(NewValidErr(err))
 	}
+
+	// 记录到请求日志
+	ReqLogChan <- &ReqLogForChan{
+		ReqNo: ReqNo,
+		Param: string(jsonByte),
+	}
+
 	err = json.Unmarshal(jsonByte, &data)
 	if err != nil {
 		panic(NewValidErr(err))
@@ -117,7 +125,6 @@ func ValidateData(data MapItf, format map[string]string, as interface{}) MapItf 
 	}()
 
 	// 参数校验
-	zhcn.RegisterGlobal()
 	va := validate.Map(data)
 	va.FilterRules(filter)
 	va.StringRules(rule)

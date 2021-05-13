@@ -15,6 +15,7 @@ import (
 "frozen_new": "float64", // 变更后冻结金额
 "task_id": "int", // 关联任务编号
 "shop_id": "int", // 关联店铺编号
+"order_id": "int", // 订单编号
 "in_out_id": "int", // 充提记录编号
 "remark": "string", // 说明
 "create_time": "string", // 添加时间
@@ -32,10 +33,11 @@ type AccountLog struct {
 	FrozenNew  float64 `db:"frozen_new" json:"frozen_new"`
 	TaskId     int     `db:"task_id" json:"task_id"`
 	ShopId     int     `db:"shop_id" json:"shop_id"`
+	OrderId    int     `db:"order_id" json:"order_id"`
 	InOutId    int     `db:"in_out_id" json:"in_out_id"`
 	Remark     string  `db:"remark" json:"remark"`
 	CreateTime string  `db:"create_time" json:"create_time"`
-	UpdateTime string  `db:"update_time" json:"update_time"`
+	UpdateTime string  `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewAccountLogModel() *AccountLog {
@@ -124,6 +126,11 @@ func (m *AccountLog) SetShopId(arg int) *AccountLog {
 	return m
 }
 
+func (m *AccountLog) SetOrderId(arg int) *AccountLog {
+	m.OrderId = arg
+	return m
+}
+
 func (m *AccountLog) SetInOutId(arg int) *AccountLog {
 	m.InOutId = arg
 	return m
@@ -156,6 +163,7 @@ func (m AccountLog) AsMapItf() MapItf {
 		"frozen_new":  m.FrozenNew,
 		"task_id":     m.TaskId,
 		"shop_id":     m.ShopId,
+		"order_id":    m.OrderId,
 		"in_out_id":   m.InOutId,
 		"remark":      m.Remark,
 		"create_time": m.CreateTime,
@@ -174,6 +182,7 @@ func (m AccountLog) Translates() map[string]string {
 		"frozen_new":  "变更后冻结金额",
 		"task_id":     "关联任务编号",
 		"shop_id":     "关联店铺编号",
+		"order_id":    "订单编号",
 		"in_out_id":   "充提记录编号",
 		"remark":      "说明",
 		"create_time": "添加时间",

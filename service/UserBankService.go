@@ -13,6 +13,13 @@ func (s *UserService) ListUserBank() (data *RespList) {
 }
 
 func (s *UserService) InsertUserBank(userBank *model.UserBank) {
+	// 校验银行
+	category := model.NewCategoryModel().SetId(userBank.BankCategoryId)
+	if !NewConfigService().InfoCategory(category) {
+		panic(NewRespErr(ErrNotExist, "不存在银行"))
+	}
+	userBank.BankCategoryName = category.Name
+
 	userBankS := &model.UserBank{
 		Code: userBank.Code,
 	}
@@ -34,6 +41,13 @@ func (s *UserService) UpdateUserBank(set *model.UserBank) {
 	if !userBank.Info() {
 		panic(NewRespErr(ErrNotExist, "不存在的银行卡记录"))
 	}
+
+	// 校验银行
+	category := model.NewCategoryModel().SetId(set.BankCategoryId)
+	if !NewConfigService().InfoCategory(category) {
+		panic(NewRespErr(ErrNotExist, "不存在银行"))
+	}
+	set.BankCategoryName = category.Name
 
 	row := userBank.Update(set)
 	if row == 0 {

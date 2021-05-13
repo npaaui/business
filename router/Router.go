@@ -9,7 +9,7 @@ import (
 )
 
 func Load(r *gin.Engine) *gin.Engine {
-	apiR := r.Group("api").Use(middleware.RecoverDbError())
+	apiR := r.Group("api").Use(middleware.ReqLog(), middleware.RecoverDbError())
 	{
 		loginCtrl := api.NewLoginController()
 		smsCtrl := api.NewSmsController()
@@ -23,6 +23,7 @@ func Load(r *gin.Engine) *gin.Engine {
 		{
 			LoadUserRouter(apiR)
 			LoadConfigRouter(apiR)
+			LoadAuditRouter(apiR)
 		}
 	}
 	return r

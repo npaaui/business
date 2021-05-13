@@ -30,8 +30,8 @@ func (c *LoginController) Register(g *gin.Context) {
 	_ = ValidatePostJson(g, map[string]string{
 		"mobile":      "string|required",
 		"password":    "string|required",
-		"invite_code": "string|required",
-		"valid_code":  "string|required",
+		"invite_code": "string",
+		"valid_code":  "string",
 		"wechat":      "string",
 		"qq":          "string",
 	}, user)

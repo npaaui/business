@@ -8,6 +8,8 @@ import (
 "id": "int", // 账户充提记录编号
 "user_id": "int", // 商家编号
 "user_bank_id": "int", // 用户银行卡编号
+"bank_name": "string", // 银行名称（快照）
+"bank_code": "string", // 银行卡号（快照）
 "type": "string", // 充值/提现
 "amount": "float64", // 金额
 "img": "string", // 充值截图
@@ -22,6 +24,8 @@ type AccountInOut struct {
 	Id         int     `db:"id" json:"id"`
 	UserId     int     `db:"user_id" json:"user_id"`
 	UserBankId int     `db:"user_bank_id" json:"user_bank_id"`
+	BankName   string  `db:"bank_name" json:"bank_name"`
+	BankCode   string  `db:"bank_code" json:"bank_code"`
 	Type       string  `db:"type" json:"type"`
 	Amount     float64 `db:"amount" json:"amount"`
 	Img        string  `db:"img" json:"img"`
@@ -83,6 +87,16 @@ func (m *AccountInOut) SetUserBankId(arg int) *AccountInOut {
 	return m
 }
 
+func (m *AccountInOut) SetBankName(arg string) *AccountInOut {
+	m.BankName = arg
+	return m
+}
+
+func (m *AccountInOut) SetBankCode(arg string) *AccountInOut {
+	m.BankCode = arg
+	return m
+}
+
 func (m *AccountInOut) SetType(arg string) *AccountInOut {
 	m.Type = arg
 	return m
@@ -128,6 +142,8 @@ func (m AccountInOut) AsMapItf() MapItf {
 		"id":           m.Id,
 		"user_id":      m.UserId,
 		"user_bank_id": m.UserBankId,
+		"bank_name":    m.BankName,
+		"bank_code":    m.BankCode,
 		"type":         m.Type,
 		"amount":       m.Amount,
 		"img":          m.Img,
@@ -143,6 +159,8 @@ func (m AccountInOut) Translates() map[string]string {
 		"id":           "账户充提记录编号",
 		"user_id":      "商家编号",
 		"user_bank_id": "用户银行卡编号",
+		"bank_name":    "银行名称（快照）",
+		"bank_code":    "银行卡号（快照）",
 		"type":         "充值/提现",
 		"amount":       "金额",
 		"img":          "充值截图",

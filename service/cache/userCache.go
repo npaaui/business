@@ -17,8 +17,10 @@ type UserInfoS struct {
 }
 
 type UserInfo struct {
-	User      *model.User `json:"user"`
-	ShopCount int         `json:"shop_count"`
+	User         *model.User `json:"user"`
+	ShopCount    int         `json:"shop_count"`
+	Amount       float64     `json:"amount"`
+	FrozenAmount float64     `json:"frozen_amount"`
 }
 
 func NewCacheUserInfo(id int) *UserInfoS {

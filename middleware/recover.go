@@ -13,6 +13,7 @@ func RecoverDbError() gin.HandlerFunc {
 	return func(g *gin.Context) {
 		defer func() {
 			p := recover()
+			g.Abort()
 			// 自定义异常
 			if sysErr, ok := p.(SysErr); ok {
 				ReturnErrSys(g, ErrSys, sysErr)
@@ -38,6 +39,7 @@ func RecoverDbError() gin.HandlerFunc {
 			}
 			if err, ok := p.(error); ok {
 				ReturnErrSys(g, ErrSys, err)
+				return
 			}
 		}()
 		g.Next()

@@ -5,6 +5,41 @@ import (
 	"business/dao/model"
 )
 
+type ListUserArgs struct {
+	UserName        string `json:"user_name"`
+	Mobile          string `json:"mobile"`
+	CreateTimeStart string `json:"create_time_start"`
+	CreateTimeEnd   string `json:"create_time_end"`
+	Offset          int    `json:"offset"`
+	Limit           int    `json:"limit"`
+}
+
+func ListUser(args *ListUserArgs) (int, []model.User) {
+	DbEngine.ShowSQL(true)
+	session := DbEngine.Table("b_user").
+		Alias("bu").Select("*").Where("1=1")
+
+	if args.UserName != "" {
+		session.And("bu.username = ?", args.UserName)
+	}
+	if args.Mobile != "" {
+		session.And("bu.mobile = ?", args.Mobile)
+	}
+	if args.CreateTimeStart != "" {
+		session.And("bu.create_time >= ?", args.CreateTimeStart)
+	}
+	if args.CreateTimeEnd != "" {
+		session.And("bu.create_time <= ?", args.CreateTimeEnd)
+	}
+
+	var list []model.User
+	count, err := session.Limit(args.Limit, args.Offset).FindAndCount(&list)
+	if err != nil {
+		panic(NewDbErr(err))
+	}
+	return int(count), list
+}
+
 func CheckMobileAndPwd(user *model.User) {
 	has := user.SetPassword(GetHash(user.Password)).Info()
 	if !has {

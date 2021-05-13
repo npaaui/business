@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gookit/validate/locales/zhcn"
 
 	. "business/common"
+	"business/dao"
 	"business/router"
 )
 
@@ -18,6 +21,8 @@ func main() {
 	InitConfig("config.ini")
 	InitMysql()
 	InitRedis()
+	zhcn.RegisterGlobal() // 验证器语言包
+	DoSomeRoutine()       // 常驻通道消费
 
 	/**
 	 * 加载路由
@@ -28,4 +33,19 @@ func main() {
 	if err := r.Run("127.0.0.1:8080"); err != nil {
 		fmt.Println(err)
 	}
+}
+
+func DoSomeRoutine() {
+	// 请求日志记录通道
+	go func() {
+		for {
+			select {
+			case reqLog := <-ReqLogChan:
+				go func() {
+					dao.UpdateReqLog(reqLog)
+				}()
+				time.Sleep(time.Millisecond * 100)
+			}
+		}
+	}()
 }

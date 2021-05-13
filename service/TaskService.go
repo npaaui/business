@@ -134,7 +134,7 @@ func getPublishPlan(conf string) []string {
 				// 如果是最后一次分配，则只需分配剩余次数
 				tmp = make([]string, total%num)
 			}
-			for _ = range tmp {
+			for range tmp {
 				publishPlan = append(publishPlan, start.Format("2006-01-02 15:04:05"))
 			}
 			start = start.Add(time.Duration(interval) * time.Minute)
