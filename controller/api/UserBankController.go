@@ -1,6 +1,7 @@
 package api
 
 import (
+	"business/dao"
 	"github.com/gin-gonic/gin"
 
 	. "business/common"
@@ -22,7 +23,7 @@ func NewUserBankController() *UserBankController {
  * 获取店铺列表
  */
 func (c *UserBankController) ListUserBank(g *gin.Context) {
-	userBankList := c.service.ListUserBank()
+	userBankList := c.service.ListUserBank(&dao.ListUserBankArgs{UserId: g.GetInt("user_id")})
 	ReturnData(g, userBankList)
 }
 
@@ -30,7 +31,7 @@ func (c *UserBankController) ListUserBank(g *gin.Context) {
  * 新增店铺
  */
 func (c *UserBankController) InsertUserBank(g *gin.Context) {
-	var userBank = model.NewUserBankModel().SetUserId(TokenInfo.UserId)
+	var userBank = model.NewUserBankModel().SetUserId(g.GetInt("user_id"))
 	_ = ValidatePostJson(g, map[string]string{
 		"bank_category_id": "int|required",    // 银行品类id
 		"open_bank_name":   "string",          // 开户行名称
@@ -47,7 +48,7 @@ func (c *UserBankController) InsertUserBank(g *gin.Context) {
  * 编辑店铺
  */
 func (c *UserBankController) UpdateUserBank(g *gin.Context) {
-	var userBank = model.NewUserBankModel().SetUserId(TokenInfo.UserId)
+	var userBank = model.NewUserBankModel().SetUserId(g.GetInt("user_id"))
 	_ = ValidatePostJson(g, map[string]string{
 		"id":               "int|required",
 		"bank_category_id": "int",    // 银行品类id
@@ -65,7 +66,7 @@ func (c *UserBankController) UpdateUserBank(g *gin.Context) {
  * 删除店铺
  */
 func (c *UserBankController) DeleteUserBank(g *gin.Context) {
-	var userBank = model.NewUserBankModel().SetUserId(TokenInfo.UserId)
+	var userBank = model.NewUserBankModel().SetUserId(g.GetInt("user_id"))
 	_ = ValidatePostJson(g, map[string]string{
 		"id": "int|required",
 	}, userBank)

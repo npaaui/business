@@ -8,7 +8,7 @@ import (
 const (
 	// 任务明细状态
 	TaskDetailStatusInit    = "init"    // 待审核
-	TaskDetailStatusPublic  = "public"  // 已发布
+	TaskDetailStatusPublish = "publish" // 已发布
 	TaskDetailStatusRunning = "running" // 进行中
 	TaskDetailStatusDone    = "done"    // 已完成
 )

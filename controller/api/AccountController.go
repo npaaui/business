@@ -22,7 +22,7 @@ func NewAccountController() *AccountController {
 
 func (c *AccountController) Recharge(g *gin.Context) {
 	accountInOut := model.NewAccountInOutModel().
-		SetUserId(TokenInfo.UserId).
+		SetUserId(g.GetInt("user_id")).
 		SetType(dao.AccountInOutTypeRecharge)
 	ValidatePostJson(g, map[string]string{
 		"user_bank_id": "int|required",
@@ -35,7 +35,7 @@ func (c *AccountController) Recharge(g *gin.Context) {
 
 func (c *AccountController) Withdraw(g *gin.Context) {
 	args := &service.WithdrawArgs{
-		UserId: TokenInfo.UserId,
+		UserId: g.GetInt("user_id"),
 	}
 	ValidatePostJson(g, map[string]string{
 		"user_bank_id": "int|required||用户银行卡编号",
@@ -49,7 +49,7 @@ func (c *AccountController) Withdraw(g *gin.Context) {
 
 func (c *AccountController) UpdateAccountInOutStatus(g *gin.Context) {
 	args := &model.AccountInOut{
-		UserId: TokenInfo.UserId,
+		UserId: g.GetInt("user_id"),
 	}
 	ValidatePostJson(g, map[string]string{
 		"id":     "int|required",
@@ -65,7 +65,7 @@ func (c *AccountController) UpdateAccountInOutStatus(g *gin.Context) {
  */
 func (c *AccountController) ListAccountInOut(g *gin.Context) {
 	args := &dao.ListAccountInOutArgs{
-		UserId: TokenInfo.UserId,
+		UserId: g.GetInt("user_id"),
 	}
 	ValidateQuery(g, map[string]string{
 		"type":      "string|enum:" + strings.Join(dao.AccountInOutTypeSlice, ","),
@@ -81,7 +81,7 @@ func (c *AccountController) ListAccountInOut(g *gin.Context) {
  */
 func (c *AccountController) ListAccountLog(g *gin.Context) {
 	args := &dao.ListAccountLogArgs{
-		UserId: TokenInfo.UserId,
+		UserId: g.GetInt("user_id"),
 	}
 	ValidateQuery(g, map[string]string{
 		"account_type":      "string|enum:" + strings.Join(dao.AccountTypeSlice, ","),

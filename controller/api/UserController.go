@@ -23,7 +23,7 @@ func NewUserController() *UserController {
  * 商家详情
  */
 func (c *UserController) InfoUser(g *gin.Context) {
-	userInfo := c.service.InfoUserById(TokenInfo.UserId)
+	userInfo := c.service.InfoUserById(g.GetInt("user_id"))
 	ReturnData(g, userInfo)
 }
 
@@ -68,6 +68,37 @@ func (c *UserController) UpdateUserPassword(g *gin.Context) {
 		user.SetWithdrawPassword(GetHash(args.Password))
 	} else {
 		user.SetPassword(GetHash(args.Password))
+	}
+
+	c.service.UpdateUserPassword(user)
+	ReturnData(g, nil)
+	return
+}
+
+/**
+ * 重置密码
+ */
+type ResetUserPasswordArgs struct {
+	Type   string `json:"type"`
+	UserId int    `json:"user_id"`
+}
+
+func (c *UserController) ResetUserPassword(g *gin.Context) {
+	var args = &ResetUserPasswordArgs{}
+	_ = ValidatePostJson(g, map[string]string{
+		"type":    "string||密码类型",
+		"user_id": "int|required||商家编号",
+	}, args)
+
+	user := model.NewUserModel().SetId(args.UserId)
+	if !user.Info() {
+		ReturnErrMsg(g, ErrNotExist, "无效商家")
+	}
+
+	if args.Type == "withdraw" {
+		user.SetWithdrawPassword(GetHash(user.Mobile))
+	} else {
+		user.SetPassword(GetHash(user.Mobile))
 	}
 
 	c.service.UpdateUserPassword(user)

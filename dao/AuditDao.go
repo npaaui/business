@@ -12,9 +12,17 @@ const (
 	AuditStatusPass = "pass"
 )
 
+var AuditStatusMap = MapStr{
+	AuditStatusInit: "待审核",
+	AuditStatusStop: "审核中断",
+	AuditStatusFail: "拒绝",
+	AuditStatusPass: "通过",
+}
+
 const (
 	AuditActionCodeRecharge = "recharge"
 	AuditActionCodeWithdraw = "withdraw"
+	AuditActionCodeTask     = "task"
 )
 
 func InsertAudit(audit *model.Audit) {

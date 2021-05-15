@@ -68,4 +68,40 @@ func (a *UpdateTaskStatusPaid) CheckTask() {
 	if a.task.Status != dao.TaskStatusInit {
 		panic(NewRespErr(ErrTaskStatus, "订单非待支付状态"))
 	}
+
+	account := dao.InfoAccountByUserAndType(a.UserId, dao.AccountTypeMain)
+	if a.task.PayAmount > account.Amount {
+		panic(NewRespErr(ErrAccountAmountLow, ""))
+	}
+}
+
+func (a *UpdateTaskStatusPaid) AfterUpdate() {
+	// 冻结任务金额
+	err := dao.UpdateAccountAmount(dao.UpdateAccountAmountArgs{
+		UserId:             a.UserId,
+		Type:               dao.AccountTypeMain,
+		ChangeType:         dao.AccountInOutTypeTask,
+		AmountChange:       -a.task.PayAmount,
+		FrozenAmountChange: a.task.PayAmount,
+		TaskId:             a.task.Id,
+		ShopId:             a.task.ShopId,
+	})
+	var remark string
+	if err != nil {
+		remark = err.Error()
+	}
+
+	// 增加审核记录
+	content := "商家编号:" + IntToStr(a.UserId) +
+		"\n任务编号:" + IntToStr(a.task.Id)
+	dao.InsertAudit(&model.Audit{
+		Action:     dao.AuditActionCodeTask,
+		Status:     dao.AuditStatusInit,
+		LinkId:     a.task.Id,
+		UserId:     a.UserId,
+		Content:    content,
+		Remark:     remark,
+		CreateTime: GetNow(),
+		UpdateTime: GetNow(),
+	})
 }

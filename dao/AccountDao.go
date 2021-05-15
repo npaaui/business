@@ -3,6 +3,7 @@ package dao
 import (
 	. "business/common"
 	"business/dao/model"
+	"business/service/cache"
 	"errors"
 )
 
@@ -53,10 +54,16 @@ func UpdateAccountAmount(args UpdateAccountAmountArgs) error {
 	if !account.Info() {
 		return errors.New("账户信息有误")
 	}
+
 	set := model.NewAccountModel().
 		SetAmount(account.Amount + args.AmountChange).
 		SetFrozenAmount(account.FrozenAmount + args.FrozenAmountChange)
-	if row := account.Update(set); row == 0 {
+
+	row, err := DbEngine.Cols("amount", "frozen_amount").Update(set, account)
+	if err != nil {
+		panic(NewDbErr(err))
+	}
+	if row == 0 {
 		return errors.New("更新账户金额失败")
 	}
 
@@ -77,5 +84,7 @@ func UpdateAccountAmount(args UpdateAccountAmountArgs) error {
 		UpdateTime: GetNow(),
 	}
 	log.Insert()
+
+	cache.NewCacheUserInfo(account.UserId).DeleteCacheUserInfo()
 	return nil
 }

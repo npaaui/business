@@ -39,9 +39,7 @@ func (c *TaskController) InfoTask(g *gin.Context) {
  * 获取任务列表
  */
 func (c *TaskController) ListTask(g *gin.Context) {
-	args := &service.ListTaskArgs{
-		UserId: TokenInfo.UserId,
-	}
+	args := &service.ListTaskArgs{}
 	ValidateQuery(g, map[string]string{
 		"id":                "int",
 		"shop_id":           "int",
@@ -53,6 +51,10 @@ func (c *TaskController) ListTask(g *gin.Context) {
 		"page":              "int",
 		"page_size":         "int",
 	}, args)
+	userType := g.GetString("user_type")
+	if userType != dao.UserTypeAdmin {
+		args.UserId = g.GetInt("user_id")
+	}
 	taskList := c.service.ListTask(args)
 	ReturnData(g, taskList)
 }
@@ -70,7 +72,7 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 	taskGoods := req["goods"].([]interface{})
 	taskDetail := req["detail"].([]interface{})
 
-	task := model.NewTaskModel()
+	task := model.NewTaskModel().SetUserId(g.GetInt("user_id"))
 	args := &service.InsertTaskArgs{
 		Task: task,
 	}
@@ -150,7 +152,7 @@ func (c *TaskController) InsertTask(g *gin.Context) {
 // 更新任务状态
 func (c *TaskController) UpdateTaskStatus(g *gin.Context) {
 	args := &service.UpdateTaskStatusArgs{
-		UserId: TokenInfo.UserId,
+		UserId: g.GetInt("user_id"),
 	}
 	ValidatePostJson(g, map[string]string{
 		"id":     "int|required||任务编号",
@@ -158,4 +160,28 @@ func (c *TaskController) UpdateTaskStatus(g *gin.Context) {
 	}, args)
 	c.service.UpdateTaskStatus(args)
 	ReturnData(g, nil)
+}
+
+/**
+ * 获取订单列表
+ */
+func (c *TaskController) ListOrder(g *gin.Context) {
+	args := &dao.ListOrderArgs{}
+	ValidateQuery(g, map[string]string{
+		"id":                "int",
+		"user_id":           "int",
+		"task_id":           "int",
+		"shop_id":           "int",
+		"status":            "string|enum:" + strings.Join(dao.OrderStatusSlice, ","),
+		"create_time_start": "string",
+		"create_time_end":   "string",
+		"page":              "int",
+		"page_size":         "int",
+	}, args)
+	userType := g.GetString("user_type")
+	if userType != dao.UserTypeAdmin {
+		args.UserId = g.GetInt("user_id")
+	}
+	orderList := service.NewOrderService().ListOrder(args)
+	ReturnData(g, orderList)
 }

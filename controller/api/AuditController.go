@@ -21,7 +21,7 @@ func NewAuditController() *AuditController {
 
 func (c *AuditController) ListAudit(g *gin.Context) {
 	args := &dao.ListAuditArgs{
-		UserId: TokenInfo.UserId,
+		UserId: g.GetInt("user_id"),
 	}
 	ValidateQuery(g, map[string]string{
 		"action":            "string",
@@ -37,7 +37,7 @@ func (c *AuditController) ListAudit(g *gin.Context) {
 
 func (c *AuditController) UpdateAudit(g *gin.Context) {
 	args := &model.Audit{
-		OpsId: TokenInfo.UserId,
+		OpsId: g.GetInt("user_id"),
 	}
 	ValidatePostJson(g, map[string]string{
 		"id":     "int",

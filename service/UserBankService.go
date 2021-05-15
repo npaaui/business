@@ -6,8 +6,8 @@ import (
 	"business/dao/model"
 )
 
-func (s *UserService) ListUserBank() (data *RespList) {
-	count, list := dao.ListUserBank(&dao.ListUserBankArgs{UserId: TokenInfo.UserId})
+func (s *UserService) ListUserBank(args *dao.ListUserBankArgs) (data *RespList) {
+	count, list := dao.ListUserBank(args)
 	data = NewRespList(count, list)
 	return
 }

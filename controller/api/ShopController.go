@@ -1,6 +1,7 @@
 package api
 
 import (
+	"business/dao"
 	"github.com/gin-gonic/gin"
 
 	. "business/common"
@@ -22,7 +23,7 @@ func NewShopController() *ShopController {
  * 获取店铺列表
  */
 func (c *ShopController) ListShop(g *gin.Context) {
-	shopList := c.service.ListShop()
+	shopList := c.service.ListShop(&dao.ListShopArgs{UserId: g.GetInt("user_id")})
 	ReturnData(g, shopList)
 }
 
@@ -30,7 +31,7 @@ func (c *ShopController) ListShop(g *gin.Context) {
  * 新增店铺
  */
 func (c *ShopController) InsertShop(g *gin.Context) {
-	var shop = model.NewShopModel().SetUserId(TokenInfo.UserId)
+	var shop = model.NewShopModel().SetUserId(g.GetInt("user_id"))
 	_ = ValidatePostJson(g, map[string]string{
 		"shop_sn":          "string|required",
 		"platform":         "string|required",
@@ -59,7 +60,7 @@ func (c *ShopController) InsertShop(g *gin.Context) {
  * 编辑店铺
  */
 func (c *ShopController) UpdateShop(g *gin.Context) {
-	var shop = model.NewShopModel().SetUserId(TokenInfo.UserId)
+	var shop = model.NewShopModel().SetUserId(g.GetInt("user_id"))
 	_ = ValidatePostJson(g, map[string]string{
 		"id":               "int|required",
 		"shop_sn":          "string|required",

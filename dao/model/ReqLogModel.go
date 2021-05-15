@@ -37,7 +37,7 @@ type ReqLog struct {
 	Ip         string  `db:"ip" json:"ip"`
 	Cost       float64 `db:"cost" json:"cost"`
 	CreateTime string  `db:"create_time" json:"create_time"`
-	UpdateTime string  `db:"update_time" json:"update_time" xorm:"updated"`
+	UpdateTime string  `db:"update_time" json:"update_time"`
 }
 
 func NewReqLogModel() *ReqLog {

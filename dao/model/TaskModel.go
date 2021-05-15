@@ -13,6 +13,7 @@ import (
 "shop_name": "string", // 店铺名称
 "name": "string", // 任务名
 "pay_amount": "float64", // 总费用
+"order_count": "int", // 总单数
 "coupon_url": "string", // 优惠券链接
 "free_shipping": "string", // 是否包邮
 "shipping_amount": "float64", // 邮费
@@ -45,6 +46,7 @@ type Task struct {
 	ShopName       string  `db:"shop_name" json:"shop_name"`
 	Name           string  `db:"name" json:"name"`
 	PayAmount      float64 `db:"pay_amount" json:"pay_amount"`
+	OrderCount     int     `db:"order_count" json:"order_count"`
 	CouponUrl      string  `db:"coupon_url" json:"coupon_url"`
 	FreeShipping   string  `db:"free_shipping" json:"free_shipping"`
 	ShippingAmount float64 `db:"shipping_amount" json:"shipping_amount"`
@@ -141,6 +143,11 @@ func (m *Task) SetName(arg string) *Task {
 
 func (m *Task) SetPayAmount(arg float64) *Task {
 	m.PayAmount = arg
+	return m
+}
+
+func (m *Task) SetOrderCount(arg int) *Task {
+	m.OrderCount = arg
 	return m
 }
 
@@ -259,6 +266,7 @@ func (m Task) AsMapItf() MapItf {
 		"shop_name":       m.ShopName,
 		"name":            m.Name,
 		"pay_amount":      m.PayAmount,
+		"order_count":     m.OrderCount,
 		"coupon_url":      m.CouponUrl,
 		"free_shipping":   m.FreeShipping,
 		"shipping_amount": m.ShippingAmount,
@@ -292,6 +300,7 @@ func (m Task) Translates() map[string]string {
 		"shop_name":       "店铺名称",
 		"name":            "任务名",
 		"pay_amount":      "总费用",
+		"order_count":     "总单数",
 		"coupon_url":      "优惠券链接",
 		"free_shipping":   "是否包邮",
 		"shipping_amount": "邮费",

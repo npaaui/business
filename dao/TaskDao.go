@@ -67,7 +67,7 @@ func ListTask(args *ListTaskArgs) (int, []model.Task) {
 	if args.CreateTimeEnd != "" {
 		session.And("create_time <= ?", args.CreateTimeEnd)
 	}
-	count, err := session.Limit(args.Limit, args.Offset).FindAndCount(&taskList)
+	count, err := session.OrderBy("create_time desc").Limit(args.Limit, args.Offset).FindAndCount(&taskList)
 	if err != nil {
 		panic(NewDbErr(err))
 	}
@@ -76,7 +76,6 @@ func ListTask(args *ListTaskArgs) (int, []model.Task) {
 
 func InsertTask(task *model.Task) {
 	task.
-		SetUserId(TokenInfo.UserId).
 		SetCreateTime(GetNow()).
 		SetUpdateTime(GetNow()).
 		SetStatus(TaskStatusInit)

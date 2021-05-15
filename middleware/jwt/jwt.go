@@ -38,8 +38,9 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 		// 继续交由下一个路由处理,并将解析出的信息传递下去
-		//g.Set("userInfo", claims)
-		TokenInfo.UserId = claims.UserId
+		//g.Set("token_info", claims)
+		g.Set("user_id", claims.UserId)
+		g.Set("user_type", claims.UserType)
 	}
 }
 
@@ -60,6 +61,7 @@ var (
 // 载荷，可以加一些自己需要的信息
 type CustomClaims struct {
 	UserId   int    `json:"user_id"`
+	UserType string `json:"user_type"`
 	Mobile   string `json:"mobile"`
 	Username string `json:"username"`
 	jwt.StandardClaims

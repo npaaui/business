@@ -33,6 +33,7 @@ func UpdateReqLog(args *ReqLogForChan) {
 			Ip:         args.Ip,
 			Cost:       args.Cost,
 			CreateTime: GetNow(),
+			UpdateTime: GetNow(),
 		}).Insert()
 	} else {
 		reqLog.Update(&model.ReqLog{
@@ -47,7 +48,7 @@ func UpdateReqLog(args *ReqLogForChan) {
 			Data:       args.Data,
 			Ip:         args.Ip,
 			Cost:       args.Cost,
-			CreateTime: GetNow(),
+			UpdateTime: GetNow(),
 		})
 	}
 }

@@ -15,6 +15,7 @@ var (
 
 	AccountInOutTypeRecharge = "recharge"
 	AccountInOutTypeWithdraw = "withdraw"
+	AccountInOutTypeTask     = "task"
 )
 var AccountInOutTypeSlice = []string{AccountInOutTypeRecharge, AccountInOutTypeWithdraw}
 var AccountInOutStatusMap = MapStr{

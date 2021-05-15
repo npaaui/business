@@ -5,6 +5,12 @@ import (
 	"business/dao/model"
 )
 
+const (
+	UserTypeShop  = "shop"
+	UserTypeAdmin = "admin"
+	UserTypeBuyer = "buyer"
+)
+
 type ListUserArgs struct {
 	UserName        string `json:"user_name"`
 	Mobile          string `json:"mobile"`
@@ -33,7 +39,7 @@ func ListUser(args *ListUserArgs) (int, []model.User) {
 	}
 
 	var list []model.User
-	count, err := session.Limit(args.Limit, args.Offset).FindAndCount(&list)
+	count, err := session.OrderBy("create_time desc").Limit(args.Limit, args.Offset).FindAndCount(&list)
 	if err != nil {
 		panic(NewDbErr(err))
 	}

@@ -76,11 +76,7 @@ func (s *UserService) UpdateUserPassword(set *model.User) {
 		panic(NewRespErr(ErrNotExist, "该手机号未注册"))
 	}
 
-	row := user.Update(set)
-	if row == 0 {
-		panic(NewRespErr(ErrUpdate, ""))
-	}
+	user.Update(set)
 
-	ca := cache.NewCacheUserInfo(TokenInfo.UserId)
-	ca.DeleteCacheUserInfo()
+	cache.NewCacheUserInfo(user.Id).DeleteCacheUserInfo()
 }

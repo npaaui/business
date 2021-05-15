@@ -35,7 +35,6 @@ func ReqLog() gin.HandlerFunc {
 
 		ReqLogChan <- &ReqLogForChan{
 			ReqNo:      ReqNo,
-			UserId:     TokenInfo.UserId,
 			Router:     g.Request.URL.Path,
 			Method:     g.Request.Method,
 			Agent:      g.Request.UserAgent(),
@@ -54,7 +53,7 @@ func ReqLog() gin.HandlerFunc {
 		cost := float64(time.Now().UnixNano()/1e6-start) / 1000
 		ReqLogChan <- &ReqLogForChan{
 			ReqNo:    ReqNo,
-			UserId:   TokenInfo.UserId,
+			UserId:   g.GetInt("user_id"),
 			Cost:     cost,
 			HttpCode: g.Writer.Status(),
 			Code:     resp.Code,

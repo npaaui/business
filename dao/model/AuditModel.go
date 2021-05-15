@@ -11,6 +11,8 @@ import (
 "link_id": "int", // 关联编号
 "user_id": "int", // 商家编号
 "ops_id": "int", // 审核人编号
+"content": "string", // 审核内容
+"img": "string", // 审核相关图片
 "remark": "string", // 备注
 "create_time": "string", // 添加时间
 "update_time": "string", // 更新时间
@@ -23,6 +25,8 @@ type Audit struct {
 	LinkId     int    `db:"link_id" json:"link_id"`
 	UserId     int    `db:"user_id" json:"user_id"`
 	OpsId      int    `db:"ops_id" json:"ops_id"`
+	Content    string `db:"content" json:"content"`
+	Img        string `db:"img" json:"img"`
 	Remark     string `db:"remark" json:"remark"`
 	CreateTime string `db:"create_time" json:"create_time"`
 	UpdateTime string `db:"update_time" json:"update_time"`
@@ -94,6 +98,16 @@ func (m *Audit) SetOpsId(arg int) *Audit {
 	return m
 }
 
+func (m *Audit) SetContent(arg string) *Audit {
+	m.Content = arg
+	return m
+}
+
+func (m *Audit) SetImg(arg string) *Audit {
+	m.Img = arg
+	return m
+}
+
 func (m *Audit) SetRemark(arg string) *Audit {
 	m.Remark = arg
 	return m
@@ -117,6 +131,8 @@ func (m Audit) AsMapItf() MapItf {
 		"link_id":     m.LinkId,
 		"user_id":     m.UserId,
 		"ops_id":      m.OpsId,
+		"content":     m.Content,
+		"img":         m.Img,
 		"remark":      m.Remark,
 		"create_time": m.CreateTime,
 		"update_time": m.UpdateTime,
@@ -130,6 +146,8 @@ func (m Audit) Translates() map[string]string {
 		"link_id":     "关联编号",
 		"user_id":     "商家编号",
 		"ops_id":      "审核人编号",
+		"content":     "审核内容",
+		"img":         "审核相关图片",
 		"remark":      "备注",
 		"create_time": "添加时间",
 		"update_time": "更新时间",

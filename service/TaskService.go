@@ -83,7 +83,7 @@ func (s *TaskService) InsertTask(args *InsertTaskArgs) {
 	if len(publishPlan) != len(args.Detail) {
 		panic(NewValidErr(fmt.Errorf("publish_config配置有误:%v", args.Task.PublishConfig)))
 	}
-
+	args.Task.OrderCount = len(args.Detail)
 	dao.InsertTask(args.Task)
 
 	for _, v := range args.Goods {
@@ -125,9 +125,9 @@ func getPublishPlan(conf string) []string {
 	for _, v := range plans {
 		plan := v.(map[string]interface{})
 		start, _ := time.ParseInLocation("2006-01-02 15:04:05", plan["start"].(string), time.Local)
-		interval := Float64ToInt(plan["interval_min"].(float64))
-		total := Float64ToInt(plan["total"].(float64))
-		num := Float64ToInt(plan["num"].(float64))
+		interval := StrToInt(plan["interval_min"].(string), 0)
+		total := StrToInt(plan["total"].(string), 0)
+		num := StrToInt(plan["num"].(string), 0)
 		for i := 0; i < total; i += num {
 			var tmp = make([]string, num)
 			if i == total-1 && total%num != 0 {

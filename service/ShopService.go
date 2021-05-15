@@ -7,8 +7,8 @@ import (
 	"business/service/cache"
 )
 
-func (s *UserService) ListShop() (data *RespList) {
-	count, list := dao.ListShop(&dao.ListShopArgs{UserId: TokenInfo.UserId})
+func (s *UserService) ListShop(args *dao.ListShopArgs) (data *RespList) {
+	count, list := dao.ListShop(args)
 	data = NewRespList(count, list)
 	return
 }
@@ -20,11 +20,11 @@ func (s *UserService) InfoShop(shop *model.Shop) bool {
 
 func (s *UserService) InsertShop(shop *model.Shop) {
 	var shopCount int
-	ca := cache.NewCacheUserInfo(TokenInfo.UserId)
+	ca := cache.NewCacheUserInfo(shop.UserId)
 	if ok := ca.GetCacheUserInfo(); ok {
 		shopCount = ca.Content.ShopCount
 	} else {
-		shopCount = int(dao.CountShop(&dao.CountShopArgs{UserId: TokenInfo.UserId}))
+		shopCount = int(dao.CountShop(&dao.CountShopArgs{UserId: shop.UserId}))
 	}
 
 	if shopCount >= 10 {

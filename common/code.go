@@ -31,12 +31,16 @@ const (
 	ErrShopCountLimit = 20102
 
 	ErrAccountWithdrawAmount = 20201
+	ErrAccountAmountLow      = 20202
 
 	// 任务模块 21001 ～ 22000
 	ErrTaskStatus = 21001 // 任务状态异常
 
 	// 消息模块 24001 ～ 25000
 	ErrSmsSend = 24001
+
+	// 审核模块 25001 ～ 26000
+	ErrAuditStop = 25001
 )
 
 func GetMsg(code int) string {
@@ -73,15 +77,20 @@ func GetMsg(code int) string {
 	case ErrShopCountLimit:
 		return "店铺数量已达上限"
 
+	case ErrAccountWithdrawAmount:
+		return "提现金额有误"
+	case ErrAccountAmountLow:
+		return "余额不足"
+
 	// 任务模块 21001 ～ 22000
 	case ErrTaskStatus:
 		return "任务状态异常"
 
-	case ErrAccountWithdrawAmount:
-		return "提现金额有误"
-
 	case ErrSmsSend:
 		return "信息发送失败"
+
+	case ErrAuditStop:
+		return "审核异常"
 
 	default:
 		return "未知错误"
