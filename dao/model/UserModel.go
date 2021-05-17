@@ -44,8 +44,8 @@ type User struct {
 	Address          string `db:"address" json:"address"`
 	ContactName      string `db:"contact_name" json:"contact_name"`
 	ContactMobile    string `db:"contact_mobile" json:"contact_mobile"`
-	CreateTime       string `db:"create_time" json:"create_time"`
-	UpdateTime       string `db:"update_time" json:"update_time"`
+	CreateTime       string `db:"create_time" json:"create_time" xorm:"created"`
+	UpdateTime       string `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewUserModel() *User {

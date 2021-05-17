@@ -20,9 +20,7 @@ var AccountLogTypeMap = MapStr{
 }
 
 func InsertAccountLog(accountLog *model.AccountLog) {
-	row := accountLog.
-		SetCreateTime(GetNow()).
-		SetUpdateTime(GetNow()).Insert()
+	row := accountLog.Insert()
 	if row == 0 {
 		Log(LogLevelDanger, errors.New("资金记录添加失败"))
 	}

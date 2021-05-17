@@ -95,13 +95,11 @@ func (a *UpdateTaskStatusPaid) AfterUpdate() {
 	content := "商家编号:" + IntToStr(a.UserId) +
 		"\n任务编号:" + IntToStr(a.task.Id)
 	dao.InsertAudit(&model.Audit{
-		Action:     dao.AuditActionCodeTask,
-		Status:     dao.AuditStatusInit,
-		LinkId:     a.task.Id,
-		UserId:     a.UserId,
-		Content:    content,
-		Remark:     remark,
-		CreateTime: GetNow(),
-		UpdateTime: GetNow(),
+		Action:  dao.AuditActionCodeTask,
+		Status:  dao.AuditStatusInit,
+		LinkId:  a.task.Id,
+		UserId:  a.UserId,
+		Content: content,
+		Remark:  remark,
 	})
 }

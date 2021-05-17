@@ -31,7 +31,7 @@ func (s *UserService) InsertShop(shop *model.Shop) {
 		panic(NewRespErr(ErrShopCountLimit, ""))
 	}
 
-	shop.SetCreateTime(GetNow()).SetUpdateTime(GetNow()).Insert()
+	shop.Insert()
 
 	ca.DeleteCacheUserInfo()
 }

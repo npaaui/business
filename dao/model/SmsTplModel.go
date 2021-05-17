@@ -20,8 +20,8 @@ type SmsTpl struct {
 	UniqueId   string `db:"unique_id" json:"unique_id"`
 	ModeId     string `db:"mode_id" json:"mode_id"`
 	Remark     string `db:"remark" json:"remark"`
-	CreateTime string `db:"create_time" json:"create_time"`
-	UpdateTime string `db:"update_time" json:"update_time"`
+	CreateTime string `db:"create_time" json:"create_time" xorm:"created"`
+	UpdateTime string `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewSmsTplModel() *SmsTpl {

@@ -32,8 +32,8 @@ type AccountInOut struct {
 	Status     string  `db:"status" json:"status"`
 	Remark     string  `db:"remark" json:"remark"`
 	OpsUserId  int     `db:"ops_user_id" json:"ops_user_id"`
-	CreateTime string  `db:"create_time" json:"create_time"`
-	UpdateTime string  `db:"update_time" json:"update_time"`
+	CreateTime string  `db:"create_time" json:"create_time" xorm:"created"`
+	UpdateTime string  `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewAccountInOutModel() *AccountInOut {

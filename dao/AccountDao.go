@@ -19,7 +19,7 @@ var AccountTypeMap = MapStr{
 var AccountTypeSlice = []string{AccountTypeMain, AccountTypeEmploy}
 
 func InsertAccount(account *model.Account) {
-	row := account.SetCreateTime(GetNow()).SetUpdateTime(GetNow()).Insert()
+	row := account.Insert()
 	if row == 0 {
 		panic(NewRespErr(ErrInsert, ""))
 	}
@@ -68,20 +68,18 @@ func UpdateAccountAmount(args UpdateAccountAmountArgs) error {
 	}
 
 	log := &model.AccountLog{
-		AccountId:  account.Id,
-		UserId:     account.UserId,
-		Type:       args.ChangeType,
-		AmountOld:  account.Amount,
-		AmountNew:  account.Amount + args.AmountChange,
-		FrozenOld:  account.FrozenAmount,
-		FrozenNew:  account.FrozenAmount + args.FrozenAmountChange,
-		TaskId:     args.TaskId,
-		ShopId:     args.ShopId,
-		OrderId:    args.OrderId,
-		InOutId:    args.InOutId,
-		Remark:     args.Remark,
-		CreateTime: GetNow(),
-		UpdateTime: GetNow(),
+		AccountId: account.Id,
+		UserId:    account.UserId,
+		Type:      args.ChangeType,
+		AmountOld: account.Amount,
+		AmountNew: account.Amount + args.AmountChange,
+		FrozenOld: account.FrozenAmount,
+		FrozenNew: account.FrozenAmount + args.FrozenAmountChange,
+		TaskId:    args.TaskId,
+		ShopId:    args.ShopId,
+		OrderId:   args.OrderId,
+		InOutId:   args.InOutId,
+		Remark:    args.Remark,
 	}
 	log.Insert()
 

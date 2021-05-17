@@ -27,7 +27,7 @@ func (s *UserService) InsertUserBank(userBank *model.UserBank) {
 	if userBankS.Id > 0 {
 		panic(NewRespErr(ErrInsert, "该银行卡记录已存在"))
 	}
-	ret := userBank.SetCreateTime(GetNow()).SetUpdateTime(GetNow()).Insert()
+	ret := userBank.Insert()
 	if ret != 1 {
 		panic(NewRespErr(ErrInsert, ""))
 	}

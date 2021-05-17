@@ -30,7 +30,7 @@ func ListTaskGoods(args *ListTaskGoodsArgs) (int, []model.TaskGoods) {
 }
 
 func InsertTaskGoods(goods *model.TaskGoods) *model.TaskGoods {
-	if row := goods.SetCreateTime(GetNow()).SetUpdateTime(GetNow()).Insert(); row == 0 {
+	if row := goods.Insert(); row == 0 {
 		panic(NewRespErr(ErrInsert, "任务商品新增失败"))
 	}
 	if !goods.Info() {

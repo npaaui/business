@@ -26,8 +26,8 @@ type UserBank struct {
 	Code             string `db:"code" json:"code"`
 	Name             string `db:"name" json:"name"`
 	Default          int8   `db:"default" json:"default"`
-	CreateTime       string `db:"create_time" json:"create_time"`
-	UpdateTime       string `db:"update_time" json:"update_time"`
+	CreateTime       string `db:"create_time" json:"create_time" xorm:"created"`
+	UpdateTime       string `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewUserBankModel() *UserBank {

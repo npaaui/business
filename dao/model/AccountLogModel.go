@@ -36,8 +36,8 @@ type AccountLog struct {
 	OrderId    int     `db:"order_id" json:"order_id"`
 	InOutId    int     `db:"in_out_id" json:"in_out_id"`
 	Remark     string  `db:"remark" json:"remark"`
-	CreateTime string  `db:"create_time" json:"create_time"`
-	UpdateTime string  `db:"update_time" json:"update_time"`
+	CreateTime string  `db:"create_time" json:"create_time" xorm:"created"`
+	UpdateTime string  `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewAccountLogModel() *AccountLog {

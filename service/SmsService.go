@@ -20,8 +20,6 @@ var SmsValidTypeArr = []string{SmsValidTypeRegister, SmsValidTypeUpdatePassword,
 
 func SendSmsValid(smsValid *model.SmsValid) error {
 	row := smsValid.SetCode(RandNumString(4)).
-		SetCreateTime(GetNow()).
-		SetUpdateTime(GetNow()).
 		SetExpireTime(GetNow()).Insert()
 	if row == 0 {
 		return errors.New("生成短信验证码失败")

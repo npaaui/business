@@ -20,8 +20,8 @@ type Config struct {
 	Value      string `db:"value" json:"value"`
 	Opt        string `db:"opt" json:"opt"`
 	Comment    string `db:"comment" json:"comment"`
-	CreateTime string `db:"create_time" json:"create_time"`
-	UpdateTime string `db:"update_time" json:"update_time"`
+	CreateTime string `db:"create_time" json:"create_time" xorm:"created"`
+	UpdateTime string `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewConfigModel() *Config {

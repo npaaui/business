@@ -30,8 +30,8 @@ type TaskGoods struct {
 	SearchPrice float64 `db:"search_price" json:"search_price"`
 	Num         int     `db:"num" json:"num"`
 	Spec        string  `db:"spec" json:"spec"`
-	CreateTime  string  `db:"create_time" json:"create_time"`
-	UpdateTime  string  `db:"update_time" json:"update_time"`
+	CreateTime  string  `db:"create_time" json:"create_time" xorm:"created"`
+	UpdateTime  string  `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewTaskGoodsModel() *TaskGoods {

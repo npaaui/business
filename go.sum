@@ -98,6 +98,8 @@ github.com/npaaui/helper-go v1.0.1 h1:vV3E44ktSxWB/UabTua5oCjnf4MkADkgH+lnxNhmH/
 github.com/npaaui/helper-go v1.0.1/go.mod h1:UdkY7v7u0aOOSLK2L3BVF15KRrgcKDoc42NtP+beNGc=
 github.com/npaaui/helper-go v1.0.2 h1:qEly8T+f0xdSsPfRIXmy0RIazOYJSVvue19w77PKXZ0=
 github.com/npaaui/helper-go v1.0.2/go.mod h1:UdkY7v7u0aOOSLK2L3BVF15KRrgcKDoc42NtP+beNGc=
+github.com/npaaui/helper-go v1.0.3 h1:6hn/tp7KEC+lg3CoZrOWIMkMg+7X+3ITTEbuVTOgTSQ=
+github.com/npaaui/helper-go v1.0.3/go.mod h1:UdkY7v7u0aOOSLK2L3BVF15KRrgcKDoc42NtP+beNGc=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/gomega v1.4.3/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=

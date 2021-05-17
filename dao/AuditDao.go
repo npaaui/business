@@ -32,12 +32,11 @@ func InsertAudit(audit *model.Audit) {
 
 	// 添加审核日志
 	log := &model.AuditLog{
-		AuditId:    audit.Id,
-		Status:     audit.Status,
-		LinkId:     audit.LinkId,
-		Remark:     audit.Remark,
-		OpsId:      audit.OpsId,
-		CreateTime: GetNow(),
+		AuditId: audit.Id,
+		Status:  audit.Status,
+		LinkId:  audit.LinkId,
+		Remark:  audit.Remark,
+		OpsId:   audit.OpsId,
 	}
 	log.Insert()
 }

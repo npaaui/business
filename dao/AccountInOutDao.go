@@ -27,9 +27,7 @@ var AccountInOutStatusMap = MapStr{
 
 func InsertAccountInOut(accountInOut *model.AccountInOut) {
 	row := accountInOut.
-		SetStatus(AccountInOutStatusInit).
-		SetCreateTime(GetNow()).
-		SetUpdateTime(GetNow()).Insert()
+		SetStatus(AccountInOutStatusInit).Insert()
 	if row == 0 {
 		if accountInOut.Type == AccountInOutTypeRecharge {
 			panic(NewRespErr(ErrInsert, "添加充值申请失败"))

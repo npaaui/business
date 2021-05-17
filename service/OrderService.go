@@ -36,8 +36,6 @@ func (s *OrderService) InitOrders(taskId int) error {
 			Status:        dao.OrderStatusInit,
 			CommentStatus: dao.OrderCommentStatusInit,
 			RunningTime:   GetBegin(),
-			CreateTime:    GetNow(),
-			UpdateTime:    GetNow(),
 		}).Insert()
 	}
 	return nil

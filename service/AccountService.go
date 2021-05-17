@@ -33,13 +33,11 @@ func (s *UserService) Recharge(accountInOut *model.AccountInOut) {
 		"\n充值金额:" + Float64ToString(accountInOut.Amount) +
 		"\n充值时间:" + accountInOut.CreateTime
 	dao.InsertAudit(&model.Audit{
-		Action:     dao.AuditActionCodeRecharge,
-		Status:     dao.AuditStatusInit,
-		LinkId:     accountInOut.Id,
-		UserId:     accountInOut.UserId,
-		Content:    content,
-		CreateTime: GetNow(),
-		UpdateTime: GetNow(),
+		Action:  dao.AuditActionCodeRecharge,
+		Status:  dao.AuditStatusInit,
+		LinkId:  accountInOut.Id,
+		UserId:  accountInOut.UserId,
+		Content: content,
 	})
 }
 
@@ -86,14 +84,12 @@ func (s *UserService) Withdraw(args *WithdrawArgs) {
 		"\n提现金额:" + Float64ToString(accountInOut.Amount) +
 		"\n提现时间:" + accountInOut.CreateTime
 	dao.InsertAudit(&model.Audit{
-		Action:     dao.AuditActionCodeWithdraw,
-		Status:     dao.AuditStatusInit,
-		LinkId:     accountInOut.Id,
-		UserId:     accountInOut.UserId,
-		Content:    content,
-		Img:        accountInOut.Img,
-		CreateTime: GetNow(),
-		UpdateTime: GetNow(),
+		Action:  dao.AuditActionCodeWithdraw,
+		Status:  dao.AuditStatusInit,
+		LinkId:  accountInOut.Id,
+		UserId:  accountInOut.UserId,
+		Content: content,
+		Img:     accountInOut.Img,
 	})
 }
 

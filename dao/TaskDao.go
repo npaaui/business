@@ -75,10 +75,7 @@ func ListTask(args *ListTaskArgs) (int, []model.Task) {
 }
 
 func InsertTask(task *model.Task) {
-	task.
-		SetCreateTime(GetNow()).
-		SetUpdateTime(GetNow()).
-		SetStatus(TaskStatusInit)
+	task.SetStatus(TaskStatusInit)
 
 	if task.ClosingDate == "no" {
 		task.SetClosingDate(GetForever())

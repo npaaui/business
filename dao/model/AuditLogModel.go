@@ -23,7 +23,7 @@ type AuditLog struct {
 	UserId     int    `db:"user_id" json:"user_id"`
 	OpsId      int    `db:"ops_id" json:"ops_id"`
 	Remark     string `db:"remark" json:"remark"`
-	CreateTime string `db:"create_time" json:"create_time"`
+	CreateTime string `db:"create_time" json:"create_time" xorm:"created"`
 }
 
 func NewAuditLogModel() *AuditLog {

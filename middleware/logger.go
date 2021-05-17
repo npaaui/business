@@ -34,13 +34,12 @@ func ReqLog() gin.HandlerFunc {
 		ReqNo = time.Now().Format("20060102-150405-") + nowNano[len(nowNano)-9:len(nowNano)]
 
 		ReqLogChan <- &ReqLogForChan{
-			ReqNo:      ReqNo,
-			Router:     g.Request.URL.Path,
-			Method:     g.Request.Method,
-			Agent:      g.Request.UserAgent(),
-			Param:      g.Request.RequestURI,
-			Ip:         g.ClientIP(),
-			CreateTime: GetNow(),
+			ReqNo:  ReqNo,
+			Router: g.Request.URL.Path,
+			Method: g.Request.Method,
+			Agent:  g.Request.UserAgent(),
+			Param:  g.Request.RequestURI,
+			Ip:     g.ClientIP(),
 		}
 
 		g.Next()

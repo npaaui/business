@@ -24,8 +24,8 @@ type SmsValid struct {
 	Code       string `db:"code" json:"code"`
 	Ip         string `db:"ip" json:"ip"`
 	ExpireTime string `db:"expire_time" json:"expire_time"`
-	CreateTime string `db:"create_time" json:"create_time"`
-	UpdateTime string `db:"update_time" json:"update_time"`
+	CreateTime string `db:"create_time" json:"create_time" xorm:"created"`
+	UpdateTime string `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewSmsValidModel() *SmsValid {

@@ -48,8 +48,8 @@ type TaskDetail struct {
 	CommentAmount      float64 `db:"comment_amount" json:"comment_amount"`
 	ShippingAmount     float64 `db:"shipping_amount" json:"shipping_amount"`
 	PublishTime        string  `db:"publish_time" json:"publish_time"`
-	CreateTime         string  `db:"create_time" json:"create_time"`
-	UpdateTime         string  `db:"update_time" json:"update_time"`
+	CreateTime         string  `db:"create_time" json:"create_time" xorm:"created"`
+	UpdateTime         string  `db:"update_time" json:"update_time" xorm:"updated"`
 }
 
 func NewTaskDetailModel() *TaskDetail {
