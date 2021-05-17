@@ -22,7 +22,7 @@ func ListShop(args *ListShopArgs) (int, []model.Shop) {
 	}
 
 	var shopList []model.Shop
-	count, err := session.OrderBy("create_time desc").FindAndCount(&shopList)
+	count, err := session.OrderBy("s.create_time desc").FindAndCount(&shopList)
 	if err != nil {
 		panic(NewDbErr(err))
 	}

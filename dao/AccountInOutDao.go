@@ -61,7 +61,7 @@ func ListAccountInOut(args *ListAccountInOutArgs) (int, []model.AccountInOut) {
 		session.And("aio.type = ?", args.Type)
 	}
 
-	session.OrderBy("create_time desc").Limit(args.Limit, args.Offset)
+	session.OrderBy("aio.create_time desc").Limit(args.Limit, args.Offset)
 
 	var accountInOutList []model.AccountInOut
 	count, err := session.FindAndCount(&accountInOutList)

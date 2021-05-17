@@ -26,6 +26,11 @@ func GetForever() (date string) {
 	return
 }
 
+func GetBegin() (date string) {
+	date = "0000-00-00 00:00:00"
+	return
+}
+
 func GetTomorrowBegin() (date string) {
 	date = time.Now().AddDate(0, 0, 1).Format("2006-01-02 00:00:00")
 	return

@@ -21,6 +21,7 @@ func Load(r *gin.Engine) *gin.Engine {
 
 		apiR.Use(jwt.JWTAuth())
 		{
+			apiR.PUT("logout", loginCtrl.Logout)
 			LoadUserRouter(apiR)
 			LoadConfigRouter(apiR)
 			LoadAuditRouter(apiR)

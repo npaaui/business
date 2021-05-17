@@ -1,6 +1,8 @@
 package api
 
 import (
+	"bytes"
+	"encoding/csv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -177,11 +179,45 @@ func (c *TaskController) ListOrder(g *gin.Context) {
 		"create_time_end":   "string",
 		"page":              "int",
 		"page_size":         "int",
+		"export":            "int",
 	}, args)
 	userType := g.GetString("user_type")
 	if userType != dao.UserTypeAdmin {
 		args.UserId = g.GetInt("user_id")
 	}
-	orderList := service.NewOrderService().ListOrder(args)
-	ReturnData(g, orderList)
+	if args.Export > 0 {
+		args.Offset = 0
+		args.Limit = 20000
+		_, list := service.NewOrderService().ListOrder(args)
+		header := []string{"订单编号", "接单时间", "任务编号", "买手编号", "任务店铺", "接单信息", "费用", "实付", "评论状态", "订单状态"}
+
+		b := &bytes.Buffer{}
+		b.WriteString("\xEF\xBB\xBF") // 写入UTF-8 BOM，避免中文乱码
+		wr := csv.NewWriter(b)
+		wr.Write(header) //按行shu
+
+		var items []string
+		for _, v := range list {
+			items = []string{
+				IntToStr(v.Id),
+				v.RunningTime,
+				IntToStr(v.TaskId),
+				IntToStr(v.BuyerId),
+				v.ShopName,
+				"",
+				Float64ToString(v.Amount),
+				Float64ToString(v.PaidAmount),
+				v.CommentStatusDesc,
+				v.StatusDesc,
+			}
+			_ = wr.Write(items)
+		}
+		wr.Flush()
+		ReturnFile(g, "order_list.csv", b.Bytes())
+		return
+	}
+
+	count, list := service.NewOrderService().ListOrder(args)
+	data := NewRespList(count, list)
+	ReturnData(g, data)
 }

@@ -95,3 +95,19 @@ type LoginResult struct {
 	User  model.User `json:"user"`
 	Token string     `json:"token"`
 }
+
+/**
+ * 退出登录
+ */
+func (c *LoginController) Logout(g *gin.Context) {
+	//j := myjwt.NewJWT()
+	//token := g.Request.Header.Get("authorization")
+	//token = strings.Replace(token, "Bearer ", "", 1)
+	//_, err := j.InvalidToken(token)
+	//if err != nil {
+	//	ReturnErrMsg(g, ErrUserLogout, err.Error())
+	//	return
+	//}
+	ReturnData(g, nil)
+	return
+}

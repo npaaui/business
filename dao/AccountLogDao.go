@@ -86,7 +86,7 @@ func ListAccountLog(args *ListAccountLogArgs) (int, []ListAccountLogResult) {
 		session.And("al.create_time <= ?", args.CreateTimeEnd)
 	}
 
-	session.OrderBy("create_time desc").Limit(args.Limit, args.Offset)
+	session.OrderBy("al.create_time desc").Limit(args.Limit, args.Offset)
 
 	var accountLogList []ListAccountLogResult
 	count, err := session.FindAndCount(&accountLogList)

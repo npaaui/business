@@ -80,7 +80,7 @@ func ListAudit(args *ListAuditArgs) (int, []model.Audit) {
 		session.And("a.create_time <= ?", args.CreateTimeEnd)
 	}
 
-	session.OrderBy("create_time desc").Limit(args.Limit, args.Offset)
+	session.OrderBy("a.create_time desc").Limit(args.Limit, args.Offset)
 
 	var auditList []model.Audit
 	count, err := session.FindAndCount(&auditList)

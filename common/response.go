@@ -55,3 +55,10 @@ func ReturnErrSys(g *gin.Context, code int, err error) {
 	})
 	return
 }
+
+func ReturnFile(c *gin.Context, fileName string, data []byte) {
+	c.Writer.Header().Set("Content-Type", "application/octet-stream") //二进制流文件
+	c.Writer.Header().Set("Content-Disposition", fmt.Sprintf("attachment;filename=%s", fileName))
+	c.Data(200, "application/octet-stream", data)
+	c.Abort()
+}

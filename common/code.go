@@ -24,9 +24,11 @@ const (
 	ErrNotExist = 10204
 
 	// 用户模块 20001 ～ 21000
-	ErrUserRegister = 20001
-	ErrUserLogin    = 20002
-	ErrUserPassword = 20003
+	ErrUserRegister     = 20001
+	ErrUserLogin        = 20002
+	ErrUserLogout       = 20003
+	ErrUserPassword     = 20004
+	ErrUserTokenInvalid = 20005
 
 	ErrShopCountLimit = 20102
 
@@ -71,8 +73,12 @@ func GetMsg(code int) string {
 		return "注册失败"
 	case ErrUserLogin:
 		return "登录失败"
+	case ErrUserLogout:
+		return "退出登录失败"
 	case ErrUserPassword:
 		return "密码错误"
+	case ErrUserTokenInvalid:
+		return "登录信息失效，请重新登录"
 
 	case ErrShopCountLimit:
 		return "店铺数量已达上限"

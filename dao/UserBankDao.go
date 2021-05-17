@@ -17,7 +17,7 @@ func ListUserBank(args *ListUserBankArgs) (int, []model.UserBank) {
 		Where("ub.user_id = ?", args.UserId)
 
 	var userBankList []model.UserBank
-	count, err := session.OrderBy("create_time desc").FindAndCount(&userBankList)
+	count, err := session.OrderBy("ub.create_time desc").FindAndCount(&userBankList)
 	if err != nil {
 		panic(NewDbErr(err))
 	}

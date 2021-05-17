@@ -16,7 +16,7 @@ func JWTAuth() gin.HandlerFunc {
 		token := g.Request.Header.Get("authorization")
 		token = strings.Replace(token, "Bearer ", "", 1)
 		if token == "" {
-			ReturnErrMsg(g, ErrUserLogin, "请求未携带token，无权限访问")
+			ReturnErrMsg(g, ErrUserTokenInvalid, "请求未携带token，无权限访问")
 			g.Abort()
 			return
 		}
@@ -28,12 +28,12 @@ func JWTAuth() gin.HandlerFunc {
 		claims, err := j.ParseToken(token)
 		if err != nil {
 			if err == TokenExpired {
-				ReturnErrMsg(g, ErrUserLogin, "登录授权已过期")
+				ReturnErrMsg(g, ErrUserTokenInvalid, "登录授权已过期")
 				g.Abort()
 				return
 			}
 
-			ReturnErr(g, ErrUserLogin, err)
+			ReturnErrSys(g, ErrUserTokenInvalid, err)
 			g.Abort()
 			return
 		}
@@ -121,6 +121,25 @@ func (j *JWT) ParseToken(tokenString string) (*CustomClaims, error) {
 
 // 更新token
 func (j *JWT) RefreshToken(tokenString string) (string, error) {
+	jwt.TimeFunc = func() time.Time {
+		return time.Unix(0, 0)
+	}
+	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return j.SigningKey, nil
+	})
+	if err != nil {
+		return "", err
+	}
+	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
+		jwt.TimeFunc = time.Now
+		claims.StandardClaims.ExpiresAt = time.Now().Add(1 * time.Hour).Unix()
+		return j.CreateToken(*claims)
+	}
+	return "", TokenInvalid
+}
+
+// 失效token
+func (j *JWT) InvalidToken(tokenString string) (string, error) {
 	jwt.TimeFunc = func() time.Time {
 		return time.Unix(0, 0)
 	}

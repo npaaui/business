@@ -21,7 +21,6 @@ type ListUserArgs struct {
 }
 
 func ListUser(args *ListUserArgs) (int, []model.User) {
-	DbEngine.ShowSQL(true)
 	session := DbEngine.Table("b_user").
 		Alias("bu").Select("*").Where("1=1")
 
@@ -39,7 +38,7 @@ func ListUser(args *ListUserArgs) (int, []model.User) {
 	}
 
 	var list []model.User
-	count, err := session.OrderBy("create_time desc").Limit(args.Limit, args.Offset).FindAndCount(&list)
+	count, err := session.OrderBy("bu.create_time desc").Limit(args.Limit, args.Offset).FindAndCount(&list)
 	if err != nil {
 		panic(NewDbErr(err))
 	}

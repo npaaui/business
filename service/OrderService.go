@@ -31,8 +31,11 @@ func (s *OrderService) InitOrders(taskId int) error {
 			TaskId:        v.TaskId,
 			TaskDetailId:  v.Id,
 			ShopId:        task.ShopId,
+			Amount:        v.Amount,
+			PaidAmount:    0,
 			Status:        dao.OrderStatusInit,
 			CommentStatus: dao.OrderCommentStatusInit,
+			RunningTime:   GetBegin(),
 			CreateTime:    GetNow(),
 			UpdateTime:    GetNow(),
 		}).Insert()
@@ -43,12 +46,13 @@ func (s *OrderService) InitOrders(taskId int) error {
 /**
  * 订单列表
  */
-func (s *OrderService) ListOrder(args *dao.ListOrderArgs) (data *RespList) {
+func (s *OrderService) ListOrder(args *dao.ListOrderArgs) (int, []dao.ListOrderRet) {
 	count, list := dao.ListOrder(args)
-	for _, v := range list {
+	var resList = make([]dao.ListOrderRet, len(list))
+	for k, v := range list {
 		v.StatusDesc = dao.OrderStatusMap[v.Status]
 		v.CommentStatusDesc = dao.OrderCommentStatusMap[v.CommentStatus]
+		resList[k] = v
 	}
-	data = NewRespList(count, list)
-	return
+	return count, resList
 }
