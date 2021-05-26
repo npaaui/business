@@ -54,7 +54,7 @@ func (s *UserService) RegisterUser(user *model.User) {
 	if userS.Id > 0 {
 		panic(NewRespErr(ErrUserRegister, "该手机号已被注册"))
 	}
-	ret := user.SetCreateTime(GetNow()).SetUpdateTime(GetNow()).SetPassword(GetHash(user.Password)).Insert()
+	ret := user.SetPassword(GetHash(user.Password)).Insert()
 	if ret != 1 {
 		panic(NewRespErr(ErrUserRegister, ""))
 	}

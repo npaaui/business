@@ -1,5 +1,7 @@
 package common
 
+import "sync"
+
 type ReqLogForChan struct {
 	ReqNo      string
 	UserId     int
@@ -18,3 +20,5 @@ type ReqLogForChan struct {
 }
 
 var ReqLogChan = make(chan *ReqLogForChan, 100)
+
+var WG sync.WaitGroup

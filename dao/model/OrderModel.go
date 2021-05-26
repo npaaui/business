@@ -8,7 +8,7 @@ import (
 "id": "int", // 订单编号
 "user_id": "int", // 商家编号
 "buyer_id": "int", // 买手编号
-"task_id": "int", // 任务编号
+"task_id": "int64", // 任务编号
 "task_detail_id": "int", // 任务明细编号
 "shop_id": "int", // 店铺编号
 "online_order_id": "int", // 网店订单号
@@ -25,7 +25,7 @@ type Order struct {
 	Id            int     `db:"id" json:"id"`
 	UserId        int     `db:"user_id" json:"user_id"`
 	BuyerId       int     `db:"buyer_id" json:"buyer_id"`
-	TaskId        int     `db:"task_id" json:"task_id"`
+	TaskId        int64   `db:"task_id" json:"task_id"`
 	TaskDetailId  int     `db:"task_detail_id" json:"task_detail_id"`
 	ShopId        int     `db:"shop_id" json:"shop_id"`
 	OnlineOrderId int     `db:"online_order_id" json:"online_order_id"`
@@ -89,7 +89,7 @@ func (m *Order) SetBuyerId(arg int) *Order {
 	return m
 }
 
-func (m *Order) SetTaskId(arg int) *Order {
+func (m *Order) SetTaskId(arg int64) *Order {
 	m.TaskId = arg
 	return m
 }

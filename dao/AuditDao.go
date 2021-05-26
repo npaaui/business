@@ -3,6 +3,7 @@ package dao
 import (
 	. "business/common"
 	"business/dao/model"
+	"errors"
 )
 
 const (
@@ -25,20 +26,53 @@ const (
 	AuditActionCodeTask     = "task"
 )
 
-func InsertAudit(audit *model.Audit) {
-	audit.Insert()
+func InsertAudit(audit *model.Audit) error {
+	session := DbEngine.NewSession()
+	defer session.Close()
+	err := session.Begin()
+	if err != nil {
+		return err
+	}
 
-	audit.Info()
+	row, err := session.Insert(audit)
+	if err != nil {
+		_ = session.Rollback()
+		return err
+	}
+	if row == 0 {
+		_ = session.Rollback()
+		return errors.New("审核记录未新增")
+	}
+
+	has, err := session.Get(audit)
+	if err != nil {
+		_ = session.Rollback()
+		return err
+	}
+	if !has {
+		_ = session.Rollback()
+		return errors.New("审核记录未新增")
+	}
 
 	// 添加审核日志
-	log := &model.AuditLog{
+	row, err = session.Insert(&model.AuditLog{
 		AuditId: audit.Id,
+		UserId:  audit.UserId,
 		Status:  audit.Status,
 		LinkId:  audit.LinkId,
 		Remark:  audit.Remark,
 		OpsId:   audit.OpsId,
+	})
+	if err != nil {
+		_ = session.Rollback()
+		return err
 	}
-	log.Insert()
+	if row == 0 {
+		_ = session.Rollback()
+		return errors.New("审核日志未新增")
+	}
+	_ = session.Commit()
+	return nil
 }
 
 /**

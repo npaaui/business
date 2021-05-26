@@ -3,6 +3,7 @@ package dao
 import (
 	. "business/common"
 	"business/dao/model"
+	"github.com/go-xorm/xorm"
 )
 
 const (
@@ -31,7 +32,7 @@ var TaskStatusSlice = []string{TaskStatusInit, TaskStatusPaid, TaskStatusFail, T
  * 获取任务列表
  */
 type ListTaskArgs struct {
-	Id              []int
+	Id              []int64
 	UserId          int
 	ShopId          int
 	CategoryId      int
@@ -47,7 +48,7 @@ func ListTask(args *ListTaskArgs) (int, []model.Task) {
 	session := DbEngine.Table("b_task").
 		Where("1=1")
 	if len(args.Id) > 0 {
-		session.And("id in " + WhereInInt(args.Id))
+		session.And("id in " + WhereInInt64(args.Id))
 	}
 	if args.UserId > 0 {
 		session.And("user_id = ?", args.UserId)
@@ -74,8 +75,8 @@ func ListTask(args *ListTaskArgs) (int, []model.Task) {
 	return int(count), taskList
 }
 
-func InsertTask(task *model.Task) {
-	task.SetStatus(TaskStatusInit)
+func InsertTask(s *xorm.Session, task *model.Task) {
+	task.SetStatus(TaskStatusInit).SetId(UniqueIdWorker.GetId())
 
 	if task.ClosingDate == "no" {
 		task.SetClosingDate(GetForever())
@@ -85,10 +86,33 @@ func InsertTask(task *model.Task) {
 		task.SetClosingDate(GetAfterHour(StrToInt(task.ClosingDate, 0)))
 	}
 
-	if row := task.Insert(); row == 0 {
+	row, err := s.Insert(task)
+	if err != nil {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		panic(NewDbErr(err))
+	}
+	if row == 0 {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		panic(NewRespErr(ErrInsert, "任务新增失败"))
 	}
-	if !task.Info() {
-		panic(NewRespErr(ErrInsert, "任务新增失败"))
+}
+
+func UpdateTask(s *xorm.Session, task *model.Task, set *model.Task) {
+	row, err := s.Update(set, task)
+	if err != nil {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		panic(NewDbErr(err))
+	}
+	if row == 0 {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		panic(NewRespErr(ErrInsert, "更新任务金额失败"))
 	}
 }

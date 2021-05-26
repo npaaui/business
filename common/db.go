@@ -2,13 +2,15 @@ package common
 
 import (
 	"fmt"
+	"github.com/npaaui/helper-go/tools"
 
 	"github.com/go-xorm/xorm"
 	"github.com/npaaui/helper-go/db"
 )
 
 var (
-	DbEngine *xorm.Engine
+	DbEngine       *xorm.Engine
+	UniqueIdWorker *tools.Worker
 )
 
 // 初始化数据库

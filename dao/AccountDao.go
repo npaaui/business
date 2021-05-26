@@ -5,6 +5,7 @@ import (
 	"business/dao/model"
 	"business/service/cache"
 	"errors"
+	"github.com/go-xorm/xorm"
 )
 
 var (
@@ -42,7 +43,7 @@ type UpdateAccountAmountArgs struct {
 	ChangeType         string
 	AmountChange       float64
 	FrozenAmountChange float64
-	TaskId             int
+	TaskId             int64
 	ShopId             int
 	OrderId            int
 	InOutId            int
@@ -50,6 +51,18 @@ type UpdateAccountAmountArgs struct {
 }
 
 func UpdateAccountAmount(args UpdateAccountAmountArgs) error {
+	session := DbEngine.NewSession()
+	defer session.Close()
+	err := UpdateAccountAmountInSess(session, args)
+	if err == nil {
+		if errS := session.Commit(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+	}
+	return err
+}
+
+func UpdateAccountAmountInSess(s *xorm.Session, args UpdateAccountAmountArgs) error {
 	account := model.NewAccountModel().SetUserId(args.UserId).SetType(args.Type)
 	if !account.Info() {
 		return errors.New("账户信息有误")
@@ -59,11 +72,17 @@ func UpdateAccountAmount(args UpdateAccountAmountArgs) error {
 		SetAmount(account.Amount + args.AmountChange).
 		SetFrozenAmount(account.FrozenAmount + args.FrozenAmountChange)
 
-	row, err := DbEngine.Cols("amount", "frozen_amount").Update(set, account)
+	row, err := s.Cols("amount", "frozen_amount").Update(set, account)
 	if err != nil {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		panic(NewDbErr(err))
 	}
 	if row == 0 {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		return errors.New("更新账户金额失败")
 	}
 
@@ -81,7 +100,19 @@ func UpdateAccountAmount(args UpdateAccountAmountArgs) error {
 		InOutId:   args.InOutId,
 		Remark:    args.Remark,
 	}
-	log.Insert()
+	row, err = s.Insert(log)
+	if err != nil {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		panic(NewDbErr(err))
+	}
+	if row == 0 {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		return errors.New("新增资金记录失败")
+	}
 
 	cache.NewCacheUserInfo(account.UserId).DeleteCacheUserInfo()
 	return nil

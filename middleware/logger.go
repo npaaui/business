@@ -30,11 +30,11 @@ func ReqLog() gin.HandlerFunc {
 		g.Writer = bodyLogWriter
 
 		start := time.Now().UnixNano() / 1e6
-		nowNano := IntToStr(int(time.Now().UnixNano()))
-		ReqNo = time.Now().Format("20060102-150405-") + nowNano[len(nowNano)-9:len(nowNano)]
+		reqNo := Int64ToStr(UniqueIdWorker.GetId())
+		g.Set("req_no", reqNo)
 
 		ReqLogChan <- &ReqLogForChan{
-			ReqNo:  ReqNo,
+			ReqNo:  reqNo,
 			Router: g.Request.URL.Path,
 			Method: g.Request.Method,
 			Agent:  g.Request.UserAgent(),
@@ -51,7 +51,7 @@ func ReqLog() gin.HandlerFunc {
 		data, _ := json.Marshal(resp.Data)
 		cost := float64(time.Now().UnixNano()/1e6-start) / 1000
 		ReqLogChan <- &ReqLogForChan{
-			ReqNo:    ReqNo,
+			ReqNo:    reqNo,
 			UserId:   g.GetInt("user_id"),
 			Cost:     cost,
 			HttpCode: g.Writer.Status(),

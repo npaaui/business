@@ -8,7 +8,7 @@ import (
 "id": "int", //
 "audit_id": "int", // 审核编号
 "status": "string", // 审核状态
-"link_id": "int", // 关联编号
+"link_id": "string", // 关联编号
 "user_id": "int", // 商家编号
 "ops_id": "int", // 审核人编号
 "remark": "string", // 备注
@@ -19,7 +19,7 @@ type AuditLog struct {
 	Id         int    `db:"id" json:"id"`
 	AuditId    int    `db:"audit_id" json:"audit_id"`
 	Status     string `db:"status" json:"status"`
-	LinkId     int    `db:"link_id" json:"link_id"`
+	LinkId     string `db:"link_id" json:"link_id"`
 	UserId     int    `db:"user_id" json:"user_id"`
 	OpsId      int    `db:"ops_id" json:"ops_id"`
 	Remark     string `db:"remark" json:"remark"`
@@ -77,7 +77,7 @@ func (m *AuditLog) SetStatus(arg string) *AuditLog {
 	return m
 }
 
-func (m *AuditLog) SetLinkId(arg int) *AuditLog {
+func (m *AuditLog) SetLinkId(arg string) *AuditLog {
 	m.LinkId = arg
 	return m
 }

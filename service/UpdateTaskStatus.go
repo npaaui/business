@@ -10,8 +10,8 @@ import (
  * 更新任务状态
  */
 type UpdateTaskStatusArgs struct {
-	Id     int `json:"id"`
-	UserId int `json:"user_id"`
+	Id     int64 `json:"id"`
+	UserId int   `json:"user_id"`
 	Status string
 	task   *model.Task
 }
@@ -76,8 +76,14 @@ func (a *UpdateTaskStatusPaid) CheckTask() {
 }
 
 func (a *UpdateTaskStatusPaid) AfterUpdate() {
+	session := DbEngine.NewSession()
+	defer session.Close()
+	if err := session.Begin(); err != nil {
+		panic(NewDbErr(err))
+	}
+
 	// 冻结任务金额
-	err := dao.UpdateAccountAmount(dao.UpdateAccountAmountArgs{
+	err := dao.UpdateAccountAmountInSess(session, dao.UpdateAccountAmountArgs{
 		UserId:             a.UserId,
 		Type:               dao.AccountTypeMain,
 		ChangeType:         dao.AccountInOutTypeTask,
@@ -93,13 +99,19 @@ func (a *UpdateTaskStatusPaid) AfterUpdate() {
 
 	// 增加审核记录
 	content := "商家编号:" + IntToStr(a.UserId) +
-		"\n任务编号:" + IntToStr(a.task.Id)
-	dao.InsertAudit(&model.Audit{
+		"\n任务编号:" + Int64ToStr(a.task.Id)
+	err = dao.InsertAudit(&model.Audit{
 		Action:  dao.AuditActionCodeTask,
 		Status:  dao.AuditStatusInit,
-		LinkId:  a.task.Id,
+		LinkId:  Int64ToStr(a.task.Id),
 		UserId:  a.UserId,
 		Content: content,
 		Remark:  remark,
 	})
+	if err != nil {
+		_ = session.Rollback()
+		panic(NewRespErr(ErrInsert, "新增审核记录失败"))
+	}
+
+	_ = session.Commit()
 }

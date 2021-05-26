@@ -3,6 +3,7 @@ package dao
 import (
 	. "business/common"
 	"business/dao/model"
+	"github.com/go-xorm/xorm"
 )
 
 const (
@@ -17,14 +18,14 @@ const (
  * 获取任务明细列表
  */
 type ListTaskDetailArgs struct {
-	TaskId []int
+	TaskId []int64
 }
 
 func ListTaskDetail(args *ListTaskDetailArgs) (int, []model.TaskDetail) {
 	var detailList []model.TaskDetail
 	session := DbEngine.Where("1=1")
 	if len(args.TaskId) > 0 {
-		session.And("task_id in" + WhereInInt(args.TaskId))
+		session.And("task_id in" + WhereInInt64(args.TaskId))
 	}
 	count, err := session.FindAndCount(&detailList)
 	if err != nil {
@@ -33,13 +34,35 @@ func ListTaskDetail(args *ListTaskDetailArgs) (int, []model.TaskDetail) {
 	return int(count), detailList
 }
 
-func InsertTaskDetail(detail *model.TaskDetail) *model.TaskDetail {
+func InsertTaskDetail(s *xorm.Session, detail *model.TaskDetail) *model.TaskDetail {
 	detail.SetStatus(TaskDetailStatusInit)
-	if row := detail.Insert(); row == 0 {
+
+	row, err := s.Insert(detail)
+	if err != nil {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		panic(NewDbErr(err))
+	}
+	if row == 0 {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		panic(NewRespErr(ErrInsert, "任务明细新增失败"))
 	}
-	if !detail.Info() {
-		panic(NewRespErr(ErrInsert, "任务明细新增失败"))
+
+	has, err := s.Get(detail)
+	if err != nil {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		panic(NewDbErr(err))
+	}
+	if !has {
+		if errS := s.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		panic(NewRespErr(ErrInsert, "任务明细记录新增失败"))
 	}
 	return detail
 }

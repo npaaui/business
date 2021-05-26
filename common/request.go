@@ -15,8 +15,6 @@ import (
 	"github.com/gookit/validate"
 )
 
-var ReqNo string
-
 // 字段名称转换
 type ValidTransfer interface {
 	Translates() map[string]string
@@ -83,7 +81,7 @@ func ValidatePostJson(g *gin.Context, rule map[string]string, as interface{}) Ma
 
 	// 记录到请求日志
 	ReqLogChan <- &ReqLogForChan{
-		ReqNo: ReqNo,
+		ReqNo: g.GetString("req_no"),
 		Param: string(jsonByte),
 	}
 

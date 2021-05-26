@@ -28,17 +28,7 @@ func (s *UserService) Recharge(accountInOut *model.AccountInOut) {
 
 	dao.InsertAccountInOut(accountInOut)
 
-	// 增加审核记录
-	content := "商家编号:" + IntToStr(accountInOut.UserId) +
-		"\n充值金额:" + Float64ToString(accountInOut.Amount) +
-		"\n充值时间:" + accountInOut.CreateTime
-	dao.InsertAudit(&model.Audit{
-		Action:  dao.AuditActionCodeRecharge,
-		Status:  dao.AuditStatusInit,
-		LinkId:  accountInOut.Id,
-		UserId:  accountInOut.UserId,
-		Content: content,
-	})
+	return
 }
 
 type WithdrawArgs struct {
@@ -79,18 +69,7 @@ func (s *UserService) Withdraw(args *WithdrawArgs) {
 		SetBankCode(userBank.Code)
 	dao.InsertAccountInOut(accountInOut)
 
-	// 增加审核记录
-	content := "商家编号:" + IntToStr(accountInOut.UserId) +
-		"\n提现金额:" + Float64ToString(accountInOut.Amount) +
-		"\n提现时间:" + accountInOut.CreateTime
-	dao.InsertAudit(&model.Audit{
-		Action:  dao.AuditActionCodeWithdraw,
-		Status:  dao.AuditStatusInit,
-		LinkId:  accountInOut.Id,
-		UserId:  accountInOut.UserId,
-		Content: content,
-		Img:     accountInOut.Img,
-	})
+	return
 }
 
 func (s *UserService) UpdateAccountInOut(set *model.AccountInOut) {

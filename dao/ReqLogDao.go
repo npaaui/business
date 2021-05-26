@@ -16,6 +16,7 @@ func UpdateReqLog(args *ReqLogForChan) {
 			buf = buf[:runtime.Stack(buf, false)]
 			log.Printf("reqLogWorker: panic: %v\n%s", r, buf)
 		}
+		WG.Done()
 	}()
 	reqLog := model.NewReqLogModel().SetReqNo(args.ReqNo)
 	if !reqLog.Info() {

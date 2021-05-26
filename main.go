@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/validate/locales/zhcn"
+	"github.com/npaaui/helper-go/tools"
 
 	. "business/common"
 	"business/dao"
@@ -23,6 +23,7 @@ func main() {
 	InitRedis()
 	zhcn.RegisterGlobal() // 验证器语言包
 	DoSomeRoutine()       // 常驻通道消费
+	UniqueIdWorker = tools.NewWorker(1)
 
 	/**
 	 * 加载路由
@@ -41,10 +42,11 @@ func DoSomeRoutine() {
 		for {
 			select {
 			case reqLog := <-ReqLogChan:
+				WG.Add(1)
 				go func() {
 					dao.UpdateReqLog(reqLog)
 				}()
-				time.Sleep(time.Millisecond * 100)
+				WG.Wait()
 			}
 		}
 	}()

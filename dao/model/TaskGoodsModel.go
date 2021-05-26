@@ -6,7 +6,7 @@ import (
 
 /**
 "id": "int", //
-"task_id": "int", // 任务id
+"task_id": "int64", // 任务id
 "url": "string", // 宝贝链接
 "img": "string", // 宝贝图片
 "keywords": "string", // 关键词
@@ -15,13 +15,13 @@ import (
 "search_price": "float64", // 搜索单价
 "num": "int", // 数量
 "spec": "string", // 规格
-"create_time": "string", // 添加时间
+"create_time": "string", // 创建时间
 "update_time": "string", // 更新时间
 */
 
 type TaskGoods struct {
 	Id          int     `db:"id" json:"id"`
-	TaskId      int     `db:"task_id" json:"task_id"`
+	TaskId      int64   `db:"task_id" json:"task_id"`
 	Url         string  `db:"url" json:"url"`
 	Img         string  `db:"img" json:"img"`
 	Keywords    string  `db:"keywords" json:"keywords"`
@@ -75,7 +75,7 @@ func (m *TaskGoods) SetId(arg int) *TaskGoods {
 	return m
 }
 
-func (m *TaskGoods) SetTaskId(arg int) *TaskGoods {
+func (m *TaskGoods) SetTaskId(arg int64) *TaskGoods {
 	m.TaskId = arg
 	return m
 }
@@ -158,7 +158,7 @@ func (m TaskGoods) Translates() map[string]string {
 		"search_price": "搜索单价",
 		"num":          "数量",
 		"spec":         "规格",
-		"create_time":  "添加时间",
+		"create_time":  "创建时间",
 		"update_time":  "更新时间",
 	}
 }

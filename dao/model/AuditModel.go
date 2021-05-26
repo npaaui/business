@@ -8,7 +8,7 @@ import (
 "id": "int", //
 "action": "string", // 审核动作类别
 "status": "string", // 审核状态
-"link_id": "int", // 关联编号
+"link_id": "string", // 关联编号
 "user_id": "int", // 商家编号
 "ops_id": "int", // 审核人编号
 "content": "string", // 审核内容
@@ -22,7 +22,7 @@ type Audit struct {
 	Id         int    `db:"id" json:"id"`
 	Action     string `db:"action" json:"action"`
 	Status     string `db:"status" json:"status"`
-	LinkId     int    `db:"link_id" json:"link_id"`
+	LinkId     string `db:"link_id" json:"link_id"`
 	UserId     int    `db:"user_id" json:"user_id"`
 	OpsId      int    `db:"ops_id" json:"ops_id"`
 	Content    string `db:"content" json:"content"`
@@ -83,7 +83,7 @@ func (m *Audit) SetStatus(arg string) *Audit {
 	return m
 }
 
-func (m *Audit) SetLinkId(arg int) *Audit {
+func (m *Audit) SetLinkId(arg string) *Audit {
 	m.LinkId = arg
 	return m
 }

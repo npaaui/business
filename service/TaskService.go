@@ -84,11 +84,22 @@ func (s *TaskService) InsertTask(args *InsertTaskArgs) {
 		panic(NewValidErr(fmt.Errorf("publish_config配置有误:%v", args.Task.PublishConfig)))
 	}
 	args.Task.OrderCount = len(args.Detail)
-	dao.InsertTask(args.Task)
+
+	/**
+	 * 开启事务，执行新增
+	 */
+	session := DbEngine.NewSession()
+	defer session.Close()
+	err := session.Begin()
+	if err != nil {
+		panic(NewDbErr(err))
+	}
+
+	dao.InsertTask(session, args.Task)
 
 	for _, v := range args.Goods {
 		v.SetTaskId(args.Task.Id)
-		dao.InsertTaskGoods(v)
+		dao.InsertTaskGoods(session, v)
 	}
 
 	var payAmount float64
@@ -107,11 +118,16 @@ func (s *TaskService) InsertTask(args *InsertTaskArgs) {
 
 		v.SetPublishTime(publishPlan[k])
 
-		dao.InsertTaskDetail(v)
+		dao.InsertTaskDetail(session, v)
 	}
 
 	// 更新任务总支付金额
-	args.Task.Update(model.NewTaskModel().SetPayAmount(payAmount))
+	dao.UpdateTask(session, args.Task, model.NewTaskModel().SetPayAmount(payAmount))
+
+	if errS := session.Commit(); errS != nil {
+		panic(NewDbErr(errS))
+	}
+
 	args.Task.PayAmount = payAmount
 }
 
@@ -147,7 +163,7 @@ func getPublishPlan(conf string) []string {
  * 任务列表
  */
 type ListTaskArgs struct {
-	Id              int    `json:"id"`
+	Id              int64  `json:"id"`
 	UserId          int    `json:"user_id"`
 	ShopId          int    `json:"shop_id"`
 	CategoryId      int    `json:"category_id"`
@@ -160,7 +176,7 @@ type ListTaskArgs struct {
 }
 
 func (s *TaskService) ListTask(args *ListTaskArgs) *RespList {
-	var taskIds []int
+	var taskIds []int64
 	if args.Id > 0 {
 		taskIds = append(taskIds, args.Id)
 	}
@@ -194,7 +210,7 @@ func (s *TaskService) ListTask(args *ListTaskArgs) *RespList {
 		taskIds = append(taskIds, v.Id)
 	}
 
-	taskGoodsList := map[int][]model.TaskGoods{}
+	taskGoodsList := map[int64][]model.TaskGoods{}
 	_, goodsList := dao.ListTaskGoods(&dao.ListTaskGoodsArgs{
 		TaskId: taskIds,
 		Url:    args.GoodsUrl,
@@ -203,7 +219,7 @@ func (s *TaskService) ListTask(args *ListTaskArgs) *RespList {
 		taskGoodsList[v.TaskId] = append(taskGoodsList[v.TaskId], v)
 	}
 
-	taskDetailList := map[int][]model.TaskDetail{}
+	taskDetailList := map[int64][]model.TaskDetail{}
 	_, detailList := dao.ListTaskDetail(&dao.ListTaskDetailArgs{
 		TaskId: taskIds,
 	})
@@ -234,10 +250,10 @@ func (s *TaskService) InfoTask(task *model.Task) MapItf {
 	data := task.AsMapItf()
 	data["status_desc"] = dao.TaskStatusMap[task.Status]
 	_, data["goods"] = dao.ListTaskGoods(&dao.ListTaskGoodsArgs{
-		TaskId: []int{task.Id},
+		TaskId: []int64{task.Id},
 	})
 	_, data["detail"] = dao.ListTaskDetail(&dao.ListTaskDetailArgs{
-		TaskId: []int{task.Id},
+		TaskId: []int64{task.Id},
 	})
 
 	return data

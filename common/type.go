@@ -18,12 +18,3 @@ func NewRespList(count int, list interface{}) *RespList {
 		List:  list,
 	}
 }
-
-/**
- * token登录信息
- */
-type Claims struct {
-	UserId int
-}
-
-var TokenInfo = &Claims{}

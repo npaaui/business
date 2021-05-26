@@ -5,7 +5,7 @@ import (
 )
 
 /**
-"id": "int", // 任务编号
+"id": "int64", // 任务编号
 "user_id": "int", // 商家编号
 "category_id": "int", // 品类id
 "category_name": "string", // 品类名称
@@ -38,7 +38,7 @@ import (
 */
 
 type Task struct {
-	Id             int     `db:"id" json:"id"`
+	Id             int64   `db:"id" json:"id"`
 	UserId         int     `db:"user_id" json:"user_id"`
 	CategoryId     int     `db:"category_id" json:"category_id"`
 	CategoryName   string  `db:"category_name" json:"category_name"`
@@ -106,7 +106,7 @@ func (m *Task) Delete() int64 {
 	return row
 }
 
-func (m *Task) SetId(arg int) *Task {
+func (m *Task) SetId(arg int64) *Task {
 	m.Id = arg
 	return m
 }

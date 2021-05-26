@@ -71,3 +71,17 @@ func WhereInInt(arg []int) string {
 	}
 	return strings.TrimRight(safeStr, ",") + ")"
 }
+
+/**
+ * where in多值查询 int64
+ */
+func WhereInInt64(arg []int64) string {
+	if len(arg) == 0 {
+		return ""
+	}
+	safeStr := "("
+	for _, v := range arg {
+		safeStr += AddSlashes(Int64ToStr(v)) + ","
+	}
+	return strings.TrimRight(safeStr, ",") + ")"
+}

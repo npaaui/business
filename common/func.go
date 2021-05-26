@@ -73,6 +73,15 @@ func StrToInt(str string, def int) int {
 	return i
 }
 
+func StrToInt64(str string, def int64) int64 {
+	i, err := strconv.ParseInt(str, 10, 64)
+	if err != nil {
+		Log(LogLevelWarning, fmt.Errorf("字符串「"+str+"」转整数失败: ", err))
+		return def
+	}
+	return i
+}
+
 func Float64ToInt(f float64) int {
 	i, _ := strconv.Atoi(fmt.Sprintf("%1.0f", f))
 	return i
@@ -80,6 +89,11 @@ func Float64ToInt(f float64) int {
 
 func IntToStr(i int) string {
 	str := strconv.Itoa(i)
+	return str
+}
+
+func Int64ToStr(i int64) string {
+	str := strconv.FormatInt(i, 10)
 	return str
 }
 

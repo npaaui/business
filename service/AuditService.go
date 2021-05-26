@@ -75,7 +75,7 @@ func (s *AuditService) UpdateAudit(args *model.Audit) {
 func AuditAfterRecharge(m *model.Audit) bool {
 	if m.Status == dao.AuditStatusPass {
 		// 获取充值金额
-		accountInOut := model.NewAccountInOutModel().SetId(m.LinkId)
+		accountInOut := model.NewAccountInOutModel().SetId(StrToInt(m.LinkId, 0))
 		if !accountInOut.Info() {
 			m.Status = dao.AuditStatusStop
 			m.Remark += "\n 审核异常原因：充值记录未找到。"
@@ -88,7 +88,7 @@ func AuditAfterRecharge(m *model.Audit) bool {
 			Type:         dao.AccountTypeMain,
 			ChangeType:   dao.AccountInOutTypeRecharge,
 			AmountChange: accountInOut.Amount,
-			InOutId:      m.LinkId,
+			InOutId:      StrToInt(m.LinkId, 0),
 		})
 		if err != nil {
 			m.Status = dao.AuditStatusStop
@@ -105,7 +105,7 @@ func AuditAfterRecharge(m *model.Audit) bool {
 func AuditAfterWithdraw(m *model.Audit) bool {
 	if m.Status == dao.AuditStatusPass {
 		// 获取提现金额
-		accountInOut := model.NewAccountInOutModel().SetId(m.LinkId)
+		accountInOut := model.NewAccountInOutModel().SetId(StrToInt(m.LinkId, 0))
 		if !accountInOut.Info() {
 			m.Status = dao.AuditStatusStop
 			m.Remark += "\n 审核异常原因：充值记录未找到。"
@@ -126,7 +126,7 @@ func AuditAfterWithdraw(m *model.Audit) bool {
 			Type:         dao.AccountTypeMain,
 			ChangeType:   dao.AccountInOutTypeWithdraw,
 			AmountChange: -accountInOut.Amount,
-			InOutId:      m.LinkId,
+			InOutId:      StrToInt(m.LinkId, 0),
 		})
 		if err != nil {
 			m.Status = dao.AuditStatusStop
@@ -141,7 +141,7 @@ func AuditAfterWithdraw(m *model.Audit) bool {
 }
 
 func AuditAfterTask(m *model.Audit) bool {
-	task := model.NewTaskModel().SetId(m.LinkId)
+	task := model.NewTaskModel().SetId(StrToInt64(m.LinkId, 0))
 	if !task.Info() {
 		m.Status = dao.AuditStatusStop
 		m.Remark += "\n 审核异常：任务记录未找到。"
@@ -163,7 +163,7 @@ func AuditAfterTask(m *model.Audit) bool {
 			Type:               dao.AccountTypeMain,
 			ChangeType:         dao.AccountInOutTypeTask,
 			FrozenAmountChange: -task.PayAmount,
-			TaskId:             m.LinkId,
+			TaskId:             StrToInt64(m.LinkId, 0),
 			ShopId:             task.ShopId,
 		})
 		if err != nil {
@@ -172,7 +172,7 @@ func AuditAfterTask(m *model.Audit) bool {
 			return false
 		}
 
-		err = NewOrderService().InitOrders(m.LinkId)
+		err = NewOrderService().InitOrders(StrToInt64(m.LinkId, 0))
 		if err != nil {
 			m.Status = dao.AuditStatusStop
 			m.Remark += "\n 添加订单失败: " + err.Error()
@@ -187,7 +187,7 @@ func AuditAfterTask(m *model.Audit) bool {
 			ChangeType:         dao.AccountInOutTypeTask,
 			AmountChange:       task.PayAmount,
 			FrozenAmountChange: -task.PayAmount,
-			TaskId:             m.LinkId,
+			TaskId:             StrToInt64(m.LinkId, 0),
 			ShopId:             task.ShopId,
 		})
 		if err != nil {

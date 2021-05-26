@@ -13,7 +13,7 @@ import (
 "amount_new": "float64", // 变更后账户余额
 "frozen_old": "float64", // 变更前冻结金额
 "frozen_new": "float64", // 变更后冻结金额
-"task_id": "int", // 关联任务编号
+"task_id": "int64", // 关联任务编号
 "shop_id": "int", // 关联店铺编号
 "order_id": "int", // 订单编号
 "in_out_id": "int", // 充提记录编号
@@ -31,7 +31,7 @@ type AccountLog struct {
 	AmountNew  float64 `db:"amount_new" json:"amount_new"`
 	FrozenOld  float64 `db:"frozen_old" json:"frozen_old"`
 	FrozenNew  float64 `db:"frozen_new" json:"frozen_new"`
-	TaskId     int     `db:"task_id" json:"task_id"`
+	TaskId     int64   `db:"task_id" json:"task_id"`
 	ShopId     int     `db:"shop_id" json:"shop_id"`
 	OrderId    int     `db:"order_id" json:"order_id"`
 	InOutId    int     `db:"in_out_id" json:"in_out_id"`
@@ -116,7 +116,7 @@ func (m *AccountLog) SetFrozenNew(arg float64) *AccountLog {
 	return m
 }
 
-func (m *AccountLog) SetTaskId(arg int) *AccountLog {
+func (m *AccountLog) SetTaskId(arg int64) *AccountLog {
 	m.TaskId = arg
 	return m
 }

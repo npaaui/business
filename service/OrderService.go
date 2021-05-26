@@ -16,14 +16,14 @@ func NewOrderService() *OrderService {
 /**
  * 添加订单
  */
-func (s *OrderService) InitOrders(taskId int) error {
+func (s *OrderService) InitOrders(taskId int64) error {
 	task := model.NewTaskModel().SetId(taskId)
 	if !task.Info() {
 		return errors.New("任务不存在")
 	}
 
 	_, list := dao.ListTaskDetail(&dao.ListTaskDetailArgs{
-		TaskId: []int{taskId},
+		TaskId: []int64{taskId},
 	})
 	for _, v := range list {
 		(&model.Order{

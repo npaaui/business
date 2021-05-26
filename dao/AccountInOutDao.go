@@ -26,8 +26,16 @@ var AccountInOutStatusMap = MapStr{
 }
 
 func InsertAccountInOut(accountInOut *model.AccountInOut) {
-	row := accountInOut.
-		SetStatus(AccountInOutStatusInit).Insert()
+	session := DbEngine.NewSession()
+	session.Close()
+	_ = session.Begin()
+
+	accountInOut.
+		SetStatus(AccountInOutStatusInit)
+	row, err := session.Insert(accountInOut)
+	if err != nil {
+		panic(NewDbErr(err))
+	}
 	if row == 0 {
 		if accountInOut.Type == AccountInOutTypeRecharge {
 			panic(NewRespErr(ErrInsert, "添加充值申请失败"))
@@ -38,7 +46,38 @@ func InsertAccountInOut(accountInOut *model.AccountInOut) {
 		}
 	}
 
+	// 增加审核记录
+	content := "商家编号:" + IntToStr(accountInOut.UserId) +
+		"\n金额:" + Float64ToString(accountInOut.Amount) +
+		"\n时间:" + accountInOut.CreateTime
+	var action string
+	switch accountInOut.Type {
+	case AccountInOutTypeWithdraw:
+		action = AuditActionCodeWithdraw
+		break
+	case AccountInOutTypeTask:
+		action = AuditActionCodeTask
+		break
+	default:
+		action = AuditActionCodeRecharge
+		break
+	}
+	err = InsertAudit(&model.Audit{
+		Action:  action,
+		Status:  AuditStatusInit,
+		LinkId:  IntToStr(accountInOut.Id),
+		UserId:  accountInOut.UserId,
+		Content: content,
+	})
+	if err != nil {
+		_ = session.Rollback()
+		panic(NewRespErr(ErrInsert, "新增审核记录失败"))
+	}
+
+	_ = session.Commit()
+
 	accountInOut.Info()
+	return
 }
 
 /**

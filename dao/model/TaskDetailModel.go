@@ -6,7 +6,7 @@ import (
 
 /**
 "id": "int", //
-"task_id": "int", // 任务id
+"task_id": "int64", // 任务id
 "type": "string", // 任务类型
 "keywords": "string", // 下单关键词
 "keywords2": "string", // 备用关键词
@@ -24,13 +24,13 @@ import (
 "comment_amount": "float64", // 好评费用
 "shipping_amount": "float64", // 运费
 "publish_time": "string", // 发布时间
-"create_time": "string", // 添加时间
+"create_time": "string", // 创建时间
 "update_time": "string", // 更新时间
 */
 
 type TaskDetail struct {
 	Id                 int     `db:"id" json:"id"`
-	TaskId             int     `db:"task_id" json:"task_id"`
+	TaskId             int64   `db:"task_id" json:"task_id"`
 	Type               string  `db:"type" json:"type"`
 	Keywords           string  `db:"keywords" json:"keywords"`
 	Keywords2          string  `db:"keywords2" json:"keywords2"`
@@ -93,7 +93,7 @@ func (m *TaskDetail) SetId(arg int) *TaskDetail {
 	return m
 }
 
-func (m *TaskDetail) SetTaskId(arg int) *TaskDetail {
+func (m *TaskDetail) SetTaskId(arg int64) *TaskDetail {
 	m.TaskId = arg
 	return m
 }
@@ -239,7 +239,7 @@ func (m TaskDetail) Translates() map[string]string {
 		"comment_amount":       "好评费用",
 		"shipping_amount":      "运费",
 		"publish_time":         "发布时间",
-		"create_time":          "添加时间",
+		"create_time":          "创建时间",
 		"update_time":          "更新时间",
 	}
 }
