@@ -27,10 +27,10 @@ var AccountInOutStatusMap = MapStr{
 
 func InsertAccountInOut(accountInOut *model.AccountInOut) {
 	session := DbEngine.NewSession()
-	session.Close()
+	defer session.Close()
 	_ = session.Begin()
 
-	accountInOut.
+	accountInOut.SetId(UniqueIdWorker.GetId()).
 		SetStatus(AccountInOutStatusInit)
 	row, err := session.Insert(accountInOut)
 	if err != nil {
@@ -44,6 +44,14 @@ func InsertAccountInOut(accountInOut *model.AccountInOut) {
 		} else {
 			panic(NewValidErr(errors.New("无效申请")))
 		}
+	}
+
+	_, err = session.Get(accountInOut)
+	if err != nil {
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		panic(NewDbErr(err))
 	}
 
 	// 增加审核记录
@@ -65,12 +73,14 @@ func InsertAccountInOut(accountInOut *model.AccountInOut) {
 	err = InsertAudit(&model.Audit{
 		Action:  action,
 		Status:  AuditStatusInit,
-		LinkId:  IntToStr(accountInOut.Id),
+		LinkId:  Int64ToStr(accountInOut.Id),
 		UserId:  accountInOut.UserId,
 		Content: content,
 	})
 	if err != nil {
-		_ = session.Rollback()
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		panic(NewRespErr(ErrInsert, "新增审核记录失败"))
 	}
 

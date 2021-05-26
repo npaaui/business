@@ -46,7 +46,7 @@ type UpdateAccountAmountArgs struct {
 	TaskId             int64
 	ShopId             int
 	OrderId            int
-	InOutId            int
+	InOutId            int64
 	Remark             string
 }
 

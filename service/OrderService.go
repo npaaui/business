@@ -5,6 +5,7 @@ import (
 	"business/dao"
 	"business/dao/model"
 	"errors"
+	"github.com/go-xorm/xorm"
 )
 
 type OrderService struct{}
@@ -16,7 +17,7 @@ func NewOrderService() *OrderService {
 /**
  * 添加订单
  */
-func (s *OrderService) InitOrders(taskId int64) error {
+func (s *OrderService) InitOrders(session *xorm.Session, taskId int64) error {
 	task := model.NewTaskModel().SetId(taskId)
 	if !task.Info() {
 		return errors.New("任务不存在")
@@ -26,7 +27,7 @@ func (s *OrderService) InitOrders(taskId int64) error {
 		TaskId: []int64{taskId},
 	})
 	for _, v := range list {
-		(&model.Order{
+		_, err := session.Insert(&model.Order{
 			UserId:        task.UserId,
 			TaskId:        v.TaskId,
 			TaskDetailId:  v.Id,
@@ -36,7 +37,13 @@ func (s *OrderService) InitOrders(taskId int64) error {
 			Status:        dao.OrderStatusInit,
 			CommentStatus: dao.OrderCommentStatusInit,
 			RunningTime:   GetBegin(),
-		}).Insert()
+		})
+		if err != nil {
+			if errS := session.Rollback(); errS != nil {
+				panic(NewDbErr(errS))
+			}
+			return err
+		}
 	}
 	return nil
 }

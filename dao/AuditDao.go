@@ -29,28 +29,36 @@ const (
 func InsertAudit(audit *model.Audit) error {
 	session := DbEngine.NewSession()
 	defer session.Close()
-	err := session.Begin()
-	if err != nil {
-		return err
+	if err := session.Begin(); err != nil {
+		panic(NewDbErr(err))
 	}
 
+	audit.SetId(UniqueIdWorker.GetId())
 	row, err := session.Insert(audit)
 	if err != nil {
-		_ = session.Rollback()
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		return err
 	}
 	if row == 0 {
-		_ = session.Rollback()
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		return errors.New("审核记录未新增")
 	}
 
 	has, err := session.Get(audit)
 	if err != nil {
-		_ = session.Rollback()
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		return err
 	}
 	if !has {
-		_ = session.Rollback()
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		return errors.New("审核记录未新增")
 	}
 
@@ -64,11 +72,69 @@ func InsertAudit(audit *model.Audit) error {
 		OpsId:   audit.OpsId,
 	})
 	if err != nil {
-		_ = session.Rollback()
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		return err
 	}
 	if row == 0 {
-		_ = session.Rollback()
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		return errors.New("审核日志未新增")
+	}
+	_ = session.Commit()
+	return nil
+}
+
+func UpdateAudit(audit *model.Audit, set *model.Audit) error {
+	session := DbEngine.NewSession()
+	defer session.Close()
+	if err := session.Begin(); err != nil {
+		panic(NewDbErr(err))
+	}
+
+	has, err := session.Get(audit)
+	if err != nil {
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		return err
+	}
+	if !has {
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		return errors.New("无效审核记录")
+	}
+
+	row, err := session.Update(set, audit)
+	if err != nil {
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		return err
+	}
+
+	// 添加审核日志
+	row, err = session.Insert(&model.AuditLog{
+		AuditId: audit.Id,
+		UserId:  audit.UserId,
+		Status:  set.Status,
+		LinkId:  audit.LinkId,
+		Remark:  audit.Remark,
+		OpsId:   audit.OpsId,
+	})
+	if err != nil {
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+		return err
+	}
+	if row == 0 {
+		if errS := session.Rollback(); errS != nil {
+			panic(NewDbErr(errS))
+		}
 		return errors.New("审核日志未新增")
 	}
 	_ = session.Commit()

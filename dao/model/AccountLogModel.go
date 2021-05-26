@@ -16,7 +16,7 @@ import (
 "task_id": "int64", // 关联任务编号
 "shop_id": "int", // 关联店铺编号
 "order_id": "int", // 订单编号
-"in_out_id": "int", // 充提记录编号
+"in_out_id": "int64", // 充提记录编号
 "remark": "string", // 说明
 "create_time": "string", // 添加时间
 "update_time": "string", // 更新时间
@@ -34,7 +34,7 @@ type AccountLog struct {
 	TaskId     int64   `db:"task_id" json:"task_id"`
 	ShopId     int     `db:"shop_id" json:"shop_id"`
 	OrderId    int     `db:"order_id" json:"order_id"`
-	InOutId    int     `db:"in_out_id" json:"in_out_id"`
+	InOutId    int64   `db:"in_out_id" json:"in_out_id"`
 	Remark     string  `db:"remark" json:"remark"`
 	CreateTime string  `db:"create_time" json:"create_time" xorm:"created"`
 	UpdateTime string  `db:"update_time" json:"update_time" xorm:"updated"`
@@ -131,7 +131,7 @@ func (m *AccountLog) SetOrderId(arg int) *AccountLog {
 	return m
 }
 
-func (m *AccountLog) SetInOutId(arg int) *AccountLog {
+func (m *AccountLog) SetInOutId(arg int64) *AccountLog {
 	m.InOutId = arg
 	return m
 }

@@ -5,7 +5,7 @@ import (
 )
 
 /**
-"id": "int", //
+"id": "int64", // 审核记录编号
 "action": "string", // 审核动作类别
 "status": "string", // 审核状态
 "link_id": "string", // 关联编号
@@ -19,7 +19,7 @@ import (
 */
 
 type Audit struct {
-	Id         int    `db:"id" json:"id"`
+	Id         int64  `db:"id" json:"id"`
 	Action     string `db:"action" json:"action"`
 	Status     string `db:"status" json:"status"`
 	LinkId     string `db:"link_id" json:"link_id"`
@@ -68,7 +68,7 @@ func (m *Audit) Delete() int64 {
 	return row
 }
 
-func (m *Audit) SetId(arg int) *Audit {
+func (m *Audit) SetId(arg int64) *Audit {
 	m.Id = arg
 	return m
 }
@@ -140,7 +140,7 @@ func (m Audit) AsMapItf() MapItf {
 }
 func (m Audit) Translates() map[string]string {
 	return map[string]string{
-		"id":          "",
+		"id":          "审核记录编号",
 		"action":      "审核动作类别",
 		"status":      "审核状态",
 		"link_id":     "关联编号",

@@ -44,7 +44,7 @@ func (s *AuditService) UpdateAudit(args *model.Audit) {
 		panic(NewRespErr(ErrNotExist, "审核信息有误"))
 	}
 
-	if audit.Status != dao.AuditStatusInit {
+	if audit.Status != dao.AuditStatusInit && audit.Status != dao.AuditStatusStop {
 		panic(NewRespErr(ErrNotExist, "不可重复审核"))
 	}
 
@@ -63,8 +63,8 @@ func (s *AuditService) UpdateAudit(args *model.Audit) {
 	in := []reflect.Value{reflect.ValueOf(setAudit)}
 	ret := f.Call(in)
 
-	if row := audit.Update(setAudit); row == 0 {
-		panic(NewRespErr(ErrUpdate, ""))
+	if err := dao.UpdateAudit(audit, setAudit); err != nil {
+		panic(NewRespErr(ErrUpdate, "审核记录更新失败"))
 	}
 
 	if !ret[0].Bool() {
@@ -73,39 +73,69 @@ func (s *AuditService) UpdateAudit(args *model.Audit) {
 }
 
 func AuditAfterRecharge(m *model.Audit) bool {
+	inOutId := StrToInt64(m.LinkId, 0)
 	if m.Status == dao.AuditStatusPass {
 		// 获取充值金额
-		accountInOut := model.NewAccountInOutModel().SetId(StrToInt(m.LinkId, 0))
+		accountInOut := model.NewAccountInOutModel().SetId(inOutId)
 		if !accountInOut.Info() {
 			m.Status = dao.AuditStatusStop
 			m.Remark += "\n 审核异常原因：充值记录未找到。"
 			return false
 		}
 
+		session := DbEngine.NewSession()
+		defer session.Close()
+
 		// 充值
-		err := dao.UpdateAccountAmount(dao.UpdateAccountAmountArgs{
+		err := dao.UpdateAccountAmountInSess(session, dao.UpdateAccountAmountArgs{
 			UserId:       m.UserId,
 			Type:         dao.AccountTypeMain,
 			ChangeType:   dao.AccountInOutTypeRecharge,
 			AmountChange: accountInOut.Amount,
-			InOutId:      StrToInt(m.LinkId, 0),
+			InOutId:      inOutId,
 		})
 		if err != nil {
 			m.Status = dao.AuditStatusStop
-			m.Remark += "\n " + err.Error()
+			m.Remark += "\n 充值失败" + err.Error()
 			return false
 		}
+
+		// 更改充提记录状态
+		_, err = session.Update(&model.AccountInOut{
+			Status: dao.AccountInOutStatusSuccess,
+		}, &model.AccountInOut{
+			Id: inOutId,
+		})
+		if err != nil {
+			if errS := session.Rollback(); errS != nil {
+				panic(NewDbErr(errS))
+			}
+			m.Status = dao.AuditStatusStop
+			m.Remark += "\n 更改充提记录状态失败" + err.Error()
+			return false
+		}
+
+		if errS := session.Commit(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+
 		m.Status = dao.AuditStatusPass
 	} else {
+		(&model.AccountInOut{
+			Id: inOutId,
+		}).Update(&model.AccountInOut{
+			Status: dao.AccountInOutStatusFail,
+		})
 		m.Status = dao.AuditStatusFail
 	}
 	return true
 }
 
 func AuditAfterWithdraw(m *model.Audit) bool {
+	inOutId := StrToInt64(m.LinkId, 0)
 	if m.Status == dao.AuditStatusPass {
 		// 获取提现金额
-		accountInOut := model.NewAccountInOutModel().SetId(StrToInt(m.LinkId, 0))
+		accountInOut := model.NewAccountInOutModel().SetId(inOutId)
 		if !accountInOut.Info() {
 			m.Status = dao.AuditStatusStop
 			m.Remark += "\n 审核异常原因：充值记录未找到。"
@@ -121,27 +151,55 @@ func AuditAfterWithdraw(m *model.Audit) bool {
 		}
 
 		// 提现
-		err := dao.UpdateAccountAmount(dao.UpdateAccountAmountArgs{
+		session := DbEngine.NewSession()
+		defer session.Close()
+		err := dao.UpdateAccountAmountInSess(session, dao.UpdateAccountAmountArgs{
 			UserId:       m.UserId,
 			Type:         dao.AccountTypeMain,
 			ChangeType:   dao.AccountInOutTypeWithdraw,
 			AmountChange: -accountInOut.Amount,
-			InOutId:      StrToInt(m.LinkId, 0),
+			InOutId:      inOutId,
 		})
 		if err != nil {
 			m.Status = dao.AuditStatusStop
 			m.Remark += "\n 提现失败: " + err.Error()
 			return false
 		}
+
+		// 更改充提记录状态
+		_, err = session.Update(&model.AccountInOut{
+			Status: dao.AccountInOutStatusSuccess,
+		}, &model.AccountInOut{
+			Id: inOutId,
+		})
+		if err != nil {
+			if errS := session.Rollback(); errS != nil {
+				panic(NewDbErr(errS))
+			}
+			m.Status = dao.AuditStatusStop
+			m.Remark += "\n 更改充提记录状态失败" + err.Error()
+			return false
+		}
+
+		if errS := session.Commit(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+
 		m.Status = dao.AuditStatusPass
 	} else {
+		(&model.AccountInOut{
+			Id: inOutId,
+		}).Update(&model.AccountInOut{
+			Status: dao.AccountInOutStatusFail,
+		})
 		m.Status = dao.AuditStatusFail
 	}
 	return true
 }
 
 func AuditAfterTask(m *model.Audit) bool {
-	task := model.NewTaskModel().SetId(StrToInt64(m.LinkId, 0))
+	taskId := StrToInt64(m.LinkId, 0)
+	task := model.NewTaskModel().SetId(taskId)
 	if !task.Info() {
 		m.Status = dao.AuditStatusStop
 		m.Remark += "\n 审核异常：任务记录未找到。"
@@ -157,13 +215,16 @@ func AuditAfterTask(m *model.Audit) bool {
 	}
 
 	if m.Status == dao.AuditStatusPass {
+		session := DbEngine.NewSession()
+		defer session.Close()
+
 		// 支付任务金额
-		err := dao.UpdateAccountAmount(dao.UpdateAccountAmountArgs{
+		err := dao.UpdateAccountAmountInSess(session, dao.UpdateAccountAmountArgs{
 			UserId:             m.UserId,
 			Type:               dao.AccountTypeMain,
 			ChangeType:         dao.AccountInOutTypeTask,
 			FrozenAmountChange: -task.PayAmount,
-			TaskId:             StrToInt64(m.LinkId, 0),
+			TaskId:             taskId,
 			ShopId:             task.ShopId,
 		})
 		if err != nil {
@@ -172,22 +233,47 @@ func AuditAfterTask(m *model.Audit) bool {
 			return false
 		}
 
-		err = NewOrderService().InitOrders(StrToInt64(m.LinkId, 0))
+		// 更新任务状态
+		_, err = session.Update(&model.Task{
+			Status: dao.TaskStatusRunning,
+		}, &model.Task{
+			Id: taskId,
+		})
+		if err != nil {
+			if errS := session.Rollback(); errS != nil {
+				panic(NewDbErr(errS))
+			}
+			m.Status = dao.AuditStatusStop
+			m.Remark += "\n 更新任务状态" + err.Error()
+			return false
+		}
+
+		// 添加订单
+		err = NewOrderService().InitOrders(session, taskId)
 		if err != nil {
 			m.Status = dao.AuditStatusStop
 			m.Remark += "\n 添加订单失败: " + err.Error()
 			return false
 		}
+
+		if errS := session.Commit(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+
 		m.Status = dao.AuditStatusPass
+		return true
 	} else {
+		session := DbEngine.NewSession()
+		defer session.Close()
+
 		// 解冻金额
-		err := dao.UpdateAccountAmount(dao.UpdateAccountAmountArgs{
+		err := dao.UpdateAccountAmountInSess(session, dao.UpdateAccountAmountArgs{
 			UserId:             m.UserId,
 			Type:               dao.AccountTypeMain,
 			ChangeType:         dao.AccountInOutTypeTask,
 			AmountChange:       task.PayAmount,
 			FrozenAmountChange: -task.PayAmount,
-			TaskId:             StrToInt64(m.LinkId, 0),
+			TaskId:             taskId,
 			ShopId:             task.ShopId,
 		})
 		if err != nil {
@@ -195,6 +281,26 @@ func AuditAfterTask(m *model.Audit) bool {
 			m.Remark += "\n 解冻金额失败 " + err.Error()
 			return false
 		}
+
+		// 更新任务状态
+		_, err = session.Update(&model.Task{
+			Status: dao.TaskStatusFail,
+		}, &model.Task{
+			Id: taskId,
+		})
+		if err != nil {
+			if errS := session.Rollback(); errS != nil {
+				panic(NewDbErr(errS))
+			}
+			m.Status = dao.AuditStatusStop
+			m.Remark += "\n 更新任务状态" + err.Error()
+			return false
+		}
+
+		if errS := session.Commit(); errS != nil {
+			panic(NewDbErr(errS))
+		}
+
 		m.Status = dao.AuditStatusFail
 	}
 	return true
