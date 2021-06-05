@@ -33,7 +33,7 @@ func InsertAudit(audit *model.Audit) error {
 		panic(NewDbErr(err))
 	}
 
-	audit.SetId(UniqueIdWorker.GetId())
+	audit.SetId(GetUniqueId())
 	row, err := session.Insert(audit)
 	if err != nil {
 		if errS := session.Rollback(); errS != nil {

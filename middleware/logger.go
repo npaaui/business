@@ -30,7 +30,7 @@ func ReqLog() gin.HandlerFunc {
 		g.Writer = bodyLogWriter
 
 		start := time.Now().UnixNano() / 1e6
-		reqNo := Int64ToStr(UniqueIdWorker.GetId())
+		reqNo := GetUniqueId()
 		g.Set("req_no", reqNo)
 
 		ReqLogChan <- &ReqLogForChan{
@@ -48,6 +48,7 @@ func ReqLog() gin.HandlerFunc {
 		respBody := bodyLogWriter.body.String()
 		resp := RespBody{}
 		_ = json.Unmarshal([]byte(respBody), &resp)
+		data, _ := json.Marshal(resp.Data)
 		cost := float64(time.Now().UnixNano()/1e6-start) / 1000
 		ReqLogChan <- &ReqLogForChan{
 			ReqNo:    reqNo,
@@ -56,7 +57,7 @@ func ReqLog() gin.HandlerFunc {
 			HttpCode: g.Writer.Status(),
 			Code:     resp.Code,
 			Msg:      resp.Msg,
-			Data:     respBody,
+			Data:     bytes.NewBuffer(data).String(),
 		}
 	}
 }

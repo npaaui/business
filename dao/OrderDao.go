@@ -40,7 +40,7 @@ var OrderCommentStatusMap = MapStr{
  */
 type ListOrderArgs struct {
 	Id              int    `json:"id"`
-	TaskId          int    `json:"task_id"`
+	TaskId          string `json:"task_id"`
 	ShopId          int    `json:"shop_id"`
 	UserId          int    `json:"user_id"`
 	Status          string `json:"status"`
@@ -55,7 +55,7 @@ type ListOrderRet struct {
 	Id                int     `json:"id"`
 	UserId            int     `json:"user_id"`
 	BuyerId           int     `json:"buyer_id"`
-	TaskId            int     `json:"task_id"`
+	TaskId            string  `json:"task_id"`
 	TaskDetailId      int     `json:"task_detail_id"`
 	ShopId            int     `json:"shop_id"`
 	ShopName          string  `json:"shop_name"`
@@ -83,7 +83,7 @@ func ListOrder(args *ListOrderArgs) (int, []ListOrderRet) {
 	if args.UserId > 0 {
 		session.And("bo.user_id = ?", args.UserId)
 	}
-	if args.TaskId > 0 {
+	if args.TaskId != "" {
 		session.And("bo.task_id = ?", args.TaskId)
 	}
 	if args.ShopId > 0 {

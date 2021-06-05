@@ -36,3 +36,7 @@ func InitMysql() {
 		DbEngine.ShowSQL(true)
 	}
 }
+
+func GetUniqueId() string {
+	return Int64ToStr(UniqueIdWorker.GetId())
+}

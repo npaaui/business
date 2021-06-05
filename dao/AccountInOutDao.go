@@ -30,7 +30,7 @@ func InsertAccountInOut(accountInOut *model.AccountInOut) {
 	defer session.Close()
 	_ = session.Begin()
 
-	accountInOut.SetId(UniqueIdWorker.GetId()).
+	accountInOut.SetId(GetUniqueId()).
 		SetStatus(AccountInOutStatusInit)
 	row, err := session.Insert(accountInOut)
 	if err != nil {
@@ -73,7 +73,7 @@ func InsertAccountInOut(accountInOut *model.AccountInOut) {
 	err = InsertAudit(&model.Audit{
 		Action:  action,
 		Status:  AuditStatusInit,
-		LinkId:  Int64ToStr(accountInOut.Id),
+		LinkId:  accountInOut.Id,
 		UserId:  accountInOut.UserId,
 		Content: content,
 	})

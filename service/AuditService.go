@@ -73,7 +73,7 @@ func (s *AuditService) UpdateAudit(args *model.Audit) {
 }
 
 func AuditAfterRecharge(m *model.Audit) bool {
-	inOutId := StrToInt64(m.LinkId, 0)
+	inOutId := m.LinkId
 	if m.Status == dao.AuditStatusPass {
 		// 获取充值金额
 		accountInOut := model.NewAccountInOutModel().SetId(inOutId)
@@ -132,7 +132,7 @@ func AuditAfterRecharge(m *model.Audit) bool {
 }
 
 func AuditAfterWithdraw(m *model.Audit) bool {
-	inOutId := StrToInt64(m.LinkId, 0)
+	inOutId := m.LinkId
 	if m.Status == dao.AuditStatusPass {
 		// 获取提现金额
 		accountInOut := model.NewAccountInOutModel().SetId(inOutId)
@@ -198,7 +198,7 @@ func AuditAfterWithdraw(m *model.Audit) bool {
 }
 
 func AuditAfterTask(m *model.Audit) bool {
-	taskId := StrToInt64(m.LinkId, 0)
+	taskId := m.LinkId
 	task := model.NewTaskModel().SetId(taskId)
 	if !task.Info() {
 		m.Status = dao.AuditStatusStop

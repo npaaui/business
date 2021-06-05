@@ -18,14 +18,14 @@ const (
  * 获取任务明细列表
  */
 type ListTaskDetailArgs struct {
-	TaskId []int64
+	TaskId []string
 }
 
 func ListTaskDetail(args *ListTaskDetailArgs) (int, []model.TaskDetail) {
 	var detailList []model.TaskDetail
 	session := DbEngine.Where("1=1")
 	if len(args.TaskId) > 0 {
-		session.And("task_id in" + WhereInInt64(args.TaskId))
+		session.And("task_id in" + WhereInString(args.TaskId))
 	}
 	count, err := session.FindAndCount(&detailList)
 	if err != nil {

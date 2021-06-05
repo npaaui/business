@@ -10,7 +10,7 @@ import (
  * 获取任务商品列表
  */
 type ListTaskGoodsArgs struct {
-	TaskId []int64
+	TaskId []string
 	Url    string
 }
 
@@ -18,7 +18,7 @@ func ListTaskGoods(args *ListTaskGoodsArgs) (int, []model.TaskGoods) {
 	var goodsList []model.TaskGoods
 	session := DbEngine.Where("1=1")
 	if len(args.TaskId) > 0 {
-		session.And("task_id in" + WhereInInt64(args.TaskId))
+		session.And("task_id in" + WhereInString(args.TaskId))
 	}
 	if args.Url != "" {
 		session.And("url = ?", args.Url)

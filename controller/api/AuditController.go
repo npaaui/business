@@ -20,9 +20,7 @@ func NewAuditController() *AuditController {
 }
 
 func (c *AuditController) ListAudit(g *gin.Context) {
-	args := &dao.ListAuditArgs{
-		UserId: g.GetInt("user_id"),
-	}
+	args := &dao.ListAuditArgs{}
 	ValidateQuery(g, map[string]string{
 		"action":            "string",
 		"status":            "string",
@@ -31,6 +29,12 @@ func (c *AuditController) ListAudit(g *gin.Context) {
 		"page":              "int",
 		"page_size":         "int",
 	}, args)
+
+	userType := g.GetString("user_type")
+	if userType != dao.UserTypeAdmin {
+		args.UserId = g.GetInt("user_id")
+	}
+
 	list := c.service.ListAudit(args)
 	ReturnData(g, list)
 }
@@ -40,7 +44,7 @@ func (c *AuditController) UpdateAudit(g *gin.Context) {
 		OpsId: g.GetInt("user_id"),
 	}
 	ValidatePostJson(g, map[string]string{
-		"id":     "int",
+		"id":     "string",
 		"status": "string",
 		"remark": "string",
 	}, args)

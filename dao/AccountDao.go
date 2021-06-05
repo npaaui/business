@@ -43,10 +43,10 @@ type UpdateAccountAmountArgs struct {
 	ChangeType         string
 	AmountChange       float64
 	FrozenAmountChange float64
-	TaskId             int64
+	TaskId             string
 	ShopId             int
 	OrderId            int
-	InOutId            int64
+	InOutId            string
 	Remark             string
 }
 

@@ -6,7 +6,7 @@ import (
 
 /**
 "id": "int", //
-"task_id": "int64", // 任务id
+"task_id": "string", // 任务id
 "url": "string", // 宝贝链接
 "img": "string", // 宝贝图片
 "keywords": "string", // 关键词
@@ -21,7 +21,7 @@ import (
 
 type TaskGoods struct {
 	Id          int     `db:"id" json:"id"`
-	TaskId      int64   `db:"task_id" json:"task_id"`
+	TaskId      string  `db:"task_id" json:"task_id"`
 	Url         string  `db:"url" json:"url"`
 	Img         string  `db:"img" json:"img"`
 	Keywords    string  `db:"keywords" json:"keywords"`
@@ -75,7 +75,7 @@ func (m *TaskGoods) SetId(arg int) *TaskGoods {
 	return m
 }
 
-func (m *TaskGoods) SetTaskId(arg int64) *TaskGoods {
+func (m *TaskGoods) SetTaskId(arg string) *TaskGoods {
 	m.TaskId = arg
 	return m
 }

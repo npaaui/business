@@ -10,8 +10,8 @@ import (
  * 更新任务状态
  */
 type UpdateTaskStatusArgs struct {
-	Id     int64 `json:"id"`
-	UserId int   `json:"user_id"`
+	Id     string `json:"id"`
+	UserId int    `json:"user_id"`
 	Status string
 	task   *model.Task
 }
@@ -99,11 +99,11 @@ func (a *UpdateTaskStatusPaid) AfterUpdate() {
 
 	// 增加审核记录
 	content := "商家编号:" + IntToStr(a.UserId) +
-		"\n任务编号:" + Int64ToStr(a.task.Id)
+		"\n任务编号:" + a.task.Id
 	err = dao.InsertAudit(&model.Audit{
 		Action:  dao.AuditActionCodeTask,
 		Status:  dao.AuditStatusInit,
-		LinkId:  Int64ToStr(a.task.Id),
+		LinkId:  a.task.Id,
 		UserId:  a.UserId,
 		Content: content,
 		Remark:  remark,

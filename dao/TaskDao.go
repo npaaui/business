@@ -32,7 +32,7 @@ var TaskStatusSlice = []string{TaskStatusInit, TaskStatusPaid, TaskStatusFail, T
  * 获取任务列表
  */
 type ListTaskArgs struct {
-	Id              []int64
+	Id              []string
 	UserId          int
 	ShopId          int
 	CategoryId      int
@@ -48,7 +48,7 @@ func ListTask(args *ListTaskArgs) (int, []model.Task) {
 	session := DbEngine.Table("b_task").
 		Where("1=1")
 	if len(args.Id) > 0 {
-		session.And("id in " + WhereInInt64(args.Id))
+		session.And("id in " + WhereInString(args.Id))
 	}
 	if args.UserId > 0 {
 		session.And("user_id = ?", args.UserId)
@@ -76,7 +76,7 @@ func ListTask(args *ListTaskArgs) (int, []model.Task) {
 }
 
 func InsertTask(s *xorm.Session, task *model.Task) {
-	task.SetStatus(TaskStatusInit).SetId(UniqueIdWorker.GetId())
+	task.SetStatus(TaskStatusInit).SetId(GetUniqueId())
 
 	if task.ClosingDate == "no" {
 		task.SetClosingDate(GetForever())

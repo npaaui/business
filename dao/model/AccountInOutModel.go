@@ -5,7 +5,7 @@ import (
 )
 
 /**
-"id": "int64", // 账户充提记录编号
+"id": "string", // 账户充提记录编号
 "user_id": "int", // 商家编号
 "user_bank_id": "int", // 用户银行卡编号
 "bank_name": "string", // 银行名称（快照）
@@ -21,7 +21,7 @@ import (
 */
 
 type AccountInOut struct {
-	Id         int64   `db:"id" json:"id"`
+	Id         string  `db:"id" json:"id"`
 	UserId     int     `db:"user_id" json:"user_id"`
 	UserBankId int     `db:"user_bank_id" json:"user_bank_id"`
 	BankName   string  `db:"bank_name" json:"bank_name"`
@@ -72,7 +72,7 @@ func (m *AccountInOut) Delete() int64 {
 	return row
 }
 
-func (m *AccountInOut) SetId(arg int64) *AccountInOut {
+func (m *AccountInOut) SetId(arg string) *AccountInOut {
 	m.Id = arg
 	return m
 }

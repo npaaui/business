@@ -29,7 +29,7 @@ func NewTaskController() *TaskController {
 func (c *TaskController) InfoTask(g *gin.Context) {
 	task := model.NewTaskModel()
 	ValidateParam(g, map[string]string{
-		"id": "int|required",
+		"id": "string|required",
 	}, task)
 
 	data := c.service.InfoTask(task)
@@ -43,7 +43,7 @@ func (c *TaskController) InfoTask(g *gin.Context) {
 func (c *TaskController) ListTask(g *gin.Context) {
 	args := &service.ListTaskArgs{}
 	ValidateQuery(g, map[string]string{
-		"id":                "int",
+		"id":                "string",
 		"shop_id":           "int",
 		"category_id":       "int",
 		"status":            "string|enum:" + strings.Join(dao.TaskStatusSlice, ","),
@@ -157,7 +157,7 @@ func (c *TaskController) UpdateTaskStatus(g *gin.Context) {
 		UserId: g.GetInt("user_id"),
 	}
 	ValidatePostJson(g, map[string]string{
-		"id":     "int|required||任务编号",
+		"id":     "string|required||任务编号",
 		"status": "string|required|enum:" + strings.Join(dao.TaskStatusSlice, ",") + "||任务变更状态",
 	}, args)
 	c.service.UpdateTaskStatus(args)
@@ -172,7 +172,7 @@ func (c *TaskController) ListOrder(g *gin.Context) {
 	ValidateQuery(g, map[string]string{
 		"id":                "int",
 		"user_id":           "int",
-		"task_id":           "int",
+		"task_id":           "string",
 		"shop_id":           "int",
 		"status":            "string|enum:" + strings.Join(dao.OrderStatusSlice, ","),
 		"create_time_start": "string",
@@ -194,14 +194,14 @@ func (c *TaskController) ListOrder(g *gin.Context) {
 		b := &bytes.Buffer{}
 		b.WriteString("\xEF\xBB\xBF") // 写入UTF-8 BOM，避免中文乱码
 		wr := csv.NewWriter(b)
-		wr.Write(header) //按行shu
+		_ = wr.Write(header) //按行shu
 
 		var items []string
 		for _, v := range list {
 			items = []string{
 				IntToStr(v.Id),
 				v.RunningTime,
-				IntToStr(v.TaskId),
+				v.TaskId,
 				IntToStr(v.BuyerId),
 				v.ShopName,
 				"",

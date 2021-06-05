@@ -32,7 +32,7 @@ func InsertAccountLog(accountLog *model.AccountLog) {
 type ListAccountLogArgs struct {
 	UserId          int    `json:"user_id"`
 	AccountType     string `json:"account_type"`
-	TaskId          int    `json:"task_id"`
+	TaskId          string `json:"task_id"`
 	OrderId         int    `json:"order_id"`
 	ShopId          int    `json:"shop_id"`
 	CreateTimeStart string `json:"create_time_start"`
@@ -48,7 +48,7 @@ type ListAccountLogResult struct {
 	CreateTime      string  `json:"create_time"`
 	Type            string  `json:"type"`
 	TypeDesc        string  `json:"type_desc"`
-	TaskId          int     `json:"task_id"`
+	TaskId          string  `json:"task_id"`
 	OrderId         int     `json:"order_id"`
 	ShopId          int     `json:"shop_id"`
 	Remark          string  `json:"remark"`
@@ -65,7 +65,7 @@ func ListAccountLog(args *ListAccountLogArgs) (int, []ListAccountLogResult) {
 	if args.UserId > 0 {
 		session.And("al.user_id = ?", args.UserId)
 	}
-	if args.TaskId > 0 {
+	if args.TaskId != "" {
 		session.And("al.task_id = ?", args.TaskId)
 	}
 	if args.OrderId > 0 {

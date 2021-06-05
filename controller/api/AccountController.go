@@ -52,7 +52,7 @@ func (c *AccountController) UpdateAccountInOutStatus(g *gin.Context) {
 		UserId: g.GetInt("user_id"),
 	}
 	ValidatePostJson(g, map[string]string{
-		"id":     "int|required",
+		"id":     "string|required",
 		"status": "string|required|enum:" + dao.AccountInOutStatusCancel,
 	}, args)
 
@@ -86,7 +86,7 @@ func (c *AccountController) ListAccountLog(g *gin.Context) {
 	ValidateQuery(g, map[string]string{
 		"account_type":      "string|enum:" + strings.Join(dao.AccountTypeSlice, ","),
 		"type":              "string|enum:" + strings.Join(dao.AccountLogTypeSlice, ","),
-		"task_id":           "int",
+		"task_id":           "string",
 		"order_id":          "int",
 		"shop_id":           "int",
 		"create_time_start": "string",

@@ -17,14 +17,14 @@ func NewOrderService() *OrderService {
 /**
  * 添加订单
  */
-func (s *OrderService) InitOrders(session *xorm.Session, taskId int64) error {
+func (s *OrderService) InitOrders(session *xorm.Session, taskId string) error {
 	task := model.NewTaskModel().SetId(taskId)
 	if !task.Info() {
 		return errors.New("任务不存在")
 	}
 
 	_, list := dao.ListTaskDetail(&dao.ListTaskDetailArgs{
-		TaskId: []int64{taskId},
+		TaskId: []string{taskId},
 	})
 	for _, v := range list {
 		_, err := session.Insert(&model.Order{

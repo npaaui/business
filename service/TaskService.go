@@ -163,7 +163,7 @@ func getPublishPlan(conf string) []string {
  * 任务列表
  */
 type ListTaskArgs struct {
-	Id              int64  `json:"id"`
+	Id              string `json:"id"`
 	UserId          int    `json:"user_id"`
 	ShopId          int    `json:"shop_id"`
 	CategoryId      int    `json:"category_id"`
@@ -176,8 +176,8 @@ type ListTaskArgs struct {
 }
 
 func (s *TaskService) ListTask(args *ListTaskArgs) *RespList {
-	var taskIds []int64
-	if args.Id > 0 {
+	var taskIds []string
+	if args.Id != "" {
 		taskIds = append(taskIds, args.Id)
 	}
 	if args.GoodsUrl != "" {
@@ -210,7 +210,7 @@ func (s *TaskService) ListTask(args *ListTaskArgs) *RespList {
 		taskIds = append(taskIds, v.Id)
 	}
 
-	taskGoodsList := map[int64][]model.TaskGoods{}
+	taskGoodsList := map[string][]model.TaskGoods{}
 	_, goodsList := dao.ListTaskGoods(&dao.ListTaskGoodsArgs{
 		TaskId: taskIds,
 		Url:    args.GoodsUrl,
@@ -219,7 +219,7 @@ func (s *TaskService) ListTask(args *ListTaskArgs) *RespList {
 		taskGoodsList[v.TaskId] = append(taskGoodsList[v.TaskId], v)
 	}
 
-	taskDetailList := map[int64][]model.TaskDetail{}
+	taskDetailList := map[string][]model.TaskDetail{}
 	_, detailList := dao.ListTaskDetail(&dao.ListTaskDetailArgs{
 		TaskId: taskIds,
 	})
@@ -250,10 +250,10 @@ func (s *TaskService) InfoTask(task *model.Task) MapItf {
 	data := task.AsMapItf()
 	data["status_desc"] = dao.TaskStatusMap[task.Status]
 	_, data["goods"] = dao.ListTaskGoods(&dao.ListTaskGoodsArgs{
-		TaskId: []int64{task.Id},
+		TaskId: []string{task.Id},
 	})
 	_, data["detail"] = dao.ListTaskDetail(&dao.ListTaskDetailArgs{
-		TaskId: []int64{task.Id},
+		TaskId: []string{task.Id},
 	})
 
 	return data
