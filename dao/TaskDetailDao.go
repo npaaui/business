@@ -18,7 +18,9 @@ const (
  * 获取任务明细列表
  */
 type ListTaskDetailArgs struct {
-	TaskId []string
+	TaskId         []string
+	PublishTimeEnd string
+	Status         string
 }
 
 func ListTaskDetail(args *ListTaskDetailArgs) (int, []model.TaskDetail) {
@@ -26,6 +28,12 @@ func ListTaskDetail(args *ListTaskDetailArgs) (int, []model.TaskDetail) {
 	session := DbEngine.Where("1=1")
 	if len(args.TaskId) > 0 {
 		session.And("task_id in" + WhereInString(args.TaskId))
+	}
+	if args.PublishTimeEnd != "" {
+		session.And("publish_time <= ?", args.PublishTimeEnd)
+	}
+	if args.Status != "" {
+		session.And("status = ?", args.Status)
 	}
 	count, err := session.FindAndCount(&detailList)
 	if err != nil {

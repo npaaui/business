@@ -258,3 +258,28 @@ func (s *TaskService) InfoTask(task *model.Task) MapItf {
 
 	return data
 }
+
+/**
+ * 定时任务 发布订单
+ */
+func (s *TaskService) PublishTaskOrder() {
+	_, list := dao.ListTaskDetail(&dao.ListTaskDetailArgs{
+		PublishTimeEnd: GetNow(),
+		Status:         dao.TaskDetailStatusInit,
+	})
+	var taskDetailIds = make([]int, 0)
+	for _, v := range list {
+		taskDetailIds = append(taskDetailIds, v.Id)
+	}
+
+	if len(taskDetailIds) > 0 {
+		session := DbEngine.NewSession()
+		defer session.Close()
+		_ = session.Begin()
+		dao.PublishTaskDetail(session, taskDetailIds)
+		dao.PublishOrders(session, taskDetailIds)
+		_ = session.Commit()
+	} else {
+		fmt.Println("无待发布订单")
+	}
+}

@@ -2,6 +2,8 @@ package dao
 
 import (
 	. "business/common"
+	"business/dao/model"
+	"github.com/go-xorm/xorm"
 )
 
 const (
@@ -107,4 +109,13 @@ func ListOrder(args *ListOrderArgs) (int, []ListOrderRet) {
 		panic(NewDbErr(err))
 	}
 	return int(count), orderList
+}
+
+func PublishOrders(session *xorm.Session, taskDetailIds []int) {
+	_, err := session.Where("task_detail_id in " + WhereInInt(taskDetailIds)).Update(model.Order{
+		Status: OrderStatusPublic,
+	})
+	if err != nil {
+		panic(NewDbErr(err))
+	}
 }

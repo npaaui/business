@@ -116,3 +116,12 @@ func UpdateTask(s *xorm.Session, task *model.Task, set *model.Task) {
 		panic(NewRespErr(ErrInsert, "更新任务金额失败"))
 	}
 }
+
+func PublishTaskDetail(session *xorm.Session, taskDetailIds []int) {
+	_, err := session.Where("id in " + WhereInInt(taskDetailIds)).Update(model.TaskDetail{
+		Status: TaskDetailStatusPublish,
+	})
+	if err != nil {
+		panic(NewDbErr(err))
+	}
+}

@@ -6,10 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/validate/locales/zhcn"
 	"github.com/npaaui/helper-go/tools"
+	"github.com/robfig/cron"
 
 	. "business/common"
 	"business/dao"
 	"business/router"
+	"business/service"
 )
 
 func main() {
@@ -21,9 +23,10 @@ func main() {
 	InitConfig("config.ini")
 	InitMysql()
 	InitRedis()
-	zhcn.RegisterGlobal() // 验证器语言包
-	DoSomeRoutine()       // 常驻通道消费
-	UniqueIdWorker = tools.NewWorker(1)
+	zhcn.RegisterGlobal()               // 验证器语言包
+	DoSomeRoutine()                     // 常驻通道消费
+	UniqueIdWorker = tools.NewWorker(1) // 唯一id生成器
+	InitCron()                          // 初始化任务
 
 	/**
 	 * 加载路由
@@ -50,4 +53,13 @@ func DoSomeRoutine() {
 			}
 		}
 	}()
+}
+
+func InitCron() {
+	c := cron.New()
+	err := c.AddFunc("1,20,40 * * * * ?", func() {
+		service.NewTaskService().PublishTaskOrder()
+	})
+	fmt.Println(err)
+	c.Start()
 }
