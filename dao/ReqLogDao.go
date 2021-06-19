@@ -32,6 +32,7 @@ func UpdateReqLog(args *ReqLogForChan) {
 			Msg:      args.Msg,
 			Data:     args.Data,
 			Ip:       args.Ip,
+			Server:   args.Server,
 			Cost:     args.Cost,
 		}).Insert()
 	} else {
@@ -46,6 +47,7 @@ func UpdateReqLog(args *ReqLogForChan) {
 			Msg:      args.Msg,
 			Data:     args.Data,
 			Ip:       args.Ip,
+			Server:   args.Server,
 			Cost:     args.Cost,
 		})
 	}

@@ -40,6 +40,7 @@ func ReqLog() gin.HandlerFunc {
 			Agent:  g.Request.UserAgent(),
 			Param:  g.Request.RequestURI,
 			Ip:     g.ClientIP(),
+			Server: ConfCom.Server,
 		}
 
 		g.Next()

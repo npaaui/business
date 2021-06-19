@@ -7,12 +7,13 @@ import (
 )
 
 var (
-	Conf *goconfig.ConfigFile
+	Conf    *goconfig.ConfigFile
 	ConfCom = &ConfCommon{}
 )
 
 type ConfCommon struct {
-	Env 	string
+	Env    string
+	Server string
 }
 
 func InitConfig(path string) {
@@ -27,5 +28,5 @@ func InitConfig(path string) {
 		panic(fmt.Errorf("init common conf error: %w", err))
 	}
 	ConfCom.Env = commonConf["env"]
+	ConfCom.Server = commonConf["server"]
 }
-

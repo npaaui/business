@@ -14,6 +14,7 @@ type ReqLogForChan struct {
 	Msg        string
 	Data       string
 	Ip         string
+	Server     string
 	Cost       float64
 	CreateTime string
 	UpdateTime string

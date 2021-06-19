@@ -17,6 +17,7 @@ import (
 "msg": "string", // 返回msg
 "data": "string", // 返回data
 "ip": "string", // 请求ip
+"server": "string", // 服务器ip
 "cost": "float64", // 耗时
 "create_time": "string", // 添加时间
 "update_time": "string", // 更新时间
@@ -35,6 +36,7 @@ type ReqLog struct {
 	Msg        string  `db:"msg" json:"msg"`
 	Data       string  `db:"data" json:"data"`
 	Ip         string  `db:"ip" json:"ip"`
+	Server     string  `db:"server" json:"server"`
 	Cost       float64 `db:"cost" json:"cost"`
 	CreateTime string  `db:"create_time" json:"create_time" xorm:"created"`
 	UpdateTime string  `db:"update_time" json:"update_time" xorm:"updated"`
@@ -136,6 +138,11 @@ func (m *ReqLog) SetIp(arg string) *ReqLog {
 	return m
 }
 
+func (m *ReqLog) SetServer(arg string) *ReqLog {
+	m.Server = arg
+	return m
+}
+
 func (m *ReqLog) SetCost(arg float64) *ReqLog {
 	m.Cost = arg
 	return m
@@ -165,6 +172,7 @@ func (m ReqLog) AsMapItf() MapItf {
 		"msg":         m.Msg,
 		"data":        m.Data,
 		"ip":          m.Ip,
+		"server":      m.Server,
 		"cost":        m.Cost,
 		"create_time": m.CreateTime,
 		"update_time": m.UpdateTime,
@@ -184,6 +192,7 @@ func (m ReqLog) Translates() map[string]string {
 		"msg":         "返回msg",
 		"data":        "返回data",
 		"ip":          "请求ip",
+		"server":      "服务器ip",
 		"cost":        "耗时",
 		"create_time": "添加时间",
 		"update_time": "更新时间",

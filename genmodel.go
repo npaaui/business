@@ -30,7 +30,7 @@ func main() {
 	(&gen.Conf{
 		ModelFolder: "dao/model/",
 		TplFile:     "tmp/gen/model.tpl",
-		TableNames:  "",
+		TableNames:  "req_log",
 		DbName:      "business",
 	}).InitGenConf()
 	gen.GenerateModelFile()
